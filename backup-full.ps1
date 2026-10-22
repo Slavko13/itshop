@@ -116,7 +116,11 @@ try {
         $hash = (Get-FileHash -LiteralPath (Join-Path $stage $name) -Algorithm SHA256).Hash.ToLowerInvariant()
         "$hash  $name"
     }
-    Set-Content -LiteralPath (Join-Path $stage 'SHA256SUMS') -Value $checksums -Encoding ASCII
+    [IO.File]::WriteAllText(
+        (Join-Path $stage 'SHA256SUMS'),
+        ($checksums -join "`n") + "`n",
+        [Text.UTF8Encoding]::new($false)
+    )
 
     $manifest = [ordered]@{
         format = 'itsoft-full-backup-v1'
@@ -133,7 +137,11 @@ try {
     Invoke-NativeCommand -Command 'tar' -ArgumentList @('-czf', $archive, '-C', $stage, '.')
 
     $archiveHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
-    Set-Content -LiteralPath "$archive.sha256" -Value "$archiveHash  $([IO.Path]::GetFileName($archive))" -Encoding ASCII
+    [IO.File]::WriteAllText(
+        "$archive.sha256",
+        "$archiveHash  $([IO.Path]::GetFileName($archive))`n",
+        [Text.UTF8Encoding]::new($false)
+    )
 
     Write-Host "FULL_BACKUP=$archive" -ForegroundColor Green
     Write-Host "SHA256=$archiveHash" -ForegroundColor Green

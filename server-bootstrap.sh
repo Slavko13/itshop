@@ -74,6 +74,7 @@ tar -xzf "$backup_archive" -C "$work_dir"
 for required in manifest.json SHA256SUMS database.sql.gz app-code.tar.gz uploads.tar.gz source-url.txt; do
   [[ -f "$work_dir/$required" ]] || fail "Backup is incomplete: $required is missing"
 done
+sed -i 's/\r$//' "$work_dir/SHA256SUMS"
 (
   cd "$work_dir"
   sha256sum -c SHA256SUMS
