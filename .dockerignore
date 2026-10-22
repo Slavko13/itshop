@@ -1,0 +1,12 @@
+.git
+.env
+*.sql
+*.sql.gz
+*.zip
+*.tar
+*.tar.gz
+mail.log
+www/itsoft.store/wp-config.php
+www/itsoft.store/wp-content/debug.log
+www/itsoft.store/wp-content/yookassa-debug.log
+www/itsoft.store/wp-content/uploads/telegram

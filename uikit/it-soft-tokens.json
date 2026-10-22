@@ -1,0 +1,419 @@
+{
+  "version": "3.0",
+  "colors": {
+    "primary": "#7047F5",
+    "primary-hover": "#6035E5",
+    "primary-pressed": "#5026CD",
+    "primary-subtle": "#F0EBFF",
+    "primary-subtle-hover": "#E5DCFF",
+    "primary-subtle-pressed": "#D8CBFF",
+    "text": "#151521",
+    "muted": "#696A78",
+    "placeholder": "#858593",
+    "border": "#DADAE5",
+    "border-hover": "#B6B2C4",
+    "canvas": "#F7F8FA",
+    "surface": "#FFFFFF",
+    "dark": "#211B3D",
+    "disabled-bg": "#F0F0F5",
+    "disabled-text": "#A5A5B1",
+    "success": "#177F57",
+    "success-bg": "#ECF8F1",
+    "error": "#B92E53",
+    "error-bg": "#FFF0F4",
+    "warning": "#9B520B",
+    "warning-bg": "#FFF6E9",
+    "info": "#2464BC",
+    "info-bg": "#EFF5FF"
+  },
+  "typography": {
+    "family": "Manrope",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "styles": {
+      "display": {
+        "size": 48,
+        "line": 56,
+        "weight": 700,
+        "tracking": -0.04
+      },
+      "h1": {
+        "size": 40,
+        "line": 48,
+        "weight": 700,
+        "tracking": -0.04
+      },
+      "h2": {
+        "size": 32,
+        "line": 40,
+        "weight": 700,
+        "tracking": -0.03
+      },
+      "h3": {
+        "size": 24,
+        "line": 32,
+        "weight": 700,
+        "tracking": -0.02
+      },
+      "h4": {
+        "size": 20,
+        "line": 28,
+        "weight": 600,
+        "tracking": -0.01
+      },
+      "body-lg": {
+        "size": 16,
+        "line": 24,
+        "weight": 400,
+        "tracking": 0
+      },
+      "body": {
+        "size": 14,
+        "line": 20,
+        "weight": 400,
+        "tracking": 0
+      },
+      "body-sm": {
+        "size": 12,
+        "line": 18,
+        "weight": 400,
+        "tracking": 0
+      },
+      "button": {
+        "size": 14,
+        "line": 20,
+        "weight": 600,
+        "tracking": 0
+      },
+      "caption": {
+        "size": 11,
+        "line": 16,
+        "weight": 600,
+        "tracking": 0.04
+      }
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64
+  ],
+  "radii": [
+    8,
+    10,
+    12,
+    14,
+    16
+  ],
+  "button": {
+    "sizes": {
+      "sm": {
+        "height": 36,
+        "font": 12,
+        "line": 18,
+        "padding": 14,
+        "radius": 10
+      },
+      "md": {
+        "height": 44,
+        "font": 14,
+        "line": 20,
+        "padding": 18,
+        "radius": 12
+      },
+      "lg": {
+        "height": 52,
+        "font": 16,
+        "line": 24,
+        "padding": 22,
+        "radius": 14
+      }
+    },
+    "default-width": 168,
+    "matrix-footprint": {
+      "width": 176,
+      "height": 52
+    },
+    "icon-size": 20,
+    "icon-gap": 8,
+    "states": [
+      "default",
+      "hover",
+      "pressed",
+      "focus",
+      "disabled",
+      "loading"
+    ]
+  },
+  "focus": {
+    "color": "#7047F5",
+    "ring": 2,
+    "offset": 2,
+    "reserved-space": 4
+  },
+  "field": {
+    "height": 48,
+    "radius": 12,
+    "padding-x": 14,
+    "icon-size": 20,
+    "icon-gap": 10,
+    "font-size": 14,
+    "line-height": 20,
+    "focus-footprint-height": 56
+  },
+  "search": {
+    "height": 48,
+    "radius": 12,
+    "leading-slot": 20,
+    "gap": 10,
+    "action-visual": 32,
+    "padding-left": 14,
+    "padding-right": 14,
+    "padding-right-with-action": 2,
+    "action-hit-area": 44
+  },
+  "checkbox": {
+    "size": 18,
+    "radius": 4,
+    "hit-area": 44
+  },
+  "radio": {
+    "size": 18,
+    "radius": 9,
+    "hit-area": 44
+  },
+  "switch": {
+    "width": 40,
+    "height": 24,
+    "thumb": 18,
+    "padding": 3,
+    "hit-height": 44
+  },
+  "quantity": {
+    "width": 136,
+    "height": 46,
+    "action-size": 44
+  },
+  "accordion": {
+    "width": 368,
+    "min-height": 56,
+    "radius": 12,
+    "padding-x": 16
+  },
+  "icons": {
+    "set": "lucide",
+    "viewBox": "0 0 24 24",
+    "stroke-width": 2,
+    "sizes": [
+      16,
+      20,
+      24
+    ],
+    "names": [
+      "menu",
+      "search",
+      "shopping-cart",
+      "shopping-bag",
+      "package",
+      "receipt-text",
+      "key-round",
+      "user-round",
+      "log-in",
+      "log-out",
+      "mail",
+      "phone",
+      "map-pin",
+      "credit-card",
+      "ticket-percent",
+      "shield-check",
+      "badge-check",
+      "headphones",
+      "circle-help",
+      "download",
+      "copy",
+      "external-link",
+      "eye",
+      "eye-off",
+      "lock-keyhole",
+      "settings-2",
+      "sliders-horizontal",
+      "arrow-right",
+      "arrow-left",
+      "chevron-down",
+      "chevron-right",
+      "plus",
+      "minus",
+      "x",
+      "check",
+      "circle-check",
+      "circle-alert",
+      "triangle-alert",
+      "info",
+      "loader-circle",
+      "star",
+      "message-circle",
+      "heart",
+      "trash-2",
+      "monitor",
+      "file-text",
+      "layers",
+      "database",
+      "arrow-up",
+      "arrow-down",
+      "chevrons-up-down",
+      "calendar-days",
+      "more-vertical",
+      "filter-x",
+      "refresh-cw",
+      "list-filter"
+    ]
+  },
+  "avatar": {
+    "sizes": [
+      32,
+      40,
+      48
+    ],
+    "radii": {
+      "32": 8,
+      "40": 12,
+      "48": 14
+    },
+    "fallback": "initials or user-round",
+    "min-hit-area": 44
+  },
+  "field-extended": {
+    "readonly-focusable": true,
+    "validation": "first blur or submit, then input",
+    "helper-min-height": 32,
+    "textarea-height": 112,
+    "textarea-radius": 12,
+    "textarea-counter": "Unicode code points; must match backend policy",
+    "mobile-font-size": 16,
+    "mobile-line-height": 24
+  },
+  "data-table": {
+    "header-height": 48,
+    "row-min-height": 72,
+    "cell-padding-x": 12,
+    "row-padding-y": 8,
+    "select-cell-padding-x": 0,
+    "columns": [
+      {
+        "id": "select",
+        "width": 52,
+        "flex": false
+      },
+      {
+        "id": "order",
+        "width": 116,
+        "flex": false
+      },
+      {
+        "id": "date",
+        "width": 128,
+        "flex": false
+      },
+      {
+        "id": "product",
+        "width": null,
+        "flex": true
+      },
+      {
+        "id": "status",
+        "width": 176,
+        "flex": false
+      },
+      {
+        "id": "amount",
+        "width": 132,
+        "flex": false
+      },
+      {
+        "id": "action",
+        "width": 144,
+        "flex": false
+      }
+    ],
+    "amount-align": "right",
+    "mobile": "stacked definition list",
+    "breakpoint": 768
+  },
+  "combobox": {
+    "height": 48,
+    "option-height": 44,
+    "list-padding": 8,
+    "max-visible-options": 6,
+    "search-debounce-ms": 300,
+    "selection": "manual commit"
+  },
+  "filter": {
+    "commit": "explicit apply",
+    "empty-bound": "unbounded",
+    "validation": "min <= max",
+    "reset": "defaults and page 1"
+  },
+  "dialog": {
+    "width-max": 520,
+    "viewport-margin": 16,
+    "padding": 24,
+    "radius": 16,
+    "initial-focus-danger": "cancel",
+    "escape": "close and restore trigger",
+    "pending-repeat": "blocked"
+  },
+  "drawer": {
+    "width-max": 400,
+    "padding": 20,
+    "radius": 16,
+    "behavior": "modal"
+  },
+  "popover": {
+    "radius": 12,
+    "padding": 8,
+    "option-height": 44
+  },
+  "license": {
+    "value-min-height": 64,
+    "code-font": "Menlo, Consolas, monospace",
+    "code-size": 13,
+    "code-line-height": 20,
+    "mask": "display only",
+    "availability-source": "backend"
+  },
+  "coupon": {
+    "server-validation": true,
+    "trim": "edges only, preserve case",
+    "pending-repeat": "blocked"
+  },
+  "breakpoints": {
+    "mobile-max": 767,
+    "desktop-min": 768,
+    "wide-min": 1024
+  },
+  "motion": {
+    "color-ms": 120,
+    "popover-ms": 160,
+    "dialog-ms": 200,
+    "easing": "ease",
+    "reduced-motion": "none"
+  },
+  "layers": {
+    "base": 0,
+    "dropdown": 100,
+    "popover": 200,
+    "backdrop": 300,
+    "dialog": 400,
+    "toast": 500,
+    "tooltip": 600
+  }
+}

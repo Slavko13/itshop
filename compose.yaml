@@ -1,0 +1,134 @@
+name: itsoft-local
+
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${ITSOFT_DB_NAME:-itsoft_local}
+      MARIADB_USER: ${ITSOFT_DB_USER:-itsoft}
+      MARIADB_PASSWORD: ${ITSOFT_DB_PASSWORD:-itsoft_local_only}
+      MARIADB_ROOT_PASSWORD: ${ITSOFT_DB_ROOT_PASSWORD:-itsoft_root_local_only}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    restart: unless-stopped
+    ports:
+      - "${ITSOFT_MAILPIT_PORT:-8025}:8025"
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  uploads-init:
+    image: alpine:3.20
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - >-
+        if [ ! -f /target/.itsoft-seeded ]; then
+          for item in /source/*; do
+            [ "$$(basename "$$item")" = "telegram" ] || cp -a "$$item" /target/;
+          done;
+          touch /target/.itsoft-seeded;
+        fi
+    volumes:
+      - type: bind
+        source: ./www/itsoft.store/wp-content/uploads
+        target: /source
+        read_only: true
+      - local_uploads:/target
+
+  code-init:
+    image: alpine:3.20
+    restart: "no"
+    command:
+      - sh
+      - -c
+      - >-
+        if [ ! -f /target/.itsoft-code-seeded ]; then
+          mkdir -p /target/wp-content &&
+          for item in /source/* /source/.[!.]* /source/..?*; do
+            [ -e "$$item" ] || continue;
+            name="$$(basename "$$item")";
+            if [ "$$name" != "wp-content" ] && [ "$$name" != "wp-config.php" ]; then
+              cp -a "$$item" /target/;
+            fi;
+          done &&
+          for item in /source/wp-content/* /source/wp-content/.[!.]* /source/wp-content/..?*; do
+            [ -e "$$item" ] || continue;
+            name="$$(basename "$$item")";
+            if [ "$$name" != "uploads" ] && [ "$$name" != "debug.log" ] && [ "$$name" != "yookassa-debug.log" ]; then
+              cp -a "$$item" /target/wp-content/;
+            fi;
+          done &&
+          touch /target/.itsoft-code-seeded;
+        fi
+    volumes:
+      - type: bind
+        source: ./www/itsoft.store
+        target: /source
+        read_only: true
+      - app_code:/target
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: docker/wordpress/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+      uploads-init:
+        condition: service_completed_successfully
+      code-init:
+        condition: service_completed_successfully
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${ITSOFT_DB_NAME:-itsoft_local}
+      WORDPRESS_DB_USER: ${ITSOFT_DB_USER:-itsoft}
+      WORDPRESS_DB_PASSWORD: ${ITSOFT_DB_PASSWORD:-itsoft_local_only}
+      ITSOFT_LOCAL_URL: ${ITSOFT_LOCAL_URL:-http://localhost:8080}
+    ports:
+      - "${ITSOFT_HTTP_PORT:-8080}:80"
+    volumes:
+      - app_code:/var/www/html
+      - type: bind
+        source: ./docker/wordpress/wp-config.local.php
+        target: /var/www/html/wp-config.php
+        read_only: true
+      - type: bind
+        source: ./www/itsoft.store/wp-content/themes/itsoft
+        target: /var/www/html/wp-content/themes/itsoft
+        read_only: true
+      - type: bind
+        source: ./www/itsoft.store/wp-content/plugins/itsoft-license-fulfillment
+        target: /var/www/html/wp-content/plugins/itsoft-license-fulfillment
+        read_only: true
+      - type: bind
+        source: ./scripts
+        target: /workspace/scripts
+        read_only: true
+      - local_uploads:/var/www/html/wp-content/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1/wp-login.php >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+volumes:
+  db_data:
+  local_uploads:
+  app_code:

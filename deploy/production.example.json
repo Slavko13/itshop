@@ -1,0 +1,8 @@
+{
+  "host": "server.example.ru",
+  "user": "u1234567",
+  "port": 22,
+  "wordpressPath": "/var/www/u1234567/data/www/itsoft.store",
+  "url": "https://itsoft.store",
+  "identityFile": "C:\\Users\\YOUR_USER\\.ssh\\id_ed25519"
+}

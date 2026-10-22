@@ -1,0 +1,56 @@
+# ITSOFT source repository.
+# The production copy contains WordPress core, third-party plugins, uploads,
+# hosting metadata and local runtime files. Only project-owned source is tracked.
+
+# Local configuration and secrets.
+/.env
+/deploy/*.local.json
+/www/itsoft.store/wp-config.php
+/.ssh/
+/.softaculous/
+/.bash_history
+
+# Runtime, build and test output.
+/.build/
+/artifacts/
+/logs/
+/tmp
+/bin-tmp/
+/php-bin*/
+/mail.log
+/test-results/
+/playwright-report/
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.sql
+/*.sql.gz
+/*.zip
+/*.tar
+/*.tar.gz
+
+# Editor and OS metadata.
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+
+# WordPress installation: keep only project-owned theme and plugin.
+/www/itsoft.store/*
+!/www/itsoft.store/wp-content/
+/www/itsoft.store/wp-content/*
+!/www/itsoft.store/wp-content/themes/
+!/www/itsoft.store/wp-content/plugins/
+/www/itsoft.store/wp-content/themes/*
+!/www/itsoft.store/wp-content/themes/itsoft/
+!/www/itsoft.store/wp-content/themes/itsoft/**
+/www/itsoft.store/wp-content/plugins/*
+!/www/itsoft.store/wp-content/plugins/itsoft-license-fulfillment/
+!/www/itsoft.store/wp-content/plugins/itsoft-license-fulfillment/**
+
+# Logs or generated data that may appear inside owned components.
+/www/itsoft.store/wp-content/debug.log
+/www/itsoft.store/wp-content/yookassa-debug.log
+/www/itsoft.store/wp-content/uploads/
+/www/itsoft.store/wp-content/themes/itsoft/telegram-bot/logs/

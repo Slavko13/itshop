@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>ITSOFT — заключение по проекту</title>
+  <style>
+    @page { size: A4; margin: 15mm 16mm 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: #1e2430;
+      font-family: Arial, "Segoe UI", sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.45;
+      background: #fff;
+    }
+    .topline { height: 5px; background: linear-gradient(90deg, #6246ea, #8b5cf6); margin-bottom: 18px; }
+    .eyebrow { color: #6246ea; font-size: 9pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 5px 0 7px; font-size: 23pt; line-height: 1.12; color: #171b25; }
+    .subtitle { margin: 0 0 16px; color: #697386; font-size: 11.5pt; }
+    .verdict {
+      padding: 13px 15px;
+      margin: 0 0 16px;
+      border-left: 4px solid #6246ea;
+      border-radius: 0 7px 7px 0;
+      background: #f5f2ff;
+      font-size: 11pt;
+    }
+    h2 { margin: 16px 0 7px; font-size: 13.5pt; color: #252a35; }
+    p { margin: 0 0 8px; }
+    ul, ol { margin: 5px 0 9px 20px; padding: 0; }
+    li { margin: 2px 0; }
+    .payment {
+      margin: 10px 0 13px;
+      padding: 11px 13px;
+      border: 1px solid #f0cf80;
+      border-radius: 7px;
+      background: #fff9e9;
+    }
+    .payment strong { color: #785600; }
+    .stages {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 18px;
+      margin: 7px 0 13px;
+      counter-reset: stage;
+    }
+    .stage { display: flex; gap: 8px; align-items: flex-start; }
+    .stage::before {
+      counter-increment: stage;
+      content: counter(stage);
+      flex: 0 0 20px;
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #6246ea;
+      color: white;
+      font-size: 8.5pt;
+      font-weight: 700;
+    }
+    .timeline { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 14px; }
+    .timebox { padding: 10px 12px; border: 1px solid #ddd8f7; border-radius: 7px; background: #faf9ff; }
+    .timebox b { display: block; color: #6246ea; font-size: 15pt; margin-bottom: 2px; }
+    .conditions { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 18px; }
+    .condition::before { content: "✓"; color: #17855b; font-weight: 700; margin-right: 7px; }
+    .decision {
+      margin-top: 15px;
+      padding: 13px 15px;
+      border-radius: 7px;
+      background: #202433;
+      color: #fff;
+    }
+    .decision strong { color: #c9bdff; }
+    footer { margin-top: 13px; padding-top: 8px; border-top: 1px solid #e8e9ee; color: #7b8290; font-size: 8.5pt; }
+  </style>
+</head>
+<body>
+  <div class="topline"></div>
+  <div class="eyebrow">ITSOFT · техническое заключение</div>
+  <h1>Готовность проекта к запуску работ</h1>
+  <p class="subtitle">Итог предварительного аудита интернет-магазина цифровых лицензий</p>
+
+  <div class="verdict"><strong>Проект можно принимать в работу.</strong> Все заявленные задачи технически реализуемы: склад лицензий, ручная и автоматическая выдача ключей, защита от повторной выдачи, письма, личный кабинет, корзина, поиск и мобильные исправления.</div>
+
+  <h2>Что установлено по результатам аудита</h2>
+  <p>Сайт работает на WordPress и WooCommerce с собственной темой. Основной модуль хранения и выдачи лицензионных ключей пока отсутствует — его необходимо разработать как отдельный безопасный компонент с журналированием и защитой от параллельной выдачи одного ключа двум заказам.</p>
+
+  <div class="payment"><strong>Важный вопрос по оплате.</strong> Действующая интеграция онлайн-оплаты не обнаружена. Плагин ЮKassa ранее устанавливался, но затем был деактивирован и удалён. Сейчас WooCommerce показывает только встроенный ручной способ оплаты. Для автоматической выдачи ключей потребуется восстановить или заново подключить платёжный модуль и проверить его серверные уведомления.</div>
+
+  <h2>Предлагаемый порядок работ</h2>
+  <div class="stages">
+    <div class="stage">Резервная копия, staging и проверка конфигурации</div>
+    <div class="stage">Склад ключей и административное управление</div>
+    <div class="stage">Ручная выдача ключей</div>
+    <div class="stage">Подключение оплаты и автоматическая выдача</div>
+    <div class="stage">Защита от двойной выдачи</div>
+    <div class="stage">Email, Telegram и личный кабинет</div>
+    <div class="stage">Корзина, checkout и поиск</div>
+    <div class="stage">UX, мобильная версия и внешние сервисы</div>
+    <div class="stage">Регрессионное тестирование и запуск</div>
+  </div>
+
+  <h2>Ориентировочные сроки</h2>
+  <div class="timeline">
+    <div class="timebox"><b>3–5 недель</b>Критический рабочий контур: склад, выдача, оплата, защита и письма.</div>
+    <div class="timebox"><b>7–11 недель</b>Полное ТЗ, включая кабинет, поиск, mobile, внешние сервисы и регрессию.</div>
+  </div>
+  <p>Точный график фиксируется после получения доступов и проверки production-базы, платёжного кабинета и почтовой инфраструктуры.</p>
+
+  <h2>Условия качественной реализации</h2>
+  <div class="conditions">
+    <div class="condition">Доступ к WordPress и базе данных</div>
+    <div class="condition">Отдельная staging-среда</div>
+    <div class="condition">Тестовый режим платёжной системы</div>
+    <div class="condition">Доступ к SMTP и тестовой почте</div>
+    <div class="condition">Согласование открытых бизнес-сценариев</div>
+    <div class="condition">Поэтапная приёмка и тестирование</div>
+  </div>
+
+  <div class="decision"><strong>Рекомендация:</strong> договор можно подписывать и приступать к работе. Критических технических препятствий не выявлено. Первый этап — резервное копирование, подготовка staging, защита текущих интеграций и подтверждение схемы оплаты.</div>
+
+  <footer>Подготовлено на основании технического задания ITSOFT и предварительного аудита проекта · 9 октября 2026 года</footer>
+</body>
+</html>

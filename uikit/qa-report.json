@@ -1,0 +1,1379 @@
+{
+  "version": "3.0",
+  "revision": "2026-10-15-remove-dialog-section",
+  "checks": 7,
+  "passed": 7,
+  "findings": [
+    {
+      "name": "19 visual sections",
+      "pass": true
+    },
+    {
+      "name": "19 valid navigation links",
+      "pass": true
+    },
+    {
+      "name": "Dialog section removed",
+      "pass": true
+    },
+    {
+      "name": "Following sections renumbered",
+      "pass": true
+    },
+    {
+      "name": "Header count updated",
+      "pass": true
+    },
+    {
+      "name": "No component overflow",
+      "pass": true
+    },
+    {
+      "name": "19 section export files",
+      "pass": true
+    }
+  ],
+  "previousRevisionQA": {
+    "version": "3.0",
+    "automated-checks": 136,
+    "passed": 136,
+    "suites": {
+      "visual": {
+        "version": "3.0",
+        "checks": 49,
+        "passed": 49,
+        "failed": [],
+        "height": 20203,
+        "findings": [
+          {
+            "pass": true,
+            "check": "No screenshot crops or raster product photos"
+          },
+          {
+            "pass": true,
+            "check": "No gradients on component fills",
+            "details": []
+          },
+          {
+            "pass": true,
+            "check": "No horizontal clipping or overflow",
+            "details": []
+          },
+          {
+            "pass": true,
+            "check": "Exactly 20 component and foundation sections"
+          },
+          {
+            "pass": true,
+            "check": "Embedded Manrope loaded"
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token display",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "48px",
+              "line": "56px",
+              "weight": "700",
+              "tracking": "-1.92px"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token h1",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "40px",
+              "line": "48px",
+              "weight": "700",
+              "tracking": "-1.6px"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token h2",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "32px",
+              "line": "40px",
+              "weight": "700",
+              "tracking": "-0.96px"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token h3",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "24px",
+              "line": "32px",
+              "weight": "700",
+              "tracking": "-0.48px"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token h4",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "20px",
+              "line": "28px",
+              "weight": "600",
+              "tracking": "-0.2px"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token body-lg",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "16px",
+              "line": "24px",
+              "weight": "400",
+              "tracking": "normal"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token body",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "14px",
+              "line": "20px",
+              "weight": "400",
+              "tracking": "normal"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token body-sm",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "12px",
+              "line": "18px",
+              "weight": "400",
+              "tracking": "normal"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token button",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "14px",
+              "line": "20px",
+              "weight": "600",
+              "tracking": "normal"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Typography values match token caption",
+            "details": {
+              "bg": "rgba(0, 0, 0, 0)",
+              "bgImage": "none",
+              "border": "0px",
+              "radius": "0px",
+              "pad": "0px",
+              "font": "11px",
+              "line": "16px",
+              "weight": "600",
+              "tracking": "0.44px"
+            }
+          },
+          {
+            "pass": true,
+            "check": "Button geometry stays 168×44 in all states: primary",
+            "details": [
+              {
+                "name": "Button frame / primary / default / md",
+                "outer": {
+                  "x": 129,
+                  "y": 2464,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 217,
+                  "cy": 2490
+                },
+                "inner": {
+                  "x": 133,
+                  "y": 2468,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 217,
+                  "cy": 2490
+                }
+              },
+              {
+                "name": "Button frame / primary / hover / md",
+                "outer": {
+                  "x": 433,
+                  "y": 3043,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 521,
+                  "cy": 3069
+                },
+                "inner": {
+                  "x": 437,
+                  "y": 3047,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 521,
+                  "cy": 3069
+                }
+              },
+              {
+                "name": "Button frame / primary / pressed / md",
+                "outer": {
+                  "x": 625,
+                  "y": 3043,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 713,
+                  "cy": 3069
+                },
+                "inner": {
+                  "x": 629,
+                  "y": 3047,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 713,
+                  "cy": 3069
+                }
+              },
+              {
+                "name": "Button frame / primary / focus / md",
+                "outer": {
+                  "x": 329,
+                  "y": 2464,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 417,
+                  "cy": 2490
+                },
+                "inner": {
+                  "x": 333,
+                  "y": 2468,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 417,
+                  "cy": 2490
+                }
+              },
+              {
+                "name": "Button frame / primary / disabled / md",
+                "outer": {
+                  "x": 1009,
+                  "y": 3043,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1097,
+                  "cy": 3069
+                },
+                "inner": {
+                  "x": 1013,
+                  "y": 3047,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1097,
+                  "cy": 3069
+                }
+              },
+              {
+                "name": "Button frame / primary / loading / md",
+                "outer": {
+                  "x": 1201,
+                  "y": 3043,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1289,
+                  "cy": 3069
+                },
+                "inner": {
+                  "x": 1205,
+                  "y": 3047,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1289,
+                  "cy": 3069
+                }
+              }
+            ]
+          },
+          {
+            "pass": true,
+            "check": "Button icon/label vertical centers: primary"
+          },
+          {
+            "pass": true,
+            "check": "Button content horizontal centers: primary"
+          },
+          {
+            "pass": true,
+            "check": "Focus ring geometry 2px and R16: primary"
+          },
+          {
+            "pass": true,
+            "check": "Button geometry stays 168×44 in all states: secondary",
+            "details": [
+              {
+                "name": "Button frame / secondary / default / md",
+                "outer": {
+                  "x": 241,
+                  "y": 3117,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 329,
+                  "cy": 3143
+                },
+                "inner": {
+                  "x": 245,
+                  "y": 3121,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 329,
+                  "cy": 3143
+                }
+              },
+              {
+                "name": "Button frame / secondary / hover / md",
+                "outer": {
+                  "x": 433,
+                  "y": 3117,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 521,
+                  "cy": 3143
+                },
+                "inner": {
+                  "x": 437,
+                  "y": 3121,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 521,
+                  "cy": 3143
+                }
+              },
+              {
+                "name": "Button frame / secondary / pressed / md",
+                "outer": {
+                  "x": 625,
+                  "y": 3117,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 713,
+                  "cy": 3143
+                },
+                "inner": {
+                  "x": 629,
+                  "y": 3121,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 713,
+                  "cy": 3143
+                }
+              },
+              {
+                "name": "Button frame / secondary / focus / md",
+                "outer": {
+                  "x": 817,
+                  "y": 3117,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 905,
+                  "cy": 3143
+                },
+                "inner": {
+                  "x": 821,
+                  "y": 3121,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 905,
+                  "cy": 3143
+                }
+              },
+              {
+                "name": "Button frame / secondary / disabled / md",
+                "outer": {
+                  "x": 1009,
+                  "y": 3117,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1097,
+                  "cy": 3143
+                },
+                "inner": {
+                  "x": 1013,
+                  "y": 3121,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1097,
+                  "cy": 3143
+                }
+              },
+              {
+                "name": "Button frame / secondary / loading / md",
+                "outer": {
+                  "x": 1201,
+                  "y": 3117,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1289,
+                  "cy": 3143
+                },
+                "inner": {
+                  "x": 1205,
+                  "y": 3121,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1289,
+                  "cy": 3143
+                }
+              }
+            ]
+          },
+          {
+            "pass": true,
+            "check": "Button icon/label vertical centers: secondary"
+          },
+          {
+            "pass": true,
+            "check": "Button content horizontal centers: secondary"
+          },
+          {
+            "pass": true,
+            "check": "Focus ring geometry 2px and R16: secondary"
+          },
+          {
+            "pass": true,
+            "check": "Button geometry stays 168×44 in all states: outline",
+            "details": [
+              {
+                "name": "Button frame / outline / default / md",
+                "outer": {
+                  "x": 241,
+                  "y": 3191,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 329,
+                  "cy": 3217
+                },
+                "inner": {
+                  "x": 245,
+                  "y": 3195,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 329,
+                  "cy": 3217
+                }
+              },
+              {
+                "name": "Button frame / outline / hover / md",
+                "outer": {
+                  "x": 433,
+                  "y": 3191,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 521,
+                  "cy": 3217
+                },
+                "inner": {
+                  "x": 437,
+                  "y": 3195,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 521,
+                  "cy": 3217
+                }
+              },
+              {
+                "name": "Button frame / outline / pressed / md",
+                "outer": {
+                  "x": 625,
+                  "y": 3191,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 713,
+                  "cy": 3217
+                },
+                "inner": {
+                  "x": 629,
+                  "y": 3195,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 713,
+                  "cy": 3217
+                }
+              },
+              {
+                "name": "Button frame / outline / focus / md",
+                "outer": {
+                  "x": 817,
+                  "y": 3191,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 905,
+                  "cy": 3217
+                },
+                "inner": {
+                  "x": 821,
+                  "y": 3195,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 905,
+                  "cy": 3217
+                }
+              },
+              {
+                "name": "Button frame / outline / disabled / md",
+                "outer": {
+                  "x": 1009,
+                  "y": 3191,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1097,
+                  "cy": 3217
+                },
+                "inner": {
+                  "x": 1013,
+                  "y": 3195,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1097,
+                  "cy": 3217
+                }
+              },
+              {
+                "name": "Button frame / outline / loading / md",
+                "outer": {
+                  "x": 1201,
+                  "y": 3191,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1289,
+                  "cy": 3217
+                },
+                "inner": {
+                  "x": 1205,
+                  "y": 3195,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1289,
+                  "cy": 3217
+                }
+              }
+            ]
+          },
+          {
+            "pass": true,
+            "check": "Button icon/label vertical centers: outline"
+          },
+          {
+            "pass": true,
+            "check": "Button content horizontal centers: outline"
+          },
+          {
+            "pass": true,
+            "check": "Focus ring geometry 2px and R16: outline"
+          },
+          {
+            "pass": true,
+            "check": "Button geometry stays 168×44 in all states: ghost",
+            "details": [
+              {
+                "name": "Button frame / ghost / default / md",
+                "outer": {
+                  "x": 241,
+                  "y": 3265,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 329,
+                  "cy": 3291
+                },
+                "inner": {
+                  "x": 245,
+                  "y": 3269,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 329,
+                  "cy": 3291
+                }
+              },
+              {
+                "name": "Button frame / ghost / hover / md",
+                "outer": {
+                  "x": 433,
+                  "y": 3265,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 521,
+                  "cy": 3291
+                },
+                "inner": {
+                  "x": 437,
+                  "y": 3269,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 521,
+                  "cy": 3291
+                }
+              },
+              {
+                "name": "Button frame / ghost / pressed / md",
+                "outer": {
+                  "x": 625,
+                  "y": 3265,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 713,
+                  "cy": 3291
+                },
+                "inner": {
+                  "x": 629,
+                  "y": 3269,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 713,
+                  "cy": 3291
+                }
+              },
+              {
+                "name": "Button frame / ghost / focus / md",
+                "outer": {
+                  "x": 817,
+                  "y": 3265,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 905,
+                  "cy": 3291
+                },
+                "inner": {
+                  "x": 821,
+                  "y": 3269,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 905,
+                  "cy": 3291
+                }
+              },
+              {
+                "name": "Button frame / ghost / disabled / md",
+                "outer": {
+                  "x": 1009,
+                  "y": 3265,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1097,
+                  "cy": 3291
+                },
+                "inner": {
+                  "x": 1013,
+                  "y": 3269,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1097,
+                  "cy": 3291
+                }
+              },
+              {
+                "name": "Button frame / ghost / loading / md",
+                "outer": {
+                  "x": 1201,
+                  "y": 3265,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1289,
+                  "cy": 3291
+                },
+                "inner": {
+                  "x": 1205,
+                  "y": 3269,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1289,
+                  "cy": 3291
+                }
+              }
+            ]
+          },
+          {
+            "pass": true,
+            "check": "Button icon/label vertical centers: ghost"
+          },
+          {
+            "pass": true,
+            "check": "Button content horizontal centers: ghost"
+          },
+          {
+            "pass": true,
+            "check": "Focus ring geometry 2px and R16: ghost"
+          },
+          {
+            "pass": true,
+            "check": "Button geometry stays 168×44 in all states: danger",
+            "details": [
+              {
+                "name": "Button frame / danger / default / md",
+                "outer": {
+                  "x": 241,
+                  "y": 3339,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 329,
+                  "cy": 3365
+                },
+                "inner": {
+                  "x": 245,
+                  "y": 3343,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 329,
+                  "cy": 3365
+                }
+              },
+              {
+                "name": "Button frame / danger / hover / md",
+                "outer": {
+                  "x": 433,
+                  "y": 3339,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 521,
+                  "cy": 3365
+                },
+                "inner": {
+                  "x": 437,
+                  "y": 3343,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 521,
+                  "cy": 3365
+                }
+              },
+              {
+                "name": "Button frame / danger / pressed / md",
+                "outer": {
+                  "x": 625,
+                  "y": 3339,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 713,
+                  "cy": 3365
+                },
+                "inner": {
+                  "x": 629,
+                  "y": 3343,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 713,
+                  "cy": 3365
+                }
+              },
+              {
+                "name": "Button frame / danger / focus / md",
+                "outer": {
+                  "x": 817,
+                  "y": 3339,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 905,
+                  "cy": 3365
+                },
+                "inner": {
+                  "x": 821,
+                  "y": 3343,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 905,
+                  "cy": 3365
+                }
+              },
+              {
+                "name": "Button frame / danger / disabled / md",
+                "outer": {
+                  "x": 1009,
+                  "y": 3339,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1097,
+                  "cy": 3365
+                },
+                "inner": {
+                  "x": 1013,
+                  "y": 3343,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1097,
+                  "cy": 3365
+                }
+              },
+              {
+                "name": "Button frame / danger / loading / md",
+                "outer": {
+                  "x": 1201,
+                  "y": 3339,
+                  "w": 176,
+                  "h": 52,
+                  "cx": 1289,
+                  "cy": 3365
+                },
+                "inner": {
+                  "x": 1205,
+                  "y": 3343,
+                  "w": 168,
+                  "h": 44,
+                  "cx": 1289,
+                  "cy": 3365
+                }
+              }
+            ]
+          },
+          {
+            "pass": true,
+            "check": "Button icon/label vertical centers: danger"
+          },
+          {
+            "pass": true,
+            "check": "Button content horizontal centers: danger"
+          },
+          {
+            "pass": true,
+            "check": "Focus ring geometry 2px and R16: danger"
+          },
+          {
+            "pass": true,
+            "check": "All fields and search boxes have fixed 48px height"
+          },
+          {
+            "pass": true,
+            "check": "Search icons, text, clear and action centered vertically",
+            "details": []
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: primary / surface",
+            "details": {
+              "ratio": 5.37
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: primary-hover / surface",
+            "details": {
+              "ratio": 6.69
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: primary-pressed / surface",
+            "details": {
+              "ratio": 8.4
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: primary / primary-subtle",
+            "details": {
+              "ratio": 4.61
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: error / error-bg",
+            "details": {
+              "ratio": 5.32
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: success / success-bg",
+            "details": {
+              "ratio": 4.58
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: warning / warning-bg",
+            "details": {
+              "ratio": 5.44
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: info / info-bg",
+            "details": {
+              "ratio": 5.29
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: muted / surface",
+            "details": {
+              "ratio": 5.34
+            }
+          },
+          {
+            "pass": true,
+            "check": "Text contrast ≥4.5: muted / canvas",
+            "details": {
+              "ratio": 5.02
+            }
+          },
+          {
+            "pass": true,
+            "check": "Focus contrast ≥3"
+          },
+          {
+            "pass": true,
+            "check": "No full page compositions, screenshot crops, checkout or cabinet templates"
+          }
+        ]
+      },
+      "behavior": {
+        "checks": 71,
+        "passed": 71,
+        "findings": [
+          {
+            "pass": true,
+            "name": "Initial table has five records"
+          },
+          {
+            "pass": true,
+            "name": "Untouched field does not show errors while typing"
+          },
+          {
+            "pass": true,
+            "name": "Blur reveals an invalid e-mail"
+          },
+          {
+            "pass": true,
+            "name": "Invalid submit displays error summary"
+          },
+          {
+            "pass": true,
+            "name": "Invalid submit focuses first invalid field"
+          },
+          {
+            "pass": true,
+            "name": "Textarea counts Unicode code points"
+          },
+          {
+            "pass": true,
+            "name": "Textarea over limit is invalid"
+          },
+          {
+            "pass": true,
+            "name": "Read only remains focusable without being editable"
+          },
+          {
+            "pass": true,
+            "name": "Disabled field is skipped by Tab"
+          },
+          {
+            "pass": true,
+            "name": "Pending save blocks repeated action"
+          },
+          {
+            "pass": true,
+            "name": "Pending payload remains stable with read only inputs"
+          },
+          {
+            "pass": true,
+            "name": "Two submissions issue one simulated save request"
+          },
+          {
+            "pass": true,
+            "name": "Successful save preserves field value"
+          },
+          {
+            "pass": true,
+            "name": "Service failure does not erase form values"
+          },
+          {
+            "pass": true,
+            "name": "Service failure permits retry"
+          },
+          {
+            "pass": true,
+            "name": "Server field rejection does not submit the form"
+          },
+          {
+            "pass": true,
+            "name": "Server field rejection preserves input"
+          },
+          {
+            "pass": true,
+            "name": "Stale validation response cannot invalidate a new value"
+          },
+          {
+            "pass": true,
+            "name": "Combobox ArrowDown marks active option"
+          },
+          {
+            "pass": true,
+            "name": "Combobox Enter commits option"
+          },
+          {
+            "pass": true,
+            "name": "Combobox closes after commit"
+          },
+          {
+            "pass": true,
+            "name": "Combobox Escape restores prior selection"
+          },
+          {
+            "pass": true,
+            "name": "Older combobox response does not replace newer results"
+          },
+          {
+            "pass": true,
+            "name": "Commit cannot be reopened by an older response"
+          },
+          {
+            "pass": true,
+            "name": "No results is not presented as a selectable option"
+          },
+          {
+            "pass": true,
+            "name": "Only sorted column owns aria-sort"
+          },
+          {
+            "pass": true,
+            "name": "Ascending sort uses numerical minor units"
+          },
+          {
+            "pass": true,
+            "name": "Descending amount sort"
+          },
+          {
+            "pass": true,
+            "name": "Partial row selection gives header indeterminate state"
+          },
+          {
+            "pass": true,
+            "name": "Select all acts on shown records"
+          },
+          {
+            "pass": true,
+            "name": "Filter edits remain draft until apply"
+          },
+          {
+            "pass": true,
+            "name": "Apply commits price filter"
+          },
+          {
+            "pass": true,
+            "name": "Filter commit clears stale selection"
+          },
+          {
+            "pass": true,
+            "name": "Reversed money range is invalid"
+          },
+          {
+            "pass": true,
+            "name": "Invalid filter does not overwrite applied data"
+          },
+          {
+            "pass": true,
+            "name": "Decimal money is parsed without floating range drift"
+          },
+          {
+            "pass": true,
+            "name": "Zero and empty bounds have distinct correct semantics"
+          },
+          {
+            "pass": true,
+            "name": "Unsafe numeric amount is rejected"
+          },
+          {
+            "pass": true,
+            "name": "Reversed date range is rejected"
+          },
+          {
+            "pass": true,
+            "name": "ISO date range filter includes both boundaries"
+          },
+          {
+            "pass": true,
+            "name": "No matches produces an empty-filter state"
+          },
+          {
+            "pass": true,
+            "name": "Empty state offers an effective reset"
+          },
+          {
+            "pass": true,
+            "name": "Dangerous modal starts on least destructive action"
+          },
+          {
+            "pass": true,
+            "name": "Modal locks background scrolling"
+          },
+          {
+            "pass": true,
+            "name": "Modal Tab moves through internal controls"
+          },
+          {
+            "pass": true,
+            "name": "Modal Tab wraps inside"
+          },
+          {
+            "pass": true,
+            "name": "Modal reverse Tab wraps inside"
+          },
+          {
+            "pass": true,
+            "name": "Escape closes modal and restores trigger focus"
+          },
+          {
+            "pass": true,
+            "name": "Modal close restores scrolling"
+          },
+          {
+            "pass": true,
+            "name": "Failed modal operation remains visible"
+          },
+          {
+            "pass": true,
+            "name": "Pending modal request cannot be repeated"
+          },
+          {
+            "pass": true,
+            "name": "Failed modal operation permits retry"
+          },
+          {
+            "pass": true,
+            "name": "Coupon check blocks repeats"
+          },
+          {
+            "pass": true,
+            "name": "Coupon rejection preserves raw input"
+          },
+          {
+            "pass": true,
+            "name": "Duplicate coupon submit is ignored"
+          },
+          {
+            "pass": true,
+            "name": "Applied coupon is read only until removal"
+          },
+          {
+            "pass": true,
+            "name": "Applied coupon switches to removal styling"
+          },
+          {
+            "pass": true,
+            "name": "Removal returns coupon field to editing"
+          },
+          {
+            "pass": true,
+            "name": "License initially masked"
+          },
+          {
+            "pass": true,
+            "name": "Copy uses raw value rather than visual mask"
+          },
+          {
+            "pass": true,
+            "name": "Copy failure does not unexpectedly reveal the key"
+          },
+          {
+            "pass": true,
+            "name": "Explicit reveal exposes selectable read only value"
+          },
+          {
+            "pass": true,
+            "name": "Manual copy fallback permits full selection"
+          },
+          {
+            "pass": true,
+            "name": "Unavailable key cannot be revealed or copied"
+          },
+          {
+            "pass": true,
+            "name": "No document overflow at 375"
+          },
+          {
+            "pass": true,
+            "name": "Mobile switches to complete vertical rows"
+          },
+          {
+            "pass": true,
+            "name": "Mobile preserves all table data and action"
+          },
+          {
+            "pass": true,
+            "name": "Mobile retains select all behavior"
+          },
+          {
+            "pass": true,
+            "name": "No document overflow at 768"
+          },
+          {
+            "pass": true,
+            "name": "No document overflow at 1440"
+          },
+          {
+            "pass": true,
+            "name": "No browser runtime exceptions",
+            "detail": []
+          }
+        ],
+        "errors": []
+      },
+      "contracts-and-geometry": {
+        "checks": 16,
+        "passed": 16,
+        "findings": [
+          {
+            "pass": true,
+            "name": "43 unique component contracts"
+          },
+          {
+            "pass": true,
+            "name": "All dependencies resolve"
+          },
+          {
+            "pass": true,
+            "name": "All token references resolve"
+          },
+          {
+            "pass": true,
+            "name": "Every contract has a visual section, states and keyboard rules"
+          },
+          {
+            "pass": true,
+            "name": "Version consistency"
+          },
+          {
+            "pass": true,
+            "name": "56 exported SVG assets match registry"
+          },
+          {
+            "pass": true,
+            "name": "Table header height 48px"
+          },
+          {
+            "pass": true,
+            "name": "Standard table rows 72px"
+          },
+          {
+            "pass": true,
+            "name": "Table column lanes align in every state"
+          },
+          {
+            "pass": true,
+            "name": "Checkbox hit slots centered in selection column"
+          },
+          {
+            "pass": true,
+            "name": "Amounts align to fixed right inset"
+          },
+          {
+            "pass": true,
+            "name": "Loading rows preserve geometry"
+          },
+          {
+            "pass": true,
+            "name": "Counter matches actual error text length"
+          },
+          {
+            "pass": true,
+            "name": "Avatar triggers have minimum 44px footprint"
+          },
+          {
+            "pass": true,
+            "name": "All seven quantity states keep identical geometry"
+          },
+          {
+            "pass": true,
+            "name": "No horizontal specimen overflow",
+            "detail": []
+          }
+        ],
+        "height": 20203
+      }
+    },
+    "paper": {
+      "tested": [
+        "table header + three rows",
+        "error dialog",
+        "revealed license field"
+      ],
+      "computed-styles": {
+        "table-width": 1280,
+        "table-header-height": 48,
+        "dialog-width": 520,
+        "license-width": 560
+      },
+      "temporary-artboard-removed": true,
+      "full-20-section-import-tested": false
+    },
+    "sha256": {
+      "it-soft-ui-kit.html": "a07972cedb2b8f5ae9ab4fcec22e1d74bda09c2643c8dfacd8bfc985aa6977f8",
+      "it-soft-paper.html": "2489ac42105c11853aa04f3d7a4bb00774e6b0d5624a1d594cd6e42dd8d5be5b",
+      "it-soft-tokens.json": "4cdd991768ca42fe6318352f9fe5d267a78425f14d9c2a55c64e8ff4b157dedc",
+      "it-soft-reference.css": "a38b84a98ae6b920ace8f8eb89bc3a1ea332d8c10d780be713e39a757a7a87a9",
+      "it-soft-interactions.html": "06c0abfb576a84cb63bf6e94e7092cbcfa6d2a7a63e39ba38d445afa01e34d9d",
+      "it-soft-interactions.js": "379254614b7af97786893d2870ab82a7fa53f7ec8153ffec55ff0bf3543f1de1",
+      "components.json": "7c414eb5fb7776e1f51966df908b1fe894cef3d28a65ce19f5a09f9f4348802a",
+      "component-index.md": "0f3b3e2b5ea369dde4355651cf62ca1c14da2294dc3fda40a1cce50a23af5ed2",
+      "handoff.md": "e0bc4260dc31964f8f3e5cfdd4061242746fe012a57d7bbf177342de5fc40c43",
+      "behavior.md": "d2d28c57367bf7bd0d07a4adb0e00475f7b1b077b8288c7c4d7b331c69127e07",
+      "README.txt": "ab70dfe423eb82ff8193f7e40edcc903d1dc5c4d5280ce53e1e460bbd6aee0e5",
+      "QA.md": "759a71ee1391546746e68741594aa1cb855d242d66b64d3ff62a9cc3a7bb0920"
+    }
+  },
+  "sha256": {
+    "QA.md": "ab0f4915edd355b791ff0522f12ca7e311817a0f9552d6cea75dcf19c96a5cfa",
+    "README.txt": "c6ea41f1d83dc1d7bb9546f49c49a7c85bfc3cfbaaea4fb48d99656500a6d706",
+    "behavior.md": "d2d28c57367bf7bd0d07a4adb0e00475f7b1b077b8288c7c4d7b331c69127e07",
+    "component-index.md": "b7e31f3ac70cb9e1815e7784a5a4436fed146107f9036fe64c7f0f7ae97287a3",
+    "components.json": "fa49a5240475abd9b07d767139b32311abff792077dbcea3db6cfe139fbc672f",
+    "handoff.md": "5ea86361233acacc274a33be971e3cf92ea2d01737c1238289d8c544d90633cb",
+    "it-soft-interactions.html": "06c0abfb576a84cb63bf6e94e7092cbcfa6d2a7a63e39ba38d445afa01e34d9d",
+    "it-soft-interactions.js": "379254614b7af97786893d2870ab82a7fa53f7ec8153ffec55ff0bf3543f1de1",
+    "it-soft-paper.html": "20aa9db961d1c3baadf893696e81fb48c5799c7cb5037bf6eeef4d63c7646194",
+    "it-soft-preview.jpg": "f101839445cfb80e31bbbc30ab6e3694429f046432a81b93fda171b793ceb0c5",
+    "it-soft-reference.css": "a38b84a98ae6b920ace8f8eb89bc3a1ea332d8c10d780be713e39a757a7a87a9",
+    "it-soft-tokens.json": "4cdd991768ca42fe6318352f9fe5d267a78425f14d9c2a55c64e8ff4b157dedc",
+    "it-soft-ui-kit.html": "cf982e4a127985029e3a24bc9669f8ba04181a3341ab2c0e73853d1aaf3089da"
+  }
+}

@@ -1,0 +1,19 @@
+.itsoft-email-suggestion {
+	box-sizing: border-box;
+	width: 100%;
+	margin-top: 6px;
+	color: #5b6472;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.itsoft-email-suggestion button {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #1769aa;
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}

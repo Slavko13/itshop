@@ -1,0 +1,110 @@
+/* Popular Products */
+.popular-products {
+    margin-top: 60px;
+    margin-bottom: 120px;
+}
+
+.products-block__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.popular-products h2 {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 87%;
+    color: var(--h2-h3-h4);
+    margin-bottom: 0;
+}
+
+.products-block__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 81px 24px;
+}
+
+.popular-products .catalog-grid__item::after {
+    display: none;
+}
+
+.products-block__title {
+    font-weight: 600;
+    font-size: 38px;
+    text-align: center;
+    color: var(--h2-h3-h4);
+}
+
+.products-block__show-all {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 45px;
+}
+
+/* Horizontal Card for Recommend Products */
+.products-block__grid.recommend-products__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.catalog-card--horizontal {
+    flex-direction: row;
+    align-items: center;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 1px 4px 4px 0 rgba(12, 8, 44, 0.09);
+    padding: 20px;
+    gap: 24px;
+    box-sizing: border-box;
+}
+
+.catalog-card--horizontal .catalog-card__media {
+    flex: 0 0 288px;
+    width: 288px;
+    margin: 0;
+}
+
+.catalog-card--horizontal .catalog-card__body {
+    padding: 0;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+@media (max-width: 1199px) {
+    .products-block__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    /* Keep 2 columns for horizontal cards */
+    .products-block__grid.recommend-products__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 991px) {
+    .products-block__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .products-block__grid.recommend-products__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575px) {
+    .products-block__grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .catalog-card--horizontal {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .catalog-card--horizontal .catalog-card__media {
+        width: 100%;
+        flex: auto;
+        max-width: 100%;
+    }
+}

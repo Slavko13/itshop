@@ -1,0 +1,39 @@
+{
+    "key": "group_itsoft_home_redesign",
+    "title": "Главная — редизайн",
+    "fields": [
+        {
+            "key": "field_itsoft_home_hero_mode",
+            "label": "Первый экран",
+            "name": "home_hero_mode",
+            "type": "select",
+            "instructions": "Нативный блок адаптирован для телефона. Старый Smart Slider можно включить обратно без потери его настроек.",
+            "choices": {"native": "Нативный блок (рекомендуется)", "slider": "Smart Slider"},
+            "default_value": "native",
+            "return_format": "value",
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0
+        },
+        {"key": "field_itsoft_home_hero_title", "label": "Заголовок", "name": "home_hero_title", "type": "text", "default_value": "", "placeholder": "Лицензионное ПО без сложного оформления"},
+        {"key": "field_itsoft_home_hero_text", "label": "Пояснение", "name": "home_hero_text", "type": "textarea", "rows": 3, "new_lines": "", "default_value": ""},
+        {"key": "field_itsoft_home_hero_primary_label", "label": "Основная кнопка — текст", "name": "home_hero_primary_label", "type": "text", "default_value": "", "placeholder": "Перейти в каталог"},
+        {"key": "field_itsoft_home_hero_primary_url", "label": "Основная кнопка — ссылка", "name": "home_hero_primary_url", "type": "url", "default_value": ""},
+        {"key": "field_itsoft_home_hero_secondary_label", "label": "Вторая кнопка — текст", "name": "home_hero_secondary_label", "type": "text", "default_value": "", "placeholder": "Популярные категории"},
+        {"key": "field_itsoft_home_hero_secondary_url", "label": "Вторая кнопка — ссылка", "name": "home_hero_secondary_url", "type": "url", "default_value": ""},
+        {"key": "field_itsoft_home_hero_desktop_image", "label": "Изображение desktop", "name": "home_hero_desktop_image", "type": "image", "return_format": "id", "preview_size": "medium", "library": "all"},
+        {"key": "field_itsoft_home_hero_mobile_image", "label": "Изображение mobile", "name": "home_hero_mobile_image", "type": "image", "return_format": "id", "preview_size": "medium", "library": "all"},
+        {"key": "field_itsoft_home_popular_products", "label": "Популярные товары вручную", "name": "home_popular_products", "type": "relationship", "instructions": "Необязательно. Если не заполнено, товары выбираются по количеству отзывов.", "post_type": ["product"], "filters": ["search", "taxonomy"], "return_format": "id", "min": 0, "max": 4},
+        {"key": "field_itsoft_home_recommended_products", "label": "Рекомендуемые товары вручную", "name": "home_recommended_products", "type": "relationship", "instructions": "Необязательно. Уже показанные популярные товары автоматически исключаются.", "post_type": ["product"], "filters": ["search", "taxonomy"], "return_format": "id", "min": 0, "max": 4},
+        {"key": "field_itsoft_home_articles_category", "label": "Рубрика полезных статей", "name": "home_articles_category", "type": "taxonomy", "taxonomy": "category", "field_type": "select", "return_format": "id", "add_term": 0, "save_terms": 0, "load_terms": 0, "allow_null": 1}
+    ],
+    "location": [[{"param": "page_type", "operator": "==", "value": "front_page"}]],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "show_in_rest": 0,
+    "modified": 1791705600
+}

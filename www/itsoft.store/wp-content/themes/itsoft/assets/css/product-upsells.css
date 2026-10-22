@@ -1,0 +1,41 @@
+/* Upsells Grid */
+.product-upsells {
+    margin-top: 60px;
+    margin-bottom: 120px;
+}
+
+.product-upsells h2 {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 87%;
+    color: var(--h2-h3-h4);
+    margin-bottom: 40px;
+}
+
+.product-upsells-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 81px 24px;
+}
+
+.product-upsells .catalog-grid__item::after {
+    display: none;
+}
+
+@media (max-width: 1199px) {
+    .product-upsells-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 991px) {
+    .product-upsells-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 575px) {
+    .product-upsells-grid {
+        grid-template-columns: 1fr;
+    }
+}

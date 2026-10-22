@@ -1,0 +1,45 @@
+{
+    "key": "group_6a112f5a9c001",
+    "title": "Главная — слайдер",
+    "fields": [
+        {
+            "key": "field_6a112f5aa0001",
+            "label": "Шорткод слайдера",
+            "name": "home_hero_shortcode",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Вставьте полный шорткод Smart Slider, например [smartslider3 slider=\"123\"].",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "[smartslider3 slider=\"123\"]",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_type",
+                "operator": "==",
+                "value": "front_page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1777726680
+}

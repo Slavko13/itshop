@@ -1,0 +1,1413 @@
+{
+  "version": "3.0",
+  "purpose": "Design handoff contract, not a production library or backend schema",
+  "components": [
+    {
+      "id": "button",
+      "title": "Кнопка",
+      "section": 4,
+      "props": {
+        "variant": "primary | secondary | outline | ghost | danger",
+        "size": "sm | md | lg",
+        "label": "string",
+        "disabled": "boolean",
+        "pending": "boolean",
+        "leadingIcon": "IconName | null",
+        "trailingIcon": "IconName | null"
+      },
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus-visible",
+        "disabled",
+        "pending"
+      ],
+      "events": [
+        "onPress()"
+      ],
+      "keyboard": [
+        "Tab",
+        "Enter",
+        "Space"
+      ],
+      "tokenRefs": [
+        "button"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "icon-button",
+      "title": "Иконка-кнопка",
+      "section": 4,
+      "props": {
+        "name": "IconName",
+        "accessibleLabel": "string — required",
+        "disabled": "boolean",
+        "pending": "boolean"
+      },
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus-visible",
+        "disabled"
+      ],
+      "events": [
+        "onPress()"
+      ],
+      "keyboard": [
+        "Tab",
+        "Enter",
+        "Space"
+      ],
+      "tokenRefs": [
+        "button"
+      ],
+      "dependsOn": [
+        "button"
+      ]
+    },
+    {
+      "id": "link",
+      "title": "Ссылка",
+      "section": 8,
+      "props": {
+        "label": "string",
+        "href": "string",
+        "current": "boolean",
+        "disabled": "boolean"
+      },
+      "states": [
+        "default",
+        "hover",
+        "pressed",
+        "focus-visible",
+        "disabled"
+      ],
+      "events": [
+        "onNavigate(href)"
+      ],
+      "keyboard": [
+        "Tab",
+        "Enter"
+      ],
+      "tokenRefs": [
+        "focus"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "text-field",
+      "title": "Текстовое поле",
+      "section": 5,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null"
+      },
+      "states": [
+        "empty",
+        "focused",
+        "filled",
+        "invalid",
+        "valid",
+        "disabled",
+        "read-only",
+        "validating"
+      ],
+      "events": [
+        "onInput(rawValue)",
+        "onBlur()",
+        "onCommit(value)"
+      ],
+      "keyboard": [
+        "Native editing, Tab, Shift+Tab"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "email-field",
+      "title": "E-mail",
+      "section": 13,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "type": "email",
+        "autocomplete": "email",
+        "verificationStatus": "unverified | verified"
+      },
+      "states": [
+        "empty",
+        "filled",
+        "invalid-format",
+        "server-error",
+        "validating",
+        "valid"
+      ],
+      "events": [
+        "onInput(rawValue)",
+        "onBlur()",
+        "onValidate(value)"
+      ],
+      "keyboard": [
+        "Native editing; Enter submits form"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "password-field",
+      "title": "Пароль",
+      "section": 5,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "visible": "boolean",
+        "policy": "Rule[] — configured by backend"
+      },
+      "states": [
+        "hidden",
+        "visible",
+        "invalid",
+        "read-only",
+        "disabled"
+      ],
+      "events": [
+        "onInput(rawValue)",
+        "onVisibilityChange(visible)"
+      ],
+      "keyboard": [
+        "Show button: Enter / Space, focus stays on trigger"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field",
+        "icon-button"
+      ]
+    },
+    {
+      "id": "phone-field",
+      "title": "Телефон",
+      "section": 13,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "countryPrefix": "string | null — configuration",
+        "normalizer": "adapter for backend schema"
+      },
+      "states": [
+        "empty",
+        "filled",
+        "invalid",
+        "disabled"
+      ],
+      "events": [
+        "onInput(rawValue)",
+        "onCommit(normalizedValue)"
+      ],
+      "keyboard": [
+        "Native editing; paste permitted"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "number-field",
+      "title": "Число",
+      "section": 13,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "min": "number | null",
+        "max": "number | null",
+        "step": "number",
+        "nullable": "boolean"
+      },
+      "states": [
+        "empty-draft",
+        "valid",
+        "out-of-range",
+        "invalid-format",
+        "disabled"
+      ],
+      "events": [
+        "onInput(rawString)",
+        "onCommit(number | null)"
+      ],
+      "keyboard": [
+        "Native editing; increment/decrement where supported"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "money-field",
+      "title": "Денежное значение",
+      "section": 13,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "currency": "currency code",
+        "minorUnitDigits": "number — 2 for RUB"
+      },
+      "states": [
+        "empty-draft",
+        "valid",
+        "invalid-format",
+        "out-of-range"
+      ],
+      "events": [
+        "onInput(rawString)",
+        "onCommit(integerMinorUnits | null)"
+      ],
+      "keyboard": [
+        "Native editing"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "date-field",
+      "title": "Дата",
+      "section": 13,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "YYYY-MM-DD | empty",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "min": "YYYY-MM-DD | null",
+        "max": "YYYY-MM-DD | null"
+      },
+      "states": [
+        "empty",
+        "filled",
+        "range-error",
+        "disabled",
+        "read-only"
+      ],
+      "events": [
+        "onValueChange(ISODate | null)"
+      ],
+      "keyboard": [
+        "Native date input/picker behavior"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "textarea",
+      "title": "Textarea и счётчик",
+      "section": 13,
+      "props": {
+        "id": "string — stable DOM ID",
+        "label": "string — accessible name",
+        "value": "string — editing value",
+        "required": "boolean",
+        "disabled": "boolean",
+        "readOnly": "boolean",
+        "error": "PublicError | null",
+        "touched": "boolean",
+        "pending": "boolean",
+        "helper": "string | null",
+        "limit": "number | null — same policy as backend",
+        "counting": "code-points in reference"
+      },
+      "states": [
+        "empty",
+        "focused",
+        "filled",
+        "over-limit",
+        "disabled",
+        "read-only"
+      ],
+      "events": [
+        "onInput(value, count)",
+        "onBlur()"
+      ],
+      "keyboard": [
+        "Enter adds line break"
+      ],
+      "tokenRefs": [
+        "field-extended"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "search",
+      "title": "Поиск",
+      "section": 6,
+      "props": {
+        "query": "string",
+        "pending": "boolean",
+        "disabled": "boolean",
+        "debounceMs": "300 default",
+        "submitMode": "explicit | debounced"
+      },
+      "states": [
+        "empty",
+        "focused",
+        "query",
+        "pending",
+        "disabled"
+      ],
+      "events": [
+        "onQueryChange(query)",
+        "onSubmit(query)",
+        "onClear()"
+      ],
+      "keyboard": [
+        "Enter submits; clear has accessible label"
+      ],
+      "tokenRefs": [
+        "search"
+      ],
+      "dependsOn": [
+        "text-field",
+        "icon-button"
+      ]
+    },
+    {
+      "id": "combobox",
+      "title": "Выбор с поиском",
+      "section": 15,
+      "props": {
+        "selectedId": "string | null",
+        "query": "string — draft",
+        "options": "Option[]",
+        "activeId": "string | null",
+        "loading": "boolean",
+        "error": "PublicError | null"
+      },
+      "states": [
+        "closed",
+        "open",
+        "active-option",
+        "loading",
+        "no-results",
+        "error",
+        "disabled"
+      ],
+      "events": [
+        "onQueryChange(query)",
+        "onValueChange(id | null)",
+        "onOpenChange(open)"
+      ],
+      "keyboard": [
+        "ArrowUp / ArrowDown",
+        "Enter commits",
+        "Escape restores committed selection",
+        "Tab closes without committing query",
+        "Native editing keys remain native"
+      ],
+      "tokenRefs": [
+        "combobox"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "select",
+      "title": "Select",
+      "section": 8,
+      "props": {
+        "value": "string | null",
+        "options": "Option[]",
+        "required": "boolean",
+        "disabled": "boolean",
+        "error": "PublicError | null"
+      },
+      "states": [
+        "closed",
+        "focused",
+        "open",
+        "selected",
+        "disabled"
+      ],
+      "events": [
+        "onValueChange(value)"
+      ],
+      "keyboard": [
+        "Prefer native select behavior; custom version follows combobox contract"
+      ],
+      "tokenRefs": [
+        "field"
+      ],
+      "dependsOn": [
+        "text-field"
+      ]
+    },
+    {
+      "id": "checkbox",
+      "title": "Checkbox",
+      "section": 7,
+      "props": {
+        "checked": "boolean",
+        "indeterminate": "boolean — native property",
+        "disabled": "boolean",
+        "label": "string"
+      },
+      "states": [
+        "unchecked",
+        "checked",
+        "mixed",
+        "hover",
+        "focus-visible",
+        "disabled",
+        "disabled-checked"
+      ],
+      "events": [
+        "onCheckedChange(boolean)"
+      ],
+      "keyboard": [
+        "Space toggles"
+      ],
+      "tokenRefs": [
+        "checkbox"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "radio-group",
+      "title": "Radio group",
+      "section": 7,
+      "props": {
+        "value": "string | null",
+        "options": "Option[]",
+        "label": "string — fieldset legend",
+        "disabled": "boolean"
+      },
+      "states": [
+        "unchecked",
+        "checked",
+        "focus-visible",
+        "disabled"
+      ],
+      "events": [
+        "onValueChange(value)"
+      ],
+      "keyboard": [
+        "Arrow keys choose option; Tab enters group"
+      ],
+      "tokenRefs": [
+        "radio"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "switch",
+      "title": "Switch",
+      "section": 7,
+      "props": {
+        "checked": "boolean",
+        "disabled": "boolean",
+        "label": "string"
+      },
+      "states": [
+        "off",
+        "on",
+        "focus-visible",
+        "disabled-off",
+        "disabled-on"
+      ],
+      "events": [
+        "onCheckedChange(boolean)"
+      ],
+      "keyboard": [
+        "Space toggles"
+      ],
+      "tokenRefs": [
+        "switch"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "quantity",
+      "title": "Количество",
+      "section": 7,
+      "props": {
+        "value": "integer",
+        "min": "integer — product constraint",
+        "max": "integer | null — product constraint",
+        "pending": "boolean",
+        "error": "PublicError | null"
+      },
+      "states": [
+        "valid",
+        "minimum",
+        "maximum",
+        "editing",
+        "pending",
+        "error",
+        "disabled"
+      ],
+      "events": [
+        "onInput(rawValue)",
+        "onCommit(integer)",
+        "onIncrease()",
+        "onDecrease()"
+      ],
+      "keyboard": [
+        "Native editing; +/- actions Enter / Space"
+      ],
+      "tokenRefs": [
+        "quantity"
+      ],
+      "dependsOn": [
+        "number-field",
+        "icon-button"
+      ]
+    },
+    {
+      "id": "tabs",
+      "title": "Tabs",
+      "section": 8,
+      "props": {
+        "activeId": "string",
+        "items": "TabItem[]",
+        "activation": "automatic for local content, manual for costly content"
+      },
+      "states": [
+        "active",
+        "inactive",
+        "hover",
+        "focus-visible",
+        "disabled"
+      ],
+      "events": [
+        "onActiveChange(id)"
+      ],
+      "keyboard": [
+        "ArrowLeft / ArrowRight",
+        "Home / End",
+        "Enter / Space for manual activation"
+      ],
+      "tokenRefs": [
+        "focus"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "breadcrumbs",
+      "title": "Хлебные крошки",
+      "section": 8,
+      "props": {
+        "items": "{label,href?}[]",
+        "currentId": "string"
+      },
+      "states": [
+        "link",
+        "current"
+      ],
+      "events": [
+        "onNavigate(href)"
+      ],
+      "keyboard": [
+        "Native links"
+      ],
+      "tokenRefs": [
+        "typography"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "pagination",
+      "title": "Пагинация",
+      "section": 9,
+      "props": {
+        "page": "integer >= 1",
+        "pageSize": "integer",
+        "totalItems": "integer | null",
+        "hasNext": "boolean for unknown total",
+        "pending": "boolean"
+      },
+      "states": [
+        "first-page",
+        "middle-page",
+        "last-page",
+        "focused",
+        "pending",
+        "disabled"
+      ],
+      "events": [
+        "onPageChange(page)",
+        "onPageSizeChange(size)"
+      ],
+      "keyboard": [
+        "Native buttons; aria-current=page on active item"
+      ],
+      "tokenRefs": [
+        "button"
+      ],
+      "dependsOn": [
+        "button"
+      ]
+    },
+    {
+      "id": "filter-chip",
+      "title": "Применённый фильтр",
+      "section": 9,
+      "props": {
+        "label": "string",
+        "value": "filter value",
+        "removable": "boolean"
+      },
+      "states": [
+        "default",
+        "hover",
+        "focus-visible",
+        "removing"
+      ],
+      "events": [
+        "onRemove(value)"
+      ],
+      "keyboard": [
+        "Remove control Enter / Space"
+      ],
+      "tokenRefs": [
+        "focus"
+      ],
+      "dependsOn": [
+        "icon-button"
+      ]
+    },
+    {
+      "id": "badge",
+      "title": "Статусная метка",
+      "section": 9,
+      "props": {
+        "label": "string",
+        "tone": "brand | neutral | success | warning | error | info",
+        "icon": "IconName | null"
+      },
+      "states": [
+        "semantic tones"
+      ],
+      "events": [],
+      "keyboard": [
+        "Not focusable unless it is an action"
+      ],
+      "tokenRefs": [
+        "colors"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "price",
+      "title": "Цена",
+      "section": 9,
+      "props": {
+        "minorUnits": "safe integer",
+        "currency": "currency code",
+        "oldMinorUnits": "integer | null"
+      },
+      "states": [
+        "regular",
+        "sale",
+        "pending-recalculation"
+      ],
+      "events": [],
+      "keyboard": [
+        "Readable text"
+      ],
+      "tokenRefs": [
+        "typography"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "rating",
+      "title": "Оценка",
+      "section": 9,
+      "props": {
+        "value": "number | null",
+        "count": "integer",
+        "href": "string | null"
+      },
+      "states": [
+        "rated",
+        "no-ratings",
+        "link-focus"
+      ],
+      "events": [
+        "onOpenReviews() if linked"
+      ],
+      "keyboard": [
+        "Native link if interactive"
+      ],
+      "tokenRefs": [
+        "typography"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "data-table",
+      "title": "Таблица",
+      "section": 14,
+      "props": {
+        "rows": "Row[]",
+        "rowKey": "stable string key",
+        "columns": "Column[]",
+        "selectedIds": "string[]",
+        "sort": "{key, direction} | null",
+        "loading": "boolean",
+        "refreshing": "boolean",
+        "error": "PublicError | null"
+      },
+      "states": [
+        "ready",
+        "row-hover",
+        "row-selected",
+        "focus-within",
+        "loading",
+        "empty",
+        "no-results",
+        "error",
+        "background-refresh",
+        "mobile"
+      ],
+      "events": [
+        "onSortChange(sort)",
+        "onSelectionChange(ids)",
+        "onRowAction(actionId,rowId)"
+      ],
+      "keyboard": [
+        "Tab to real controls; rows themselves are not buttons; native table semantics"
+      ],
+      "tokenRefs": [
+        "data-table"
+      ],
+      "dependsOn": [
+        "checkbox",
+        "badge",
+        "button",
+        "price",
+        "mobile-data-row"
+      ]
+    },
+    {
+      "id": "filter-group",
+      "title": "Фильтры и диапазоны",
+      "section": 15,
+      "props": {
+        "draft": "FilterValues",
+        "applied": "FilterValues",
+        "defaults": "FilterValues",
+        "pending": "boolean",
+        "error": "PublicError | null"
+      },
+      "states": [
+        "clean",
+        "dirty",
+        "invalid-range",
+        "applying",
+        "applied"
+      ],
+      "events": [
+        "onDraftChange(values)",
+        "onApply(validValues)",
+        "onReset(defaults)"
+      ],
+      "keyboard": [
+        "Native fields; Enter submits active filter form"
+      ],
+      "tokenRefs": [
+        "filter"
+      ],
+      "dependsOn": [
+        "money-field",
+        "date-field",
+        "checkbox",
+        "button"
+      ]
+    },
+    {
+      "id": "accordion",
+      "title": "Accordion",
+      "section": 8,
+      "props": {
+        "expanded": "boolean",
+        "title": "string",
+        "panelId": "string"
+      },
+      "states": [
+        "closed",
+        "hover",
+        "focus-visible",
+        "expanded",
+        "disabled"
+      ],
+      "events": [
+        "onExpandedChange(boolean)"
+      ],
+      "keyboard": [
+        "Enter / Space toggles"
+      ],
+      "tokenRefs": [
+        "accordion"
+      ],
+      "dependsOn": [
+        "icon-button"
+      ]
+    },
+    {
+      "id": "menu-popover",
+      "title": "Меню действий",
+      "section": null,
+      "props": {
+        "open": "boolean",
+        "triggerLabel": "string",
+        "items": "ActionItem[]",
+        "anchor": "trigger reference"
+      },
+      "states": [
+        "closed",
+        "open",
+        "active-item",
+        "disabled-item"
+      ],
+      "events": [
+        "onOpenChange(open)",
+        "onSelect(actionId)"
+      ],
+      "keyboard": [
+        "ArrowUp / ArrowDown",
+        "Enter chooses",
+        "Escape closes and restores trigger"
+      ],
+      "tokenRefs": [
+        "popover"
+      ],
+      "dependsOn": [
+        "button",
+        "icon-button"
+      ],
+      "visualNote": "Визуальный блок удалён по запросу; контракт поведения сохранён."
+    },
+    {
+      "id": "dialog",
+      "title": "Modal",
+      "section": null,
+      "props": {
+        "open": "boolean",
+        "title": "string",
+        "description": "string | null",
+        "pending": "boolean",
+        "error": "PublicError | null",
+        "trigger": "focus return target"
+      },
+      "states": [
+        "closed",
+        "open",
+        "pending",
+        "error",
+        "success-close"
+      ],
+      "events": [
+        "onOpenChange(open,reason)",
+        "onConfirm()",
+        "onCancel()"
+      ],
+      "keyboard": [
+        "Focus stays inside; Tab wraps; Escape closes; focus returns to trigger"
+      ],
+      "tokenRefs": [
+        "dialog"
+      ],
+      "dependsOn": [
+        "button",
+        "alert"
+      ],
+      "visualNote": "Визуальный блок удалён по запросу; контракт поведения сохранён."
+    },
+    {
+      "id": "drawer",
+      "title": "Modal drawer",
+      "section": null,
+      "props": {
+        "open": "boolean",
+        "title": "string",
+        "draft": "FilterValues",
+        "pending": "boolean"
+      },
+      "states": [
+        "closed",
+        "open",
+        "dirty",
+        "applying",
+        "error"
+      ],
+      "events": [
+        "onOpenChange(open)",
+        "onApply(values)",
+        "onCancel()"
+      ],
+      "keyboard": [
+        "Modal contract"
+      ],
+      "tokenRefs": [
+        "drawer"
+      ],
+      "dependsOn": [
+        "dialog",
+        "filter-group"
+      ],
+      "visualNote": "Визуальный блок удалён по запросу; контракт поведения сохранён."
+    },
+    {
+      "id": "alert",
+      "title": "Inline alert",
+      "section": 10,
+      "props": {
+        "tone": "info | success | warning | error",
+        "title": "string",
+        "message": "string",
+        "dismissible": "boolean"
+      },
+      "states": [
+        "semantic tones",
+        "dismissed"
+      ],
+      "events": [
+        "onDismiss()"
+      ],
+      "keyboard": [
+        "Close action if present; aria-live depending on message urgency"
+      ],
+      "tokenRefs": [
+        "colors"
+      ],
+      "dependsOn": [
+        "icon-button"
+      ]
+    },
+    {
+      "id": "toast",
+      "title": "Toast",
+      "section": 10,
+      "props": {
+        "tone": "semantic tone",
+        "message": "string",
+        "durationMs": "number | null",
+        "action": "ActionItem | null"
+      },
+      "states": [
+        "visible",
+        "actionable",
+        "dismissed"
+      ],
+      "events": [
+        "onAction()",
+        "onDismiss()"
+      ],
+      "keyboard": [
+        "Do not steal focus; status polite for routine results"
+      ],
+      "tokenRefs": [
+        "layers"
+      ],
+      "dependsOn": [
+        "alert"
+      ]
+    },
+    {
+      "id": "tooltip",
+      "title": "Tooltip",
+      "section": 11,
+      "props": {
+        "text": "string",
+        "triggerId": "string",
+        "placement": "top | bottom"
+      },
+      "states": [
+        "hidden",
+        "hover",
+        "focus",
+        "dismissed"
+      ],
+      "events": [],
+      "keyboard": [
+        "Same hint for hover and focus; Escape dismisses"
+      ],
+      "tokenRefs": [
+        "layers"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "copy-action",
+      "title": "Копирование",
+      "section": 11,
+      "props": {
+        "value": "raw string",
+        "disabled": "boolean",
+        "pending": "boolean",
+        "successDurationMs": "1500 reference",
+        "fallback": "manual selection instruction"
+      },
+      "states": [
+        "ready",
+        "pending",
+        "success",
+        "clipboard-error",
+        "disabled"
+      ],
+      "events": [
+        "onCopySuccess()",
+        "onCopyError(error)"
+      ],
+      "keyboard": [
+        "Native button; successful Clipboard promise required"
+      ],
+      "tokenRefs": [
+        "focus"
+      ],
+      "dependsOn": [
+        "button",
+        "tooltip"
+      ]
+    },
+    {
+      "id": "license-field",
+      "title": "Поле ключа",
+      "section": 16,
+      "props": {
+        "value": "string | null — only if authorized by API",
+        "available": "boolean — backend",
+        "revealed": "boolean",
+        "copyState": "ready | pending | success | error"
+      },
+      "states": [
+        "unavailable",
+        "ready-masked",
+        "ready-visible",
+        "copy-pending",
+        "copy-success",
+        "copy-error"
+      ],
+      "events": [
+        "onRevealChange(boolean)",
+        "onCopy()"
+      ],
+      "keyboard": [
+        "Read only value stays selectable; named reveal / copy controls"
+      ],
+      "tokenRefs": [
+        "license"
+      ],
+      "dependsOn": [
+        "text-field",
+        "copy-action",
+        "icon-button"
+      ]
+    },
+    {
+      "id": "coupon-field",
+      "title": "Купон",
+      "section": 16,
+      "props": {
+        "draft": "string",
+        "appliedCode": "string | null",
+        "pending": "boolean",
+        "error": "PublicError | null"
+      },
+      "states": [
+        "empty",
+        "editing",
+        "checking",
+        "applied",
+        "removing",
+        "rejected",
+        "service-error"
+      ],
+      "events": [
+        "onApply(trimmedCode)",
+        "onRemove()"
+      ],
+      "keyboard": [
+        "Form Enter submits; pending blocks repeat"
+      ],
+      "tokenRefs": [
+        "coupon"
+      ],
+      "dependsOn": [
+        "text-field",
+        "button"
+      ]
+    },
+    {
+      "id": "payment-option",
+      "title": "Способ оплаты",
+      "section": 16,
+      "props": {
+        "id": "string",
+        "label": "string",
+        "description": "string | null",
+        "selected": "boolean",
+        "available": "boolean — backend"
+      },
+      "states": [
+        "available",
+        "selected",
+        "disabled",
+        "focused"
+      ],
+      "events": [
+        "onPaymentMethodChange(id)"
+      ],
+      "keyboard": [
+        "Radio group behavior"
+      ],
+      "tokenRefs": [
+        "radio"
+      ],
+      "dependsOn": [
+        "radio-group"
+      ]
+    },
+    {
+      "id": "empty-state",
+      "title": "Empty / no results / error",
+      "section": 17,
+      "props": {
+        "kind": "empty | no-results | error | unavailable",
+        "title": "string",
+        "description": "string",
+        "action": "ActionItem | null"
+      },
+      "states": [
+        "kinds",
+        "retrying"
+      ],
+      "events": [
+        "onAction()"
+      ],
+      "keyboard": [
+        "Only real action focusable; status for changed results"
+      ],
+      "tokenRefs": [
+        "typography"
+      ],
+      "dependsOn": [
+        "button"
+      ]
+    },
+    {
+      "id": "spinner",
+      "title": "Spinner",
+      "section": 11,
+      "props": {
+        "size": "16 | 20 | 24",
+        "label": "accessible status text"
+      },
+      "states": [
+        "running",
+        "reduced-motion"
+      ],
+      "events": [],
+      "keyboard": [
+        "Decorative SVG with adjacent text"
+      ],
+      "tokenRefs": [
+        "motion"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "skeleton",
+      "title": "Skeleton",
+      "section": 11,
+      "props": {
+        "shape": "text | table-row",
+        "dimensions": "match final content"
+      },
+      "states": [
+        "loading"
+      ],
+      "events": [],
+      "keyboard": [
+        "aria-hidden; parent aria-busy + loading text"
+      ],
+      "tokenRefs": [
+        "data-table"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "mobile-data-row",
+      "title": "Мобильная строка таблицы",
+      "section": 18,
+      "props": {
+        "row": "same Row object as desktop table",
+        "fields": "same essential columns",
+        "actions": "same action descriptors",
+        "selected": "boolean"
+      },
+      "states": [
+        "ready",
+        "selected",
+        "pending",
+        "error"
+      ],
+      "events": [
+        "same table events"
+      ],
+      "keyboard": [
+        "Definition list with native controls; one presentation exposed at a time"
+      ],
+      "tokenRefs": [
+        "breakpoints"
+      ],
+      "dependsOn": [
+        "badge",
+        "button",
+        "checkbox"
+      ]
+    },
+    {
+      "id": "avatar",
+      "title": "Avatar / initials",
+      "section": 3,
+      "props": {
+        "initials": "string",
+        "label": "accessible user name if interactive",
+        "size": "32 | 40 | 48",
+        "interactive": "boolean",
+        "disabled": "boolean"
+      },
+      "states": [
+        "initials",
+        "fallback",
+        "hover",
+        "focus-visible",
+        "disabled"
+      ],
+      "events": [
+        "onOpenAccountMenu() if interactive"
+      ],
+      "keyboard": [
+        "Native button if interactive; otherwise decorative identity"
+      ],
+      "tokenRefs": [
+        "avatar"
+      ],
+      "dependsOn": [
+        "icon-button"
+      ]
+    }
+  ],
+  "types": {
+    "Option": {
+      "id": "string",
+      "label": "string",
+      "disabled": "boolean"
+    },
+    "ActionItem": {
+      "id": "string",
+      "label": "string",
+      "disabled": "boolean",
+      "disabledReason": "string | null"
+    },
+    "PublicError": {
+      "kind": "validation | service | network | permission | conflict | rate-limit",
+      "message": "public string",
+      "fieldId": "string | null",
+      "retryable": "boolean",
+      "retryAt": "ISO timestamp | null"
+    },
+    "Column": {
+      "key": "string",
+      "label": "string",
+      "width": "number | null",
+      "align": "left | right",
+      "type": "text | money | date | status | selection | actions | license"
+    },
+    "Row": {
+      "id": "stable string",
+      "cells": "values from backend adapter",
+      "status": "{label,tone}",
+      "actions": "permitted ActionItem[]"
+    }
+  }
+}

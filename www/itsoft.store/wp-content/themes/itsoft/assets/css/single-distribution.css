@@ -1,0 +1,365 @@
+body {
+    background: var(--bg);
+}
+
+.distrib-main {
+    grid-column: span 12;
+}
+
+.distrib-head {
+    padding: 30px 0 40px 0;
+}
+
+.distrib__title {
+    font-weight: 600;
+    font-size: 44px;
+    line-height: 127%;
+    color: #000;
+    grid-column: span 12;
+    margin: 0;
+}
+
+.distrib-card {
+    display: flex;
+    gap: 61px;
+    margin-bottom: 40px;
+}
+
+.distrib-card__gallery {
+    flex: 0 0 600px;
+    max-width: 600px;
+}
+
+.distrib-card__gallery .product-gallery__thumbs img {
+    height: 100%;
+}
+
+.distrib-card__content {
+    flex: 1;
+}
+
+.distrib-card__verified {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 5px 15px;
+    background-color: #f0fdf4;
+    margin-bottom: 10px;
+    background: #ececec;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--body-text);
+    line-height: 1;
+}
+
+.distrib-card__downloads-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 45px;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: var(--placeholders);
+}
+
+.distrib-card__downloads-title {
+    font-weight: 500;
+}
+
+.distrib-card__downloads-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 auto;
+    max-width: 514px;
+}
+
+.distrib-card__download-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.distrib-card__download-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.distrib-card__download-flag {
+    width: 35px;
+    height: auto;
+    display: block;
+}
+
+.distrib-card__download-version {
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+    color: var(--h2-h3-h4);
+}
+
+.btn--download {
+    box-shadow: 0 4px 4px 0 rgba(12, 8, 44, 0.06);
+    background: #fff;
+    border: 1px solid #efefef;
+    border-radius: 12px !important;
+    padding: 12px 15px !important;
+    min-width: 200px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--body-text);
+    line-height: 1;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn--download:hover {
+    background: var(--main-perple) !important;
+    color: #fff !important;
+}
+
+.distrib-card__activation {
+    margin-top: 45px;
+}
+
+.distrib-card__activation-text {
+    font-weight: 600;
+    font-size: 16px;
+    text-align: left;
+    color: var(--placeholders);
+    margin-bottom: 10px;
+}
+
+.distrib-card__btn-buy {
+    background: var(--main-perple);
+    width: 100%;
+    border-radius: 30px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    color: #fff;
+    padding: 16px 12px !important;
+    gap: 10px;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.distrib-card__btn-buy del {
+    display: none !important;
+}
+
+.distrib-card__title {
+    font-size: 28px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.distrib-card__description {
+    margin-bottom: 30px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.distrib-card__attrs {
+    margin-bottom: 30px;
+}
+
+.distrib-card__attrs-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.distrib-card__attrs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.distrib-card__attr {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.distrib-card__attr-title {
+    font-weight: 500;
+    color: #333;
+}
+
+.distrib-card__attr-value {
+    color: #666;
+}
+
+.distrib-card__actions {
+    margin-top: 30px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn--primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn--primary:hover {
+    background-color: #0056b3;
+}
+
+.distrib-info {
+    border-top: 1px solid #dadde3;
+    padding-top: 40px;
+    margin-bottom: 110px;
+}
+
+.distrib-info__row {
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+.distrib-info__column {
+    flex: 1;
+    min-width: 300px;
+}
+
+.distrib-info__column--requirements {
+    padding: 0px 20px;
+    border-left: 5px solid #baaff0;
+}
+
+.distrib-info__title {
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--h2-h3-h4);
+    margin-top: 0;
+    margin-bottom: 25px;
+    line-height: 1;
+}
+
+.distrib-info__requirements-list {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 230%;
+    color: var(--body-text);
+    margin: 0 0 25px 0;
+    padding: 0 0 0 10px;
+}
+
+.distrib-info__requirement-item {
+    position: relative;
+    padding-left: 15px;
+    list-style: none;
+}
+
+.distrib-info__requirement-item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #4b4b4b;
+}
+
+.distrib-info__license {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.distrib-info__license-logo {
+    height: 57px;
+    width: auto;
+}
+
+.distrib-info__license-text {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--placeholders);
+}
+
+.distrib-info__table {
+    display: flex;
+    flex-direction: column;
+}
+
+.distrib-info__table-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #e8e5e4;
+}
+
+.distrib-info__table-row:last-child {
+    border-bottom: none;
+}
+
+.distrib-info__table-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--body-text);
+}
+
+.distrib-info__table-value {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--body-text);
+    text-align: right;
+}
+
+@media (max-width: 992px) {
+    .distrib-info__row {
+        gap: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .distrib-info__row {
+        flex-direction: column;
+    }
+    .btn--download {
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 992px) {
+    .distrib-card {
+        flex-direction: column;
+    }
+
+    .distrib-card__gallery {
+        flex: 1 1 auto;
+        max-width: 100%;
+    }
+}
+
+.distrib-info__text {
+    font-weight: 400;
+    font-size: 16px;
+    margin-bottom: 100px;
+}
+
+.distrib-info__text h2 {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 108%;
+    color: var(--h2-h3-h4);
+}
+
+#product-reviews {
+    margin-bottom: 60px;
+}
