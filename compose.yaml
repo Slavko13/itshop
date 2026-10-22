@@ -134,5 +134,8 @@ services:
 
 volumes:
   db_data:
+    name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_db_data
   local_uploads:
+    name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_local_uploads
   app_code:
+    name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_app_code

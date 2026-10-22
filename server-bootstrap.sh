@@ -79,10 +79,8 @@ done
   sha256sum -c SHA256SUMS
 )
 
-docker compose create >/dev/null
-
 for volume in "$app_volume" "$uploads_volume" "$db_volume"; do
-  docker volume inspect "$volume" >/dev/null 2>&1 || fail "Docker volume was not created: $volume"
+  docker volume inspect "$volume" >/dev/null 2>&1 || docker volume create "$volume" >/dev/null
 done
 
 volume_is_empty() {
