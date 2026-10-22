@@ -81,14 +81,25 @@ sed -i 's/\r$//' "$work_dir/SHA256SUMS"
 )
 
 docker_work_dir="$work_dir"
+docker_database_dump="$work_dir/database.sql.gz"
 if [[ -n "${MSYSTEM:-}" ]] && command -v cygpath >/dev/null 2>&1; then
   docker_work_dir="$(cygpath -w "$work_dir")"
+  docker_database_dump="$(cygpath -w "$work_dir/database.sql.gz")"
   export MSYS_NO_PATHCONV=1
 fi
 
-for volume in "$app_volume" "$uploads_volume" "$db_volume"; do
-  docker volume inspect "$volume" >/dev/null 2>&1 || docker volume create "$volume" >/dev/null
-done
+ensure_volume() {
+  local volume="$1"
+  local logical_name="$2"
+  docker volume inspect "$volume" >/dev/null 2>&1 || docker volume create \
+    --label "com.docker.compose.project=$project_name" \
+    --label "com.docker.compose.volume=$logical_name" \
+    "$volume" >/dev/null
+}
+
+ensure_volume "$app_volume" app_code
+ensure_volume "$uploads_volume" local_uploads
+ensure_volume "$db_volume" db_data
 
 volume_is_empty() {
   local volume="$1"
@@ -124,7 +135,7 @@ done
 
 db_container="$(docker compose ps -q db)"
 [[ -n "$db_container" ]] || fail "Database container is not running"
-docker cp "$work_dir/database.sql.gz" "$db_container:/tmp/itsoft-restore.sql.gz"
+docker cp "$docker_database_dump" "$db_container:/tmp/itsoft-restore.sql.gz"
 docker compose exec -T db sh -lc \
   'gzip -dc /tmp/itsoft-restore.sql.gz | mariadb --user=root --password="$MARIADB_ROOT_PASSWORD" "$MARIADB_DATABASE"'
 docker compose exec -T db rm -f /tmp/itsoft-restore.sql.gz
