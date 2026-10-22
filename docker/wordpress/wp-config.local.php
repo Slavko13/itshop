@@ -12,14 +12,15 @@ define( 'DB_HOST', getenv( 'WORDPRESS_DB_HOST' ) ?: 'db:3306' );
 define( 'DB_CHARSET', 'utf8mb4' );
 define( 'DB_COLLATE', '' );
 
-define( 'AUTH_KEY',         'local-auth-key-do-not-use-in-production' );
-define( 'SECURE_AUTH_KEY',  'local-secure-auth-key-do-not-use-in-production' );
-define( 'LOGGED_IN_KEY',    'local-logged-in-key-do-not-use-in-production' );
-define( 'NONCE_KEY',        'local-nonce-key-do-not-use-in-production' );
-define( 'AUTH_SALT',        'local-auth-salt-do-not-use-in-production' );
-define( 'SECURE_AUTH_SALT', 'local-secure-auth-salt-do-not-use-in-production' );
-define( 'LOGGED_IN_SALT',   'local-logged-in-salt-do-not-use-in-production' );
-define( 'NONCE_SALT',       'local-nonce-salt-do-not-use-in-production' );
+$itsoft_salt_seed = getenv( 'ITSOFT_WP_SALT' ) ?: 'itsoft-local-salt-do-not-use-on-public-servers';
+define( 'AUTH_KEY',         hash_hmac( 'sha256', 'auth-key', $itsoft_salt_seed ) );
+define( 'SECURE_AUTH_KEY',  hash_hmac( 'sha256', 'secure-auth-key', $itsoft_salt_seed ) );
+define( 'LOGGED_IN_KEY',    hash_hmac( 'sha256', 'logged-in-key', $itsoft_salt_seed ) );
+define( 'NONCE_KEY',        hash_hmac( 'sha256', 'nonce-key', $itsoft_salt_seed ) );
+define( 'AUTH_SALT',        hash_hmac( 'sha256', 'auth-salt', $itsoft_salt_seed ) );
+define( 'SECURE_AUTH_SALT', hash_hmac( 'sha256', 'secure-auth-salt', $itsoft_salt_seed ) );
+define( 'LOGGED_IN_SALT',   hash_hmac( 'sha256', 'logged-in-salt', $itsoft_salt_seed ) );
+define( 'NONCE_SALT',       hash_hmac( 'sha256', 'nonce-salt', $itsoft_salt_seed ) );
 
 $table_prefix = 'wpnr_';
 
@@ -27,16 +28,17 @@ $itsoft_local_url = rtrim( getenv( 'ITSOFT_LOCAL_URL' ) ?: 'http://localhost:808
 
 define( 'WP_HOME', $itsoft_local_url );
 define( 'WP_SITEURL', $itsoft_local_url );
-define( 'WP_ENVIRONMENT_TYPE', 'local' );
+$itsoft_environment_type = getenv( 'ITSOFT_WP_ENVIRONMENT_TYPE' ) ?: 'local';
+define( 'WP_ENVIRONMENT_TYPE', $itsoft_environment_type );
 define( 'WP_DEBUG', true );
 define( 'WP_DEBUG_DISPLAY', false );
 define( 'WP_DEBUG_LOG', false );
 define( 'SCRIPT_DEBUG', true );
 
 // Local traffic must not reach payment, Telegram, Jivo, SMTP or other production services.
-define( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED', true );
-// Fixed local-only key. Production must supply an independent random 32-byte base64 key.
-define( 'ITSOFT_LICENSE_ENCRYPTION_KEY', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' );
+define( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED', '0' !== getenv( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED' ) );
+// Preserve this value when restoring a backup or existing encrypted keys become unreadable.
+define( 'ITSOFT_LICENSE_ENCRYPTION_KEY', getenv( 'ITSOFT_LICENSE_ENCRYPTION_KEY' ) ?: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' );
 // Persistent local fixture storage. Production should point this outside the public web-root.
 define( 'ITSOFT_PRIVATE_DISTRIBUTION_DIR', '/var/www/html/wp-content/uploads/itsoft-private-distributions' );
 define( 'WP_HTTP_BLOCK_EXTERNAL', true );

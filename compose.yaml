@@ -1,4 +1,4 @@
-name: itsoft-local
+name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}
 
 services:
   db:
@@ -21,7 +21,7 @@ services:
     image: axllent/mailpit:v1.27
     restart: unless-stopped
     ports:
-      - "${ITSOFT_MAILPIT_PORT:-8025}:8025"
+      - "127.0.0.1:${ITSOFT_MAILPIT_PORT:-8025}:8025"
     healthcheck:
       test: ["CMD", "/mailpit", "readyz"]
       interval: 5s
@@ -100,6 +100,10 @@ services:
       WORDPRESS_DB_USER: ${ITSOFT_DB_USER:-itsoft}
       WORDPRESS_DB_PASSWORD: ${ITSOFT_DB_PASSWORD:-itsoft_local_only}
       ITSOFT_LOCAL_URL: ${ITSOFT_LOCAL_URL:-http://localhost:8080}
+      ITSOFT_WP_ENVIRONMENT_TYPE: ${ITSOFT_WP_ENVIRONMENT_TYPE:-local}
+      ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED: ${ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED:-1}
+      ITSOFT_WP_SALT: ${ITSOFT_WP_SALT:-itsoft-local-salt-do-not-use-on-public-servers}
+      ITSOFT_LICENSE_ENCRYPTION_KEY: ${ITSOFT_LICENSE_ENCRYPTION_KEY:-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
     ports:
       - "${ITSOFT_HTTP_PORT:-8080}:80"
     volumes:

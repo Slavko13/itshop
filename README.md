@@ -22,3 +22,7 @@ docker compose up -d --build
 Сценарий проверяет проект, собирает релиз, делает backup серверной темы и плагина и обновляет их по SSH. Полная настройка и откат описаны в [DEPLOYMENT.md](DEPLOYMENT.md).
 
 Production-конфигурация, база, uploads, заказы, ключи и платёжные секреты не хранятся в Git и не входят в автоматический code deployment.
+
+## Полный тестовый сервер
+
+Полный перенос Docker-среды вместе с SQL, WordPress Core, сторонними плагинами и uploads описан в [TEST_SERVER.md](TEST_SERVER.md). Полные backup-архивы хранятся отдельно от Git.

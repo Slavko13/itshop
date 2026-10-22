@@ -12,6 +12,7 @@
 
 # Runtime, build and test output.
 /.build/
+/.backups/
 /artifacts/
 /logs/
 /tmp
