@@ -117,13 +117,13 @@ function Get-GitIdentity {
     $commit = 'no-git'
     $status = ''
     if (Get-Command git -ErrorAction SilentlyContinue) {
-        $inside = (& git -C $ProjectRoot rev-parse --is-inside-work-tree 2>$null)
+        $inside = (& git -c "safe.directory=$ProjectRoot" -C $ProjectRoot rev-parse --is-inside-work-tree 2>$null)
         if ($LASTEXITCODE -eq 0 -and $inside -eq 'true') {
-            $commit = (& git -C $ProjectRoot rev-parse --short=12 HEAD 2>$null)
+            $commit = (& git -c "safe.directory=$ProjectRoot" -C $ProjectRoot rev-parse --short=12 HEAD 2>$null)
             if ($LASTEXITCODE -ne 0) {
                 $commit = 'uncommitted'
             }
-            $status = (& git -C $ProjectRoot status --porcelain)
+            $status = (& git -c "safe.directory=$ProjectRoot" -C $ProjectRoot status --porcelain)
             if (-not $AllowDirty -and $status) {
                 throw 'The Git working tree is not clean. Commit the release first or explicitly use -AllowDirty.'
             }
