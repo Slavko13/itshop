@@ -46,6 +46,10 @@ docker cp "$db_container:$remote_dump" "$work_dir/database.sql.gz"
 docker compose exec -T db rm -f "$remote_dump"
 
 absolute_work_dir="$(cd "$work_dir" && pwd)"
+if [[ -n "${MSYSTEM:-}" ]] && command -v cygpath >/dev/null 2>&1; then
+  absolute_work_dir="$(cygpath -w "$absolute_work_dir")"
+  export MSYS_NO_PATHCONV=1
+fi
 docker run --rm \
   --mount "type=volume,source=$app_volume,target=/source,readonly" \
   --mount "type=bind,source=$absolute_work_dir,target=/backup" \

@@ -80,6 +80,12 @@ sed -i 's/\r$//' "$work_dir/SHA256SUMS"
   sha256sum -c SHA256SUMS
 )
 
+docker_work_dir="$work_dir"
+if [[ -n "${MSYSTEM:-}" ]] && command -v cygpath >/dev/null 2>&1; then
+  docker_work_dir="$(cygpath -w "$work_dir")"
+  export MSYS_NO_PATHCONV=1
+fi
+
 for volume in "$app_volume" "$uploads_volume" "$db_volume"; do
   docker volume inspect "$volume" >/dev/null 2>&1 || docker volume create "$volume" >/dev/null
 done
@@ -96,12 +102,12 @@ volume_is_empty "$db_volume" || fail "Volume is not empty: $db_volume. Refusing 
 
 docker run --rm \
   --mount "type=volume,source=$app_volume,target=/target" \
-  --mount "type=bind,source=$work_dir,target=/backup,readonly" \
+  --mount "type=bind,source=$docker_work_dir,target=/backup,readonly" \
   alpine:3.20 tar -xzf /backup/app-code.tar.gz -C /target
 
 docker run --rm \
   --mount "type=volume,source=$uploads_volume,target=/target" \
-  --mount "type=bind,source=$work_dir,target=/backup,readonly" \
+  --mount "type=bind,source=$docker_work_dir,target=/backup,readonly" \
   alpine:3.20 tar -xzf /backup/uploads.tar.gz -C /target
 
 docker compose up -d db
