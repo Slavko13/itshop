@@ -53,7 +53,7 @@ fi
 docker run --rm \
   --mount "type=volume,source=$app_volume,target=/source,readonly" \
   --mount "type=bind,source=$absolute_work_dir,target=/backup" \
-  alpine:3.20 tar -czf /backup/app-code.tar.gz -C /source .
+  alpine:3.20 tar -czf /backup/app-code.tar.gz --exclude=./.maintenance -C /source .
 
 docker run --rm \
   --mount "type=volume,source=$uploads_volume,target=/source,readonly" \

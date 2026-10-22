@@ -115,6 +115,9 @@ docker run --rm \
   --mount "type=volume,source=$app_volume,target=/target" \
   --mount "type=bind,source=$docker_work_dir,target=/backup,readonly" \
   alpine:3.20 tar -xzf /backup/app-code.tar.gz -C /target
+docker run --rm \
+  --mount "type=volume,source=$app_volume,target=/target" \
+  alpine:3.20 rm -f /target/.maintenance
 
 docker run --rm \
   --mount "type=volume,source=$uploads_volume,target=/target" \

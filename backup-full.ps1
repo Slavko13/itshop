@@ -38,17 +38,23 @@ function Export-Volume {
     param(
         [Parameter(Mandatory)][string]$Volume,
         [Parameter(Mandatory)][string]$OutputName,
-        [Parameter(Mandatory)][string]$StageDirectory
+        [Parameter(Mandatory)][string]$StageDirectory,
+        [switch]$ExcludeMaintenance
     )
 
     $mountSource = (Resolve-Path -LiteralPath $StageDirectory).Path
-    Invoke-NativeCommand -Command 'docker' -ArgumentList @(
+    $arguments = @(
         'run', '--rm',
         '--mount', "type=volume,source=$Volume,target=/source,readonly",
         '--mount', "type=bind,source=$mountSource,target=/backup",
         'alpine:3.20',
-        'tar', '-czf', "/backup/$OutputName", '-C', '/source', '.'
+        'tar', '-czf', "/backup/$OutputName"
     )
+    if ($ExcludeMaintenance) {
+        $arguments += '--exclude=./.maintenance'
+    }
+    $arguments += @('-C', '/source', '.')
+    Invoke-NativeCommand -Command 'docker' -ArgumentList $arguments
 }
 
 Push-Location $ProjectRoot
@@ -94,7 +100,7 @@ try {
     Invoke-NativeCommand -Command 'docker' -ArgumentList @('cp', "${dbContainer}:$remoteDump", (Join-Path $stage 'database.sql.gz'))
     Invoke-NativeCommand -Command 'docker' -ArgumentList @('compose', 'exec', '-T', 'db', 'rm', '-f', $remoteDump)
 
-    Export-Volume -Volume $appVolume -OutputName 'app-code.tar.gz' -StageDirectory $stage
+    Export-Volume -Volume $appVolume -OutputName 'app-code.tar.gz' -StageDirectory $stage -ExcludeMaintenance
     Export-Volume -Volume $uploadsVolume -OutputName 'uploads.tar.gz' -StageDirectory $stage
 
     $sourceUrl = if ($env:ITSOFT_LOCAL_URL) { $env:ITSOFT_LOCAL_URL } else { 'http://localhost:8080' }
