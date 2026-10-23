@@ -24,6 +24,16 @@ define( 'NONCE_SALT',       hash_hmac( 'sha256', 'nonce-salt', $itsoft_salt_seed
 
 $table_prefix = 'wpnr_';
 
+// Caddy terminates TLS and forwards the original scheme to WordPress.
+// Trust this header only because the WordPress port is bound to localhost in HTTPS mode.
+if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) {
+	$itsoft_forwarded_proto = strtolower( trim( explode( ',', $_SERVER['HTTP_X_FORWARDED_PROTO'] )[0] ) );
+	if ( 'https' === $itsoft_forwarded_proto ) {
+		$_SERVER['HTTPS'] = 'on';
+		$_SERVER['SERVER_PORT'] = 443;
+	}
+}
+
 $itsoft_local_url = rtrim( getenv( 'ITSOFT_LOCAL_URL' ) ?: 'http://localhost:8080', '/' );
 
 define( 'WP_HOME', $itsoft_local_url );
@@ -37,12 +47,19 @@ define( 'SCRIPT_DEBUG', true );
 
 // Local traffic must not reach payment, Telegram, Jivo, SMTP or other production services.
 define( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED', '0' !== getenv( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED' ) );
+$itsoft_payment_integrations_enabled = '1' === getenv( 'ITSOFT_PAYMENT_INTEGRATIONS_ENABLED' );
+define( 'ITSOFT_PAYMENT_INTEGRATIONS_ENABLED', $itsoft_payment_integrations_enabled );
 // Preserve this value when restoring a backup or existing encrypted keys become unreadable.
 define( 'ITSOFT_LICENSE_ENCRYPTION_KEY', getenv( 'ITSOFT_LICENSE_ENCRYPTION_KEY' ) ?: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' );
 // Persistent local fixture storage. Production should point this outside the public web-root.
 define( 'ITSOFT_PRIVATE_DISTRIBUTION_DIR', '/var/www/html/wp-content/uploads/itsoft-private-distributions' );
 define( 'WP_HTTP_BLOCK_EXTERNAL', true );
-define( 'WP_ACCESSIBLE_HOSTS', '' );
+define(
+	'WP_ACCESSIBLE_HOSTS',
+	$itsoft_payment_integrations_enabled
+		? 'api.yookassa.ru,yookassa.ru,*.yookassa.ru,api.wordpress.org,downloads.wordpress.org'
+		: ''
+);
 define( 'AUTOMATIC_UPDATER_DISABLED', true );
 define( 'DISALLOW_FILE_MODS', true );
 define( 'DISALLOW_FILE_EDIT', true );

@@ -1,6 +1,6 @@
 # Статус проверки платежей ITSOFT
 
-Последнее обновление: 10 октября 2026 года.
+Последнее обновление: 23 октября 2026 года.
 
 ## Краткий статус
 
@@ -9,6 +9,8 @@
 | Локальная mock-оплата | `IMPLEMENTED / E2E PASS` | Денег и внешних запросов нет; успешно пройден реальный Blocks/Store API checkout и WooCommerce вызывает настоящий внутренний `payment_complete` |
 | Fulfillment после оплаты | `AUTOMATED TEST PASS` | AUTO назначает один ключ, повтор события не списывает второй, пустой пул остаётся `waiting_key` |
 | Официальный plugin ЮKassa | `INSTALLED LOCALLY` | Версия 2.17.3, gateways выключены, credentials отсутствуют |
+| HTTPS staging | `IMPLEMENTED / SERVER CHECK PENDING` | Добавлены Caddy, автоматический сертификат, proxy-aware WordPress и миграция URL; нужен DNS тестового домена |
+| Установка ЮKassa на staging | `IMPLEMENTED / SERVER CHECK PENDING` | Скрипт активирует официальный plugin и разрешает только необходимые внешние хосты |
 | Тестовый платёж ЮKassa | `NOT TESTED` | Нет test shopId/secret и публичного HTTPS staging callback |
 | Боевой платёж | `NOT TESTED / NOT REQUIRED YET` | Реальные деньги не использовались |
 

@@ -102,10 +102,11 @@ services:
       ITSOFT_LOCAL_URL: ${ITSOFT_LOCAL_URL:-http://localhost:8080}
       ITSOFT_WP_ENVIRONMENT_TYPE: ${ITSOFT_WP_ENVIRONMENT_TYPE:-local}
       ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED: ${ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED:-1}
+      ITSOFT_PAYMENT_INTEGRATIONS_ENABLED: ${ITSOFT_PAYMENT_INTEGRATIONS_ENABLED:-0}
       ITSOFT_WP_SALT: ${ITSOFT_WP_SALT:-itsoft-local-salt-do-not-use-on-public-servers}
       ITSOFT_LICENSE_ENCRYPTION_KEY: ${ITSOFT_LICENSE_ENCRYPTION_KEY:-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}
     ports:
-      - "${ITSOFT_HTTP_PORT:-8080}:80"
+      - "${ITSOFT_HTTP_BIND:-0.0.0.0}:${ITSOFT_HTTP_PORT:-8080}:80"
     volumes:
       - app_code:/var/www/html
       - type: bind
@@ -132,6 +133,27 @@ services:
       retries: 30
       start_period: 30s
 
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    environment:
+      ITSOFT_DOMAIN: ${ITSOFT_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - type: bind
+        source: ./deploy/Caddyfile
+        target: /etc/caddy/Caddyfile
+        read_only: true
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   db_data:
     name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_db_data
@@ -139,3 +161,7 @@ volumes:
     name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_local_uploads
   app_code:
     name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_app_code
+  caddy_data:
+    name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_caddy_data
+  caddy_config:
+    name: ${ITSOFT_COMPOSE_PROJECT_NAME:-itsoft-local}_caddy_config

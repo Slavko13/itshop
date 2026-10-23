@@ -37,11 +37,14 @@ if [[ ! -f .env ]]; then
   umask 077
   cat > .env <<EOF
 ITSOFT_COMPOSE_PROJECT_NAME=$project_name
+ITSOFT_HTTP_BIND=0.0.0.0
 ITSOFT_HTTP_PORT=${ITSOFT_HTTP_PORT:-8080}
 ITSOFT_MAILPIT_PORT=${ITSOFT_MAILPIT_PORT:-8025}
+ITSOFT_DOMAIN=
 ITSOFT_LOCAL_URL=$site_url
 ITSOFT_WP_ENVIRONMENT_TYPE=staging
 ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED=1
+ITSOFT_PAYMENT_INTEGRATIONS_ENABLED=0
 ITSOFT_WP_SALT=$wp_salt
 ITSOFT_LICENSE_ENCRYPTION_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 ITSOFT_DB_NAME=itsoft_test
@@ -178,12 +181,9 @@ fi
 
 # Drop Smart Slider's generated database cache after changing the site URL.
 # It is recreated on the first request from the portable $upload$ image paths.
-wp_table_prefix="$(docker compose exec -T wordpress wp db prefix --allow-root | tr -d '\r\n')"
-if [[ -n "$wp_table_prefix" ]]; then
-  docker compose exec -T wordpress wp db query \
-    "DELETE FROM \`${wp_table_prefix}nextend2_section_storage\` WHERE \`type\` = 'cache';" \
-    --allow-root >/dev/null 2>&1 || true
-fi
+docker compose exec -T wordpress wp eval \
+  'global $wpdb; $wpdb->delete( $wpdb->prefix . "nextend2_section_storage", array( "type" => "cache" ), array( "%s" ) );' \
+  --allow-root >/dev/null 2>&1 || true
 
 docker compose exec -T wordpress wp cache flush --allow-root >/dev/null 2>&1 || true
 docker compose ps
