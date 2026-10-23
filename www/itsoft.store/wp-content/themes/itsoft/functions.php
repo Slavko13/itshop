@@ -220,11 +220,11 @@ function itsoft_assets() {
         );
     }
 
-	$is_storefront_view = is_front_page() || ( function_exists( 'is_shop' ) && is_shop() ) || is_tax( 'product_cat' );
+	$is_storefront_view        = is_front_page() || ( function_exists( 'is_shop' ) && is_shop() ) || is_tax( 'product_cat' );
+	$needs_storefront_styles   = $is_storefront_view || is_search();
 
-	if ( $is_storefront_view ) {
+	if ( $needs_storefront_styles ) {
 		$storefront_style_path = get_template_directory() . '/assets/css/storefront-redesign.css';
-		$storefront_script_path = get_template_directory() . '/assets/js/catalog-page.js';
 		$storefront_style_dependencies = array( 'itsoft-style' );
 
 		if ( is_front_page() ) {
@@ -237,6 +237,10 @@ function itsoft_assets() {
 			$storefront_style_dependencies,
 			file_exists( $storefront_style_path ) ? (string) filemtime( $storefront_style_path ) : $ver
 		);
+	}
+
+	if ( $is_storefront_view ) {
+		$storefront_script_path = get_template_directory() . '/assets/js/catalog-page.js';
 
 		wp_enqueue_script(
 			'itsoft-catalog-page',

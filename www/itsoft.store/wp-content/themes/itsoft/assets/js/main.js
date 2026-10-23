@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
+	document.querySelectorAll('form[role="search"]').forEach((form) => {
+		const field = form.querySelector('[name="s"]');
+		if (!field) return;
+
+		field.addEventListener('input', () => field.setCustomValidity(''));
+		form.addEventListener('submit', (event) => {
+			field.value = field.value.trim();
+			if (field.value) return;
+
+			event.preventDefault();
+			field.setCustomValidity('Введите название программы или лицензии');
+			field.reportValidity();
+			field.focus();
+		});
+	});
+
     document.querySelectorAll('code').forEach(codeEl => {
         const btn = document.createElement('div');
         btn.className = 'code__copy';

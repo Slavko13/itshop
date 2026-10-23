@@ -53,12 +53,16 @@ final class ITSoft_LF_Search {
 		}
 
 		$search = trim( (string) $query->get( 's' ) );
-		if ( '' === $search ) {
-			return;
-		}
 		// Legacy theme forms submit to /search/?s=..., which WordPress also parses as a category slug.
 		if ( 'search' === $query->get( 'category_name' ) ) {
 			$query->set( 'category_name', '' );
+		}
+		if ( '' === $search ) {
+			$query->set( 'post_type', array( 'product', 'post' ) );
+			$query->set( 'post__in', array( 0 ) );
+			$query->set( 'posts_per_page', 24 );
+			$query->set( 'itsoft_ranked_search', 1 );
+			return;
 		}
 
 		$requested_type = $query->get( 'post_type' );

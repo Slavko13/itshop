@@ -268,7 +268,11 @@ try {
 			overflow: document.documentElement.scrollWidth - window.innerWidth,
 		};
 	})()`);
-	assert('paged category breadcrumb uses a separate item', pagedCategory.allItemsAreListItems && pagedCategory.items.at(-1) === 'Страница 1', pagedCategory.items.join(' / '));
+	assert(
+		'paged category breadcrumb uses a separate item',
+		pagedCategory.allItemsAreListItems && ['Страница 1', 'Page 1'].includes(pagedCategory.items.at(-1)),
+		pagedCategory.items.join(' / '),
+	);
 	assert('desktop category title stays compact', pagedCategory.titleFontSize <= 52, `${pagedCategory.titleFontSize}px`);
 	assert('desktop category hero gap stays compact', pagedCategory.heroToLayoutGap <= 30, `${pagedCategory.heroToLayoutGap}px`);
 	assert('paged category has no horizontal overflow', pagedCategory.overflow <= 1, `${pagedCategory.overflow}px`);
@@ -358,6 +362,54 @@ try {
 		if (width === 393) await capture('home-393.png');
 		if (width === 1280) await capture('home-1280.png');
 	}
+
+	for (const width of [393, 1280]) {
+		await navigate(new URL('/?s=', baseUrl).toString(), width);
+		const emptySearch = await evaluate(`(() => {
+			const head = document.querySelector('.itsoft-search__head')?.getBoundingClientRect();
+			const form = document.querySelector('.itsoft-search__form');
+			const input = form?.querySelector('[name="s"]');
+			if (input) input.value = '   ';
+			const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+			const submitAllowed = form ? form.dispatchEvent(submitEvent) : true;
+			return {
+				title: document.querySelector('.itsoft-search__title')?.textContent.trim() || '',
+				empty: Boolean(document.querySelector('.itsoft-search__empty')),
+				cards: document.querySelectorAll('.catalog-card').length,
+				articles: document.querySelectorAll('.itsoft-search-article').length,
+				overflow: document.documentElement.scrollWidth - window.innerWidth,
+				headWidth: head?.width || 0,
+				submitPrevented: !submitAllowed,
+				validationMessage: input?.validationMessage || '',
+			};
+		})()`);
+		assert(
+			`${width}px empty search renders intentional state`,
+			emptySearch.empty && ['Поиск по каталогу', 'Search the catalog'].includes(emptySearch.title),
+			JSON.stringify(emptySearch),
+		);
+		assert(`${width}px empty search returns no content cards`, emptySearch.cards === 0 && emptySearch.articles === 0, JSON.stringify(emptySearch));
+		assert(`${width}px empty search spans the content container`, emptySearch.headWidth >= width - (width < 600 ? 42 : 210), `${emptySearch.headWidth}px`);
+		assert(`${width}px empty search has no horizontal overflow`, emptySearch.overflow <= 1, `${emptySearch.overflow}px`);
+		assert(`${width}px whitespace-only search is blocked`, emptySearch.submitPrevented && emptySearch.validationMessage.length > 0, JSON.stringify(emptySearch));
+	}
+
+	await navigate(new URL('/?s=Windows%2011', baseUrl).toString(), 1280);
+	const populatedSearch = await evaluate(`(() => {
+		const grid = document.querySelector('.itsoft-search__grid');
+		const cards = [...document.querySelectorAll('.catalog-card')];
+		return {
+			storefrontStyles: Boolean(document.querySelector('link[href*="storefront-redesign.css"]')),
+			searchStyles: Boolean(document.querySelector('link[href*="search.css"]')),
+			cards: cards.length,
+			columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length : 0,
+			minCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
+			overflow: document.documentElement.scrollWidth - window.innerWidth,
+		};
+	})()`);
+	assert('search loads storefront and search styles', populatedSearch.storefrontStyles && populatedSearch.searchStyles, JSON.stringify(populatedSearch));
+	assert('search renders full-size product cards', populatedSearch.cards > 0 && populatedSearch.columns === 3 && populatedSearch.minCardWidth > 250, JSON.stringify(populatedSearch));
+	assert('populated search has no horizontal overflow', populatedSearch.overflow <= 1, `${populatedSearch.overflow}px`);
 
 	await client.send('Emulation.setScriptExecutionDisabled', { value: true });
 	await navigate(new URL('/shop/', baseUrl).toString(), 393);

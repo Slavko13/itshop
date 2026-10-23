@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ITSOFT License Fulfillment
  * Description: Secure license pools, individual keys and WooCommerce fulfillment foundation.
- * Version: 0.13.0
+ * Version: 0.13.1
  * Requires at least: 6.7
  * Requires PHP: 8.1
  * Author: ITSOFT
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ITSOFT_LF_VERSION', '0.13.0' );
+define( 'ITSOFT_LF_VERSION', '0.13.1' );
 define( 'ITSOFT_LF_FILE', __FILE__ );
 define( 'ITSOFT_LF_DIR', plugin_dir_path( __FILE__ ) );
 
