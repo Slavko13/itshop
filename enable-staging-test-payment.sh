@@ -29,12 +29,16 @@ source .env
 set +a
 
 [[ "${ITSOFT_WP_ENVIRONMENT_TYPE:-}" == "staging" ]] || fail 'Mock payment can be enabled by this script only on staging.'
-[[ "${ITSOFT_LOCAL_URL:-}" == https://* ]] || fail 'Enable HTTPS first with enable-https.sh.'
+[[ "${ITSOFT_LOCAL_URL:-}" =~ ^https?:// ]] || fail 'ITSOFT_LOCAL_URL must be an absolute HTTP or HTTPS URL.'
 
 cp -p .env ".env.pre-mock-payment.$(date -u +%Y%m%dT%H%M%SZ)"
 set_env_value ITSOFT_MOCK_PAYMENT_ENABLED 1
 
-docker compose --profile https up -d --build --force-recreate wordpress caddy
+if [[ "${ITSOFT_LOCAL_URL}" == https://* ]]; then
+  docker compose --profile https up -d --build --force-recreate wordpress caddy
+else
+  docker compose up -d --build --force-recreate wordpress
+fi
 docker compose exec -T wordpress wp cache flush --allow-root >/dev/null 2>&1 || true
 
 docker compose exec -T wordpress wp eval '

@@ -45,7 +45,7 @@ cd /root/itsoft-project && git pull --ff-only && bash enable-yookassa-test.sh
 
 Скрипт активирует только платёжный доступ к ЮKassa, устанавливает официальный plugin `yookassa` и выводит адрес настроек WooCommerce. Telegram, Jivo и внешний SMTP остаются выключены.
 
-Для тестовой оплаты без списания денег на HTTPS staging:
+Для тестовой оплаты без списания денег на staging (HTTP или HTTPS):
 
 ```bash
 cd /root/itsoft-project && git pull --ff-only && bash enable-staging-test-payment.sh
