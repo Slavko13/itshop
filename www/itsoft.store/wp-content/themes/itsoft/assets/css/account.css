@@ -456,23 +456,11 @@
 .account-form__notice {
 	display: flex;
 	align-items: flex-start;
-	gap: 12px;
 	margin: 2px 0 18px;
 	padding: 14px;
 	border: 1px solid #e4deff;
 	border-radius: 12px;
 	background: #f8f6ff;
-}
-
-.account-form__notice-icon {
-	display: grid;
-	flex: 0 0 32px;
-	height: 32px;
-	border-radius: 9px;
-	background: var(--account-purple-soft);
-	color: var(--account-purple);
-	font-size: 16px;
-	place-items: center;
 }
 
 .account-form__notice p {
@@ -577,26 +565,12 @@
 }
 
 .account-auth__benefits li {
-	display: flex;
-	align-items: flex-start;
-	gap: 13px;
 	margin: 0;
 	padding: 0;
 }
 
 .account-auth__benefits li::before {
 	display: none !important;
-}
-
-.account-auth__benefits li > span {
-	display: grid;
-	flex: 0 0 30px;
-	height: 30px;
-	border-radius: 9px;
-	background: rgba(126, 91, 255, 0.34);
-	color: #fff;
-	font-size: 14px;
-	place-items: center;
 }
 
 .account-auth__benefits strong,
@@ -647,19 +621,6 @@
 
 .account-recovery__card {
 	padding: 42px 48px 46px;
-}
-
-.account-recovery__icon {
-	display: grid;
-	width: 48px;
-	height: 48px;
-	margin-bottom: 23px;
-	border-radius: 14px;
-	background: var(--account-purple-soft);
-	color: var(--account-purple);
-	font-size: 21px;
-	font-weight: 800;
-	place-items: center;
 }
 
 .account-recovery__card h2 {
@@ -838,21 +799,10 @@
 .account-shell__help {
 	display: flex;
 	align-items: center;
-	gap: 11px;
 	padding: 15px 17px;
 	border-radius: 16px;
 	background: #211a3d;
 	color: #fff;
-}
-
-.account-shell__help > span {
-	display: grid;
-	flex: 0 0 31px;
-	height: 31px;
-	border-radius: 9px;
-	background: rgba(115, 80, 255, 0.4);
-	font-weight: 750;
-	place-items: center;
 }
 
 .account-shell__help strong,
@@ -968,9 +918,8 @@
 .account-stat {
 	position: relative;
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: minmax(0, 1fr);
 	grid-template-rows: auto auto;
-	column-gap: 12px;
 	min-height: 104px;
 	padding: 18px;
 	border: 1px solid var(--account-line);
@@ -1006,14 +955,6 @@
 	margin-top: 5px;
 	color: var(--account-muted);
 	font-size: 11px;
-}
-
-.account-stat__arrow {
-	grid-column: 2;
-	grid-row: 1 / 3;
-	align-self: center;
-	color: #a5a8b6;
-	font-size: 18px;
 }
 
 .account-dashboard__grid {
@@ -1173,19 +1114,6 @@
 .account-empty-state {
 	padding: 34px 24px;
 	text-align: center;
-}
-
-.account-dashboard-card__empty > span,
-.account-empty-state__icon {
-	display: grid;
-	width: 46px;
-	height: 46px;
-	margin: 0 auto 14px;
-	border-radius: 14px;
-	background: var(--account-purple-soft);
-	color: var(--account-purple);
-	font-size: 19px;
-	place-items: center;
 }
 
 .account-dashboard-card__empty h4,
@@ -1375,21 +1303,12 @@
 	min-width: 0;
 }
 
-.account-license-card__product img,
-.account-license-card__fallback {
+.account-license-card__product img {
 	flex: 0 0 62px;
 	width: 62px;
 	height: 62px;
 	border-radius: 14px;
 	object-fit: cover;
-}
-
-.account-license-card__fallback {
-	display: grid;
-	background: var(--account-purple-soft);
-	color: var(--account-purple);
-	font-weight: 800;
-	place-items: center;
 }
 
 .account-license-card__state {
@@ -1519,23 +1438,9 @@
 .account-form-card__header {
 	display: flex;
 	align-items: center;
-	gap: 12px;
 	margin-bottom: 20px;
 	padding-bottom: 16px;
 	border-bottom: 1px solid var(--account-line);
-}
-
-.account-form-card__icon,
-.account-address-card__icon {
-	display: grid;
-	flex: 0 0 39px;
-	height: 39px;
-	border-radius: 11px;
-	background: var(--account-purple-soft);
-	color: var(--account-purple);
-	font-size: 16px;
-	font-weight: 700;
-	place-items: center;
 }
 
 .account-form-card__header h3 {
@@ -1643,11 +1548,10 @@
 .account-address-card header {
 	display: flex;
 	align-items: center;
-	gap: 12px;
 	margin-bottom: 18px;
 }
 
-.account-address-card header span:not(.account-address-card__icon) {
+.account-address-card header span {
 	display: block;
 	margin-bottom: 3px;
 	color: var(--account-muted);

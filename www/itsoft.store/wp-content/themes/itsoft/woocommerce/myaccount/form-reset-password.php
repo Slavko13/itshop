@@ -13,7 +13,6 @@ do_action( 'woocommerce_before_reset_password_form' );
 
 <div class="account-recovery">
 	<section class="account-recovery__card">
-		<div class="account-recovery__icon" aria-hidden="true">✓</div>
 		<h2>Придумайте новый пароль</h2>
 		<p class="account-recovery__intro"><?php echo apply_filters( 'woocommerce_reset_password_message', 'Используйте новый пароль, которого нет на других сайтах.' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 

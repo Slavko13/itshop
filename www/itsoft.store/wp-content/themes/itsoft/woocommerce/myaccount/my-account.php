@@ -28,7 +28,6 @@ $display_email = $customer->user_email;
 		<?php do_action( 'woocommerce_account_navigation' ); ?>
 
 		<div class="account-shell__help">
-			<span aria-hidden="true">?</span>
 			<div>
 				<strong>Нужна помощь?</strong>
 				<a href="<?php echo esc_url( home_url( '/otvety-na-voprosy/' ) ); ?>">Ответы на вопросы</a>

@@ -92,7 +92,6 @@ final class ITSoft_LF_Customer_Account {
 
 		<?php if ( ! $entries ) : ?>
 			<div class="account-empty-state">
-				<span class="account-empty-state__icon" aria-hidden="true">◇</span>
 				<h3>Ключей пока нет</h3>
 				<p>После подтверждения оплаты и выдачи лицензия появится здесь и придёт на e-mail.</p>
 				<a class="button" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Перейти в каталог</a>
@@ -102,11 +101,7 @@ final class ITSoft_LF_Customer_Account {
 				<?php foreach ( $entries as $entry ) : ?>
 					<article class="account-license-card account-license-card--<?php echo esc_attr( $entry['state'] ); ?>">
 						<div class="account-license-card__product">
-							<?php if ( $entry['image'] ) : ?>
-								<?php echo wp_kses_post( $entry['image'] ); ?>
-							<?php else : ?>
-								<span class="account-license-card__fallback" aria-hidden="true">K</span>
-							<?php endif; ?>
+							<?php if ( $entry['image'] ) : ?><?php echo wp_kses_post( $entry['image'] ); ?><?php endif; ?>
 							<div>
 								<span class="account-license-card__state"><?php echo 'issued' === $entry['state'] ? 'Ключ выдан' : 'Ожидает выдачи'; ?></span>
 								<h3><?php echo esc_html( $entry['product_name'] ); ?></h3>

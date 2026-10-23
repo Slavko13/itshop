@@ -33,24 +33,21 @@ if ( ! $address ) {
 			<h2>Здравствуйте, <?php echo esc_html( $greeting ); ?>!</h2>
 			<p>Здесь собрана главная информация о ваших покупках.</p>
 		</div>
-		<a class="account-dashboard__catalog" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Перейти в каталог <span aria-hidden="true">→</span></a>
+		<a class="account-dashboard__catalog" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Перейти в каталог</a>
 	</header>
 
 	<div class="account-stats">
 		<a class="account-stat account-stat--orders" href="<?php echo esc_url( wc_get_account_endpoint_url( 'orders' ) ); ?>">
 			<span class="account-stat__value"><?php echo esc_html( $order_count ); ?></span>
 			<span class="account-stat__label"><?php echo esc_html( itsoft_plural_form( $order_count, array( 'заказ', 'заказа', 'заказов' ) ) ); ?></span>
-			<span class="account-stat__arrow" aria-hidden="true">→</span>
 		</a>
 		<a class="account-stat account-stat--licenses" href="<?php echo esc_url( wc_get_account_endpoint_url( 'licenses' ) ); ?>">
 			<span class="account-stat__value"><?php echo esc_html( $license_count ); ?></span>
 			<span class="account-stat__label"><?php echo esc_html( itsoft_plural_form( $license_count, array( 'ключ', 'ключа', 'ключей' ) ) ); ?></span>
-			<span class="account-stat__arrow" aria-hidden="true">→</span>
 		</a>
 		<a class="account-stat account-stat--profile" href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-account' ) ); ?>">
 			<span class="account-stat__value account-stat__value--text">Профиль</span>
 			<span class="account-stat__label">Контакты и пароль</span>
-			<span class="account-stat__arrow" aria-hidden="true">→</span>
 		</a>
 	</div>
 
@@ -98,7 +95,7 @@ if ( ! $address ) {
 				<div><dt>Телефон</dt><dd><?php echo esc_html( get_user_meta( $customer_id, 'billing_phone', true ) ?: 'Не указан' ); ?></dd></div>
 				<div><dt>Адрес доставки</dt><dd><?php echo $address ? wp_kses_post( $address ) : 'Не заполнен'; ?></dd></div>
 			</dl>
-			<a class="account-dashboard-card__address-link" href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-address' ) ); ?>">Настроить адрес <span aria-hidden="true">→</span></a>
+			<a class="account-dashboard-card__address-link" href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-address' ) ); ?>">Настроить адрес</a>
 		</aside>
 	</div>
 </section>

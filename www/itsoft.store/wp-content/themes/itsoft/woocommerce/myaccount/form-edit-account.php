@@ -23,7 +23,6 @@ do_action( 'woocommerce_before_edit_account_form' );
 
 	<section class="account-form-card">
 		<header class="account-form-card__header">
-			<span class="account-form-card__icon" aria-hidden="true">○</span>
 			<div><h3>Контактная информация</h3><p>Имя, e-mail и телефон покупателя</p></div>
 		</header>
 
@@ -57,7 +56,6 @@ do_action( 'woocommerce_before_edit_account_form' );
 	<fieldset class="account-form-card account-form-card--security">
 		<legend class="screen-reader-text">Смена пароля</legend>
 		<header class="account-form-card__header">
-			<span class="account-form-card__icon" aria-hidden="true">◇</span>
 			<div><h3>Безопасность</h3><p>Оставьте поля пустыми, если не хотите менять пароль</p></div>
 		</header>
 

@@ -42,9 +42,9 @@ do_action( 'woocommerce_before_account_orders', $has_orders );
 
 				<div class="account-order-card__body">
 					<div class="account-order-card__product">
-						<div class="account-order-card__image">
-							<?php echo $product ? wp_kses_post( $product->get_image( 'woocommerce_thumbnail' ) ) : '<span aria-hidden="true">▣</span>'; ?>
-						</div>
+						<?php if ( $product ) : ?>
+							<div class="account-order-card__image"><?php echo wp_kses_post( $product->get_image( 'woocommerce_thumbnail' ) ); ?></div>
+						<?php endif; ?>
 						<div>
 							<?php foreach ( array_slice( $items, 0, 2, true ) as $item ) : ?>
 								<strong><?php echo esc_html( $item->get_name() ); ?></strong>
@@ -83,7 +83,6 @@ do_action( 'woocommerce_before_account_orders', $has_orders );
 	<?php endif; ?>
 <?php else : ?>
 	<div class="account-empty-state">
-		<span class="account-empty-state__icon" aria-hidden="true">▣</span>
 		<h3>Заказов пока нет</h3>
 		<p>Выберите нужный продукт — после оформления заказ появится здесь.</p>
 		<a class="button" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Перейти в каталог</a>

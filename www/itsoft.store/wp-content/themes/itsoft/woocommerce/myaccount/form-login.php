@@ -89,7 +89,6 @@ do_action( 'woocommerce_before_customer_login_form' );
 							</p>
 						<?php else : ?>
 							<div class="account-form__notice">
-								<span class="account-form__notice-icon" aria-hidden="true">✉</span>
 								<p><strong>Пароль задаётся по ссылке</strong><br>После регистрации мы отправим письмо на указанный адрес.</p>
 							</div>
 						<?php endif; ?>
@@ -109,9 +108,9 @@ do_action( 'woocommerce_before_customer_login_form' );
 		<div class="account-auth__aside-content">
 			<h2>Всё важное после покупки — под рукой</h2>
 			<ul class="account-auth__benefits">
-				<li><span aria-hidden="true">✓</span><div><strong>История заказов</strong><small>Статусы, суммы и состав покупок</small></div></li>
-				<li><span aria-hidden="true">✓</span><div><strong>Лицензионные ключи</strong><small>Повторный доступ без поиска письма</small></div></li>
-				<li><span aria-hidden="true">✓</span><div><strong>Быстрое оформление</strong><small>Контактные данные сохраняются безопасно</small></div></li>
+				<li><div><strong>История заказов</strong><small>Статусы, суммы и состав покупок</small></div></li>
+				<li><div><strong>Лицензионные ключи</strong><small>Повторный доступ без поиска письма</small></div></li>
+				<li><div><strong>Быстрое оформление</strong><small>Контактные данные сохраняются безопасно</small></div></li>
 			</ul>
 		</div>
 		<p class="account-auth__aside-help">Нужна помощь? <a href="<?php echo esc_url( home_url( '/otvety-na-voprosy/' ) ); ?>">Ответы на вопросы</a></p>

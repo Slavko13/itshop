@@ -156,12 +156,13 @@ try {
 				hasAuth: !!card,
 				cardLeft: cardRect?.left || 0,
 				cardRight: cardRect?.right || 0,
-				formRight: formRect?.right || 0
+				formRight: formRect?.right || 0,
+				decorativeIcons: document.querySelectorAll('.account-form__notice-icon, .account-auth__benefits li > span, .account-recovery__icon').length,
 			};
 		})()`);
 		const overflow = Math.max(0, guest.scrollWidth - guest.viewport);
 		const clipped = Math.max(0, Math.max(guest.cardRight, guest.formRight) - guest.viewport);
-		const pass = guest.hasAuth && overflow <= 1 && clipped <= 1;
+		const pass = guest.hasAuth && overflow <= 1 && clipped <= 1 && guest.decorativeIcons === 0;
 		checks.push({ page: 'guest', width, overflow, clipped, pass });
 		console.log(`${pass ? 'PASS' : 'FAIL'} guest ${width}px overflow=${overflow}px clipped=${clipped}px card=${guest.cardLeft}-${guest.cardRight}`);
 	}
@@ -180,6 +181,12 @@ try {
 	) && emptyLogin.invalid === 2;
 	checks.push({ page: 'guest-required-fields', width: 1280, pass: emptyLoginPass });
 	console.log(`${emptyLoginPass ? 'PASS' : 'FAIL'} empty login required-fields message=${JSON.stringify(emptyLogin.message)}`);
+
+	await navigate('/my-account/lost-password/');
+	const recoveryDecorations = await evaluate(`document.querySelectorAll('.account-recovery__icon').length`);
+	const recoveryPass = recoveryDecorations === 0;
+	checks.push({ page: 'recovery-without-decorative-icons', width: 1280, pass: recoveryPass });
+	console.log(`${recoveryPass ? 'PASS' : 'FAIL'} recovery has no decorative icon`);
 
 	await login();
 
@@ -218,6 +225,7 @@ try {
 					profileHasIcon: Boolean(document.querySelector('.user-nav__login--active .user-nav__icon svg')),
 					brandText: brandWordmark?.textContent.replace(/\\s+/g, ' ').trim() || '',
 					brandFont: brandWordmark ? getComputedStyle(brandWordmark).fontFamily : '',
+					decorativeIcons: document.querySelectorAll('.account-shell__help > span, .account-empty-state__icon, .account-form-card__icon, .account-address-card__icon, .account-stat__arrow, .account-license-card__fallback').length,
 				};
 			})()`);
 			const overflow = Math.max(0, metrics.scrollWidth - metrics.viewport);
@@ -229,6 +237,7 @@ try {
 				&& metrics.columnTopSpread <= 1
 				&& metrics.headerItemTopSpread <= 1
 				&& metrics.profileHasIcon
+				&& metrics.decorativeIcons === 0
 				&& ['ITСОФТ', 'ITSOFT'].includes(metrics.brandText.replace(/\s+/g, ''))
 				&& metrics.brandFont.includes('Manrope');
 			checks.push({ page: testCase.name, width, overflow, pass, url: metrics.url });

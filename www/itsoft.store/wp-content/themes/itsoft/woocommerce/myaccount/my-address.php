@@ -27,7 +27,6 @@ $addresses   = array(
 		<?php $address = wc_get_account_formatted_address( $name ); ?>
 		<article class="account-address-card">
 			<header>
-				<span class="account-address-card__icon" aria-hidden="true"><?php echo 'shipping' === $name ? '⌖' : '○'; ?></span>
 				<div><span><?php echo 'shipping' === $name ? 'Для посылок' : 'Данные покупателя'; ?></span><h3><?php echo esc_html( $title ); ?></h3></div>
 			</header>
 			<address><?php echo $address ? wp_kses_post( $address ) : '<span>Адрес пока не заполнен</span>'; ?></address>

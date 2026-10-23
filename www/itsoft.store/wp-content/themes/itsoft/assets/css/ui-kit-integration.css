@@ -816,9 +816,7 @@ a:hover {
 	color: var(--it-primary);
 }
 
-.account-identity__avatar,
-.account-form-card__icon,
-.account-address-card__icon {
+.account-identity__avatar {
 	border-radius: 12px;
 	background: var(--it-primary-subtle);
 	color: var(--it-primary);

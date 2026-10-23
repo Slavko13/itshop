@@ -13,7 +13,6 @@ do_action( 'woocommerce_before_lost_password_form' );
 
 <div class="account-recovery">
 	<section class="account-recovery__card">
-		<div class="account-recovery__icon" aria-hidden="true">↗</div>
 		<h2>Получить ссылку для входа</h2>
 		<p class="account-recovery__intro"><?php echo apply_filters( 'woocommerce_lost_password_message', 'Введите e-mail или имя пользователя. Ссылка для установки нового пароля придёт в письме.' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 
@@ -28,7 +27,7 @@ do_action( 'woocommerce_before_lost_password_form' );
 			<input type="hidden" name="wc_reset_password" value="true">
 			<?php wp_nonce_field( 'lost_password', 'woocommerce-lost-password-nonce' ); ?>
 			<button type="submit" class="woocommerce-Button button account-form__submit" value="Отправить ссылку">Отправить ссылку</button>
-			<a class="account-recovery__back" href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">← Вернуться ко входу</a>
+			<a class="account-recovery__back" href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">Вернуться ко входу</a>
 		</form>
 	</section>
 
