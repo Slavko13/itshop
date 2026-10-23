@@ -9,14 +9,6 @@
 defined( 'ABSPATH' ) || exit;
 
 $items = wc_get_account_menu_items();
-$icons = array(
-	'dashboard'       => '⌂',
-	'orders'          => '▣',
-	'licenses'        => '◇',
-	'edit-address'    => '⌖',
-	'edit-account'    => '○',
-	'customer-logout' => '↗',
-);
 
 do_action( 'woocommerce_before_account_navigation' );
 ?>
@@ -35,7 +27,6 @@ do_action( 'woocommerce_before_account_navigation' );
 		<?php foreach ( $items as $endpoint => $label ) : ?>
 			<li class="<?php echo esc_attr( wc_get_account_menu_item_classes( $endpoint ) ); ?>">
 				<a href="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>" <?php echo wc_is_current_account_menu_item( $endpoint ) ? 'aria-current="page"' : ''; ?>>
-					<span class="account-navigation__icon" aria-hidden="true"><?php echo esc_html( $icons[ $endpoint ] ?? '·' ); ?></span>
 					<span><?php echo esc_html( $label ); ?></span>
 				</a>
 			</li>

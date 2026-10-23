@@ -413,18 +413,6 @@ function itsoft_assets() {
 		);
 	}
 
-	/*
-	 * UI KIT v3 integration is intentionally loaded after every page-specific
-	 * stylesheet. It provides canonical tokens and shared component geometry.
-	 */
-	$ui_kit_style_path = get_template_directory() . '/assets/css/ui-kit-integration.css';
-	wp_enqueue_style(
-		'itsoft-ui-kit-integration',
-		get_template_directory_uri() . '/assets/css/ui-kit-integration.css',
-		array( 'itsoft-style' ),
-		file_exists( $ui_kit_style_path ) ? (string) filemtime( $ui_kit_style_path ) : $ver
-	);
-
     wp_enqueue_script(
         'itsoft-script',
         get_template_directory_uri() . '/assets/js/main.js',

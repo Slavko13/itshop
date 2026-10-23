@@ -38,19 +38,16 @@ if ( ! $address ) {
 
 	<div class="account-stats">
 		<a class="account-stat account-stat--orders" href="<?php echo esc_url( wc_get_account_endpoint_url( 'orders' ) ); ?>">
-			<span class="account-stat__icon" aria-hidden="true">▣</span>
 			<span class="account-stat__value"><?php echo esc_html( $order_count ); ?></span>
 			<span class="account-stat__label"><?php echo esc_html( itsoft_plural_form( $order_count, array( 'заказ', 'заказа', 'заказов' ) ) ); ?></span>
 			<span class="account-stat__arrow" aria-hidden="true">→</span>
 		</a>
 		<a class="account-stat account-stat--licenses" href="<?php echo esc_url( wc_get_account_endpoint_url( 'licenses' ) ); ?>">
-			<span class="account-stat__icon" aria-hidden="true">◇</span>
 			<span class="account-stat__value"><?php echo esc_html( $license_count ); ?></span>
 			<span class="account-stat__label"><?php echo esc_html( itsoft_plural_form( $license_count, array( 'ключ', 'ключа', 'ключей' ) ) ); ?></span>
 			<span class="account-stat__arrow" aria-hidden="true">→</span>
 		</a>
 		<a class="account-stat account-stat--profile" href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-account' ) ); ?>">
-			<span class="account-stat__icon" aria-hidden="true">○</span>
 			<span class="account-stat__value account-stat__value--text">Профиль</span>
 			<span class="account-stat__label">Контакты и пароль</span>
 			<span class="account-stat__arrow" aria-hidden="true">→</span>
@@ -84,7 +81,6 @@ if ( ! $address ) {
 				</div>
 			<?php else : ?>
 				<div class="account-dashboard-card__empty">
-					<span aria-hidden="true">▣</span>
 					<h4>Заказов пока нет</h4>
 					<p>После первой покупки заказ появится в этом разделе.</p>
 					<a class="button" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">Выбрать товар</a>
