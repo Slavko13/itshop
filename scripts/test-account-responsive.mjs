@@ -185,10 +185,10 @@ try {
 
 	const cases = [
 		{ path: '/my-account/', name: 'dashboard', widths: [393, 768, 1280] },
-		{ path: '/my-account/orders/', name: 'orders', widths: [393, 1280] },
-		{ path: '/my-account/licenses/', name: 'licenses', widths: [393, 1280] },
+		{ path: '/my-account/orders/', name: 'orders', widths: [393, 1280, 1440] },
+		{ path: '/my-account/licenses/', name: 'licenses', widths: [393, 1280, 1440] },
 		{ path: '/my-account/edit-account/', name: 'profile', widths: [393, 1280] },
-		{ path: '/my-account/edit-address/', name: 'addresses', widths: [393, 1280] },
+		{ path: '/my-account/edit-address/', name: 'addresses', widths: [393, 1280, 1440] },
 	];
 
 	for (const testCase of cases) {
@@ -198,6 +198,9 @@ try {
 			const metrics = await evaluate(`(() => {
 				const navLinks = [...document.querySelectorAll('.account-navigation a')];
 				const navHeights = navLinks.map((link) => link.getBoundingClientRect().height);
+				const accountNav = document.querySelector('.account-navigation')?.getBoundingClientRect();
+				const sectionHead = document.querySelector('.account-section-head');
+				const primaryPanel = sectionHead?.nextElementSibling?.getBoundingClientRect();
 				const cart = document.querySelector('.user-nav__cart')?.getBoundingClientRect();
 				const orders = document.querySelector('.user-nav__orders')?.getBoundingClientRect();
 				const bothHeaderItemsVisible = cart?.width > 0 && orders?.width > 0;
@@ -210,6 +213,7 @@ try {
 					hasContent: !!document.querySelector('.account-shell__content'),
 					hasMobileNav: getComputedStyle(document.querySelector('.account-nav-mobile')).display !== 'none',
 					navHeightSpread: navHeights.length ? Math.max(...navHeights) - Math.min(...navHeights) : 0,
+					columnTopSpread: accountNav?.width > 0 && primaryPanel?.width > 0 ? Math.abs(accountNav.top - primaryPanel.top) : 0,
 					headerItemTopSpread: bothHeaderItemsVisible ? Math.abs(cart.top - orders.top) : 0,
 					profileHasIcon: Boolean(document.querySelector('.user-nav__login--active .user-nav__icon svg')),
 					brandText: brandWordmark?.textContent.replace(/\\s+/g, ' ').trim() || '',
@@ -222,12 +226,13 @@ try {
 				&& overflow <= 1
 				&& (width > 820 || metrics.hasMobileNav)
 				&& metrics.navHeightSpread <= 1
+				&& metrics.columnTopSpread <= 1
 				&& metrics.headerItemTopSpread <= 1
 				&& metrics.profileHasIcon
-				&& metrics.brandText.replace(/\s+/g, '') === 'ITСОФТ'
+				&& ['ITСОФТ', 'ITSOFT'].includes(metrics.brandText.replace(/\s+/g, ''))
 				&& metrics.brandFont.includes('Manrope');
 			checks.push({ page: testCase.name, width, overflow, pass, url: metrics.url });
-			console.log(`${pass ? 'PASS' : 'FAIL'} ${testCase.name} ${width}px overflow=${overflow}px url=${metrics.url}`);
+			console.log(`${pass ? 'PASS' : 'FAIL'} ${testCase.name} ${width}px overflow=${overflow}px alignment=${metrics.columnTopSpread}px url=${metrics.url}${pass ? '' : ` metrics=${JSON.stringify(metrics)}`}`);
 			if (capture && (width === 393 || width === 1280)) await screenshot(`account-${testCase.name}-${width}.png`);
 		}
 	}

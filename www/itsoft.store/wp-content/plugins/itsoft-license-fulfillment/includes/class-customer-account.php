@@ -84,7 +84,6 @@ final class ITSoft_LF_Customer_Account {
 		?>
 		<div class="account-section-head">
 			<div>
-				<span class="account-section-head__eyebrow">Ваши покупки</span>
 				<h2>Лицензионные ключи</h2>
 				<p>Ключи доступны только владельцу аккаунта. Нажмите «Показать», чтобы открыть значение.</p>
 			</div>
