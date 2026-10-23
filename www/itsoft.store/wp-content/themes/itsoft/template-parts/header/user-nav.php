@@ -17,17 +17,12 @@
         <span class="user-nav__text">Заказы</span>
     </a>
     <?php if ( is_user_logged_in() ): ?>
-        <?php
-            $user = wp_get_current_user();
-            $avatar = false; //TO DO: Возможно будут аватары    
-        ?>
-        <a class="user-nav__item user-nav__login user-nav__login--active" href="<?php echo esc_url( get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ); ?>">
+        <a class="user-nav__item user-nav__login user-nav__login--active" href="<?php echo esc_url( get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) ); ?>" aria-label="<?php esc_attr_e( 'Личный кабинет', 'itsoft' ); ?>">
             <span class="user-nav__icon">
-                <?php if($avatar): ?>
-                    <img src="<?php echo $avatar; ?>" alt="">
-                <?php else: ?>
-                    <?php echo strtoupper( mb_substr( $user->display_name, 0, 1, 'UTF-8' ) ); ?>
-                <?php endif; ?>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M10 9.16667C12.0711 9.16667 13.75 7.48773 13.75 5.41667C13.75 3.3456 12.0711 1.66667 10 1.66667C7.92893 1.66667 6.25 3.3456 6.25 5.41667C6.25 7.48773 7.92893 9.16667 10 9.16667Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.33334 18.3333C3.33334 14.6514 6.31811 11.6667 10 11.6667C13.6819 11.6667 16.6667 14.6514 16.6667 18.3333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </span>
         </a>
     <?php else: ?>

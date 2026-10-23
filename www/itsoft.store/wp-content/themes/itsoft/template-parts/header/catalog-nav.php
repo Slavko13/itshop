@@ -78,8 +78,8 @@
                 <path d="M10 30L30 10M10 10L30 30" stroke="#4B2FD7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </button>
-        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="catalog-nav__mobile-logo">
-            <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logo.svg' ); ?>" alt="ITСофт">
+        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo catalog-nav__mobile-logo">
+            <?php get_template_part( 'template-parts/brand-logo' ); ?>
         </a>
         <div class="catalog-nav__mobile-actions">
             <button class="catalog-nav__mobile-search-btn search__mobile-button" type="button" aria-label="Search">
@@ -505,6 +505,20 @@
             .catalog-nav__mobile-logo img {
                 height: 32px;
                 width: auto;
+            }
+
+            .catalog-nav__mobile-logo .brand-logo {
+                gap: 7px;
+            }
+
+            .catalog-nav__mobile-logo .brand-logo__mark {
+                flex-basis: 32px;
+                width: 32px;
+            }
+
+            .catalog-nav__mobile-logo .brand-logo__wordmark {
+                gap: 5px;
+                font-size: 21px;
             }
             
             .catalog-nav__mobile-actions {

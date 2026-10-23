@@ -360,7 +360,55 @@ blockquote p {
 .header-main__logo {
     flex: 0 0 auto;
 }
-.logo {}
+.logo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--h1--primary);
+    text-decoration: none;
+}
+
+.brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.brand-logo__mark {
+    display: block;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+}
+
+.brand-logo__wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    color: #0f1116;
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-size: 27px;
+    line-height: 1;
+    letter-spacing: -0.055em;
+}
+
+.brand-logo__wordmark strong,
+.brand-logo__wordmark span {
+    display: block;
+}
+
+.brand-logo__wordmark strong {
+    font-weight: 800;
+}
+
+.brand-logo__wordmark span {
+    font-weight: 560;
+}
+
+.brand-logo--light .brand-logo__wordmark {
+    color: #fff;
+}
+
 .logo__img {
     display: block;
     max-width: 100%;
@@ -459,7 +507,7 @@ blockquote p {
     display: flex;
     justify-content: space-between;
     flex: 0 0 auto;
-    height: 36px;
+    min-height: 44px;
     gap: 30px;
     align-items: center;
 }
@@ -469,7 +517,14 @@ blockquote p {
     align-items: center;
     justify-items: center;
     gap: 2px;
+    min-width: 56px;
+    min-height: 44px;
     text-decoration: none;
+}
+
+.user-nav__cart,
+.user-nav__orders {
+    align-self: center;
 }
 .user-nav__cart-count {}
 .user-nav__icon {
@@ -514,19 +569,29 @@ blockquote p {
 .user-nav__icon--login {}
 
 .user-nav__login--active .user-nav__icon {
-    background: #90c422;
+    background: #f0ecff;
+    border: 1px solid #ded7ff;
     width: 40px;
     height: 40px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 40px;
-    font-weight: 500;
-    font-size: 21px;
-    text-align: center;
-    color: #fff;
+    border-radius: 50%;
+    color: var(--main-perple);
     line-height: 1;
-    align-self: center;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.user-nav__login--active:hover .user-nav__icon {
+    border-color: var(--main-perple);
+    background: #fff;
+    transform: translateY(-1px);
+}
+
+.user-nav__login--active .user-nav__icon svg {
+    width: 20px;
+    height: 20px;
 }
 .user-nav__text {
     display: block;
@@ -547,6 +612,11 @@ blockquote p {
 .user-nav__login {
     position: relative;
     top: 0;
+}
+
+.user-nav__login--active {
+    display: inline-flex;
+    min-width: 44px;
 }
 
 .hero-small__container {
@@ -925,6 +995,7 @@ blockquote p {
     flex-direction: column;
 }
 .footer__logo {
+    width: fit-content;
     margin-bottom: 24px;
     padding-top: 7px;
 }
@@ -3429,6 +3500,18 @@ blockquote p {
 @media (max-width: 1024px) {
     .header-main__logo {
         width: 140px;
+    }
+    .header-main__logo .brand-logo {
+        gap: 8px;
+    }
+    .header-main__logo .brand-logo__mark {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+    }
+    .header-main__logo .brand-logo__wordmark {
+        gap: 6px;
+        font-size: 23px;
     }
     .topbar {
         display: none;

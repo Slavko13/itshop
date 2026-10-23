@@ -195,16 +195,37 @@ try {
 		for (const width of testCase.widths) {
 			await setViewport(width, width < 600 ? 1500 : 1100);
 			await navigate(testCase.path);
-			const metrics = await evaluate(`({
-				url: location.pathname,
-				viewport: innerWidth,
-				scrollWidth: document.documentElement.scrollWidth,
-				hasShell: !!document.querySelector('.account-shell'),
-				hasContent: !!document.querySelector('.account-shell__content'),
-				hasMobileNav: getComputedStyle(document.querySelector('.account-nav-mobile')).display !== 'none'
-			})`);
+			const metrics = await evaluate(`(() => {
+				const navLinks = [...document.querySelectorAll('.account-navigation a')];
+				const navHeights = navLinks.map((link) => link.getBoundingClientRect().height);
+				const cart = document.querySelector('.user-nav__cart')?.getBoundingClientRect();
+				const orders = document.querySelector('.user-nav__orders')?.getBoundingClientRect();
+				const bothHeaderItemsVisible = cart?.width > 0 && orders?.width > 0;
+				const brandWordmark = document.querySelector('.header-main__logo .brand-logo__wordmark');
+				return {
+					url: location.pathname,
+					viewport: innerWidth,
+					scrollWidth: document.documentElement.scrollWidth,
+					hasShell: !!document.querySelector('.account-shell'),
+					hasContent: !!document.querySelector('.account-shell__content'),
+					hasMobileNav: getComputedStyle(document.querySelector('.account-nav-mobile')).display !== 'none',
+					navHeightSpread: navHeights.length ? Math.max(...navHeights) - Math.min(...navHeights) : 0,
+					headerItemTopSpread: bothHeaderItemsVisible ? Math.abs(cart.top - orders.top) : 0,
+					profileHasIcon: Boolean(document.querySelector('.user-nav__login--active .user-nav__icon svg')),
+					brandText: brandWordmark?.textContent.replace(/\\s+/g, ' ').trim() || '',
+					brandFont: brandWordmark ? getComputedStyle(brandWordmark).fontFamily : '',
+				};
+			})()`);
 			const overflow = Math.max(0, metrics.scrollWidth - metrics.viewport);
-			const pass = metrics.hasShell && metrics.hasContent && overflow <= 1 && (width > 820 || metrics.hasMobileNav);
+			const pass = metrics.hasShell
+				&& metrics.hasContent
+				&& overflow <= 1
+				&& (width > 820 || metrics.hasMobileNav)
+				&& metrics.navHeightSpread <= 1
+				&& metrics.headerItemTopSpread <= 1
+				&& metrics.profileHasIcon
+				&& metrics.brandText.replace(/\s+/g, '') === 'ITСОФТ'
+				&& metrics.brandFont.includes('Manrope');
 			checks.push({ page: testCase.name, width, overflow, pass, url: metrics.url });
 			console.log(`${pass ? 'PASS' : 'FAIL'} ${testCase.name} ${width}px overflow=${overflow}px url=${metrics.url}`);
 			if (capture && (width === 393 || width === 1280)) await screenshot(`account-${testCase.name}-${width}.png`);

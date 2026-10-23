@@ -4,7 +4,7 @@
         <div class="grid-container">
             <div class="footer__col footer__col_info">
                 <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo footer__logo">
-                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logo_bottom.png' ); ?>" alt="ITСофт" class="logo__img">
+                    <?php get_template_part( 'template-parts/brand-logo', null, array( 'variant' => 'light' ) ); ?>
                 </a>
 
                 <a href="tel:+79934796500" class="footer__tel">+7 993 479 6500</a>

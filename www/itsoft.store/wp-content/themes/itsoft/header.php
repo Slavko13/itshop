@@ -21,7 +21,7 @@
         <div class="header-main__row grid-container">
             <?php get_template_part( 'template-parts/header/mobile-nav' ); ?>
             <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="logo header-main__logo">
-                <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logo.svg' ); ?>" alt="ITСофт" class="logo__img">
+                <?php get_template_part( 'template-parts/brand-logo' ); ?>
             </a>
             <?php get_template_part( 'template-parts/header/catalog-btn' ); ?>
             <?php get_template_part( 'template-parts/header/search-form' ); ?>
