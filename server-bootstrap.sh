@@ -160,6 +160,29 @@ if [[ -n "$source_url" && "$source_url" != "$ITSOFT_LOCAL_URL" ]]; then
   docker compose exec -T wordpress wp search-replace \
     "$source_url" "$ITSOFT_LOCAL_URL" \
     --all-tables --skip-columns=guid --precise --allow-root
+
+  # Smart Slider stores generated image URLs without a scheme
+  # (for example //localhost:8080/wp-content/uploads/...). A regular
+  # search-replace of http://localhost:8080 does not match those cached URLs.
+  source_scheme_relative="${source_url#http:}"
+  source_scheme_relative="${source_scheme_relative#https:}"
+  target_scheme_relative="${ITSOFT_LOCAL_URL#http:}"
+  target_scheme_relative="${target_scheme_relative#https:}"
+
+  if [[ -n "$source_scheme_relative" && "$source_scheme_relative" != "$target_scheme_relative" ]]; then
+    docker compose exec -T wordpress wp search-replace \
+      "$source_scheme_relative" "$target_scheme_relative" \
+      --all-tables --skip-columns=guid --precise --allow-root
+  fi
+fi
+
+# Drop Smart Slider's generated database cache after changing the site URL.
+# It is recreated on the first request from the portable $upload$ image paths.
+wp_table_prefix="$(docker compose exec -T wordpress wp db prefix --allow-root | tr -d '\r\n')"
+if [[ -n "$wp_table_prefix" ]]; then
+  docker compose exec -T wordpress wp db query \
+    "DELETE FROM \`${wp_table_prefix}nextend2_section_storage\` WHERE \`type\` = 'cache';" \
+    --allow-root >/dev/null 2>&1 || true
 fi
 
 docker compose exec -T wordpress wp cache flush --allow-root >/dev/null 2>&1 || true

@@ -121,23 +121,23 @@ if ( ! empty( $extra_class ) ) {
 ?>
 
 <article class="<?php echo esc_attr( $card_classes ); ?>" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>" itemscope itemtype="http://schema.org/Product">
-	<?php if ( $badges || ( $has_discount && $discount ) ) : ?>
-		<div class="catalog-card__labels">
-			<?php if ( $badges ) : ?>
-			<div class="catalog-card__badges">
-				<?php foreach ( $badges as $badge ) : ?>
-					<span class="catalog-card__badge" style="background-color: <?php echo esc_attr( $badge['color'] ); ?>"><?php echo esc_html( $badge['name'] ); ?></span>
-				<?php endforeach; ?>
-			</div>
-			<?php endif; ?>
-
-			<?php if ( $has_discount && $discount ) : ?>
-				<span class="catalog-card__discount">-<?php echo esc_html( $discount ); ?>%</span>
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
-
 	<div class="catalog-card__media">
+		<?php if ( $badges || ( $has_discount && $discount ) ) : ?>
+			<div class="catalog-card__labels">
+				<?php if ( $badges ) : ?>
+				<div class="catalog-card__badges">
+					<?php foreach ( $badges as $badge ) : ?>
+						<span class="catalog-card__badge" style="background-color: <?php echo esc_attr( $badge['color'] ); ?>"><?php echo esc_html( $badge['name'] ); ?></span>
+					<?php endforeach; ?>
+				</div>
+				<?php endif; ?>
+
+				<?php if ( $has_discount && $discount ) : ?>
+					<span class="catalog-card__discount">-<?php echo esc_html( $discount ); ?>%</span>
+				<?php endif; ?>
+			</div>
+		<?php endif; ?>
+
 		<a class="catalog-card__image-link" href="<?php echo esc_url( $permalink ); ?>">
 			<?php echo $image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</a>

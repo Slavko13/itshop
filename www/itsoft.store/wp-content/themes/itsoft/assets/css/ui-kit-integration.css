@@ -485,41 +485,66 @@ a:hover {
 }
 
 .catalog-card__labels {
+	position: absolute;
+	z-index: 3;
+	top: 20px;
+	right: 20px;
+	left: 20px;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 8px;
-	min-height: 28px;
-	padding: 12px 12px 0;
+	min-height: 0;
+	padding: 0;
+	pointer-events: none;
 }
 
 .catalog-card__badges {
 	position: static;
 	display: flex;
+	min-width: 0;
 	align-items: center;
-	flex-wrap: wrap;
+	flex: 1 1 auto;
+	flex-wrap: nowrap;
 	gap: 6px;
-	max-width: none;
+	max-width: 100%;
+	overflow: hidden;
 }
 
 .catalog-card__media {
+	position: relative;
 	border-radius: 12px;
 	background: var(--it-disabled-bg);
 }
 
 .catalog-card__badge {
-	min-height: 28px;
-	padding: 5px 9px;
-	border-radius: 8px;
-	font-size: 11px;
+	min-width: 0;
+	min-height: 24px;
+	padding: 4px 9px;
+	overflow: hidden;
+	border-radius: 999px;
+	font-size: 10px;
 	font-weight: 600;
+	line-height: 16px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .catalog-card__discount {
 	position: static;
+	flex: 0 0 auto;
 	margin-left: auto;
-	border-radius: 8px;
+	border-radius: 999px;
 	background: var(--it-error-bg);
 	color: var(--it-error);
+}
+
+@media (max-width: 575px) {
+	.catalog-card__labels {
+		top: 12px;
+		right: 12px;
+		left: 12px;
+		gap: 5px;
+	}
 }
 
 .catalog-card__price-current,

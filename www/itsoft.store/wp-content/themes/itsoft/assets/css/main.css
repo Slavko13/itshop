@@ -569,7 +569,12 @@ blockquote p {
     height: auto;
     min-height: 0;
     overflow: hidden;
-    background: none;
+    /*
+     * The restored Smart Slider can briefly contain a stale generated image
+     * URL until its cache is rebuilt. Keep the approved banner visible while
+     * the slider initializes instead of showing an empty 480px panel.
+     */
+    background: #f8f9fc url("../../../../uploads/slider4/ITSOFT.png") center / cover no-repeat;
 }
 
 .hero-smartslider-button {
