@@ -1,6 +1,6 @@
 <?php
 /**
- * Shared product archive layout for the shop and product categories.
+ * Shared product archive layout for the shop, product categories and tags.
  *
  * @package itsoft
  */
@@ -9,20 +9,22 @@ defined( 'ABSPATH' ) || exit;
 
 global $wp_query;
 
-$current_term = get_queried_object();
-$is_term      = $current_term instanceof WP_Term && 'product_cat' === $current_term->taxonomy;
-$term_id      = $is_term ? (int) $current_term->term_id : 0;
-$shop_url     = get_permalink( wc_get_page_id( 'shop' ) );
-$term_link    = $is_term ? get_term_link( $current_term ) : $shop_url;
-$term_link    = ! is_wp_error( $term_link ) ? $term_link : home_url( '/' );
-$term_desc    = $is_term ? term_description( $term_id, 'product_cat' ) : '';
-$page_title   = $is_term ? single_term_title( '', false ) : esc_html__( 'Каталог', 'itsoft' );
+$current_term     = get_queried_object();
+$is_category_term = $current_term instanceof WP_Term && 'product_cat' === $current_term->taxonomy;
+$is_tag_term      = $current_term instanceof WP_Term && 'product_tag' === $current_term->taxonomy;
+$is_term          = $is_category_term || $is_tag_term;
+$term_id          = $is_term ? (int) $current_term->term_id : 0;
+$shop_url         = get_permalink( wc_get_page_id( 'shop' ) );
+$term_link        = $is_term ? get_term_link( $current_term ) : $shop_url;
+$term_link        = ! is_wp_error( $term_link ) ? $term_link : home_url( '/' );
+$term_desc        = $is_term ? term_description( $term_id, $current_term->taxonomy ) : '';
+$page_title       = $is_term ? single_term_title( '', false ) : esc_html__( 'Каталог', 'itsoft' );
 
 $category_tree      = itsoft_get_catalog_category_tree();
 $category_tree_html = itsoft_render_catalog_category_tree(
 	$category_tree,
 	array(
-		'current_id' => $term_id,
+		'current_id' => $is_category_term ? $term_id : 0,
 	)
 );
 
@@ -68,7 +70,7 @@ add_action( 'woocommerce_shop_loop_header', 'woocommerce_product_taxonomy_archiv
 
 		<header class="catalog__hero">
 			<div>
-				<?php if ( $is_term && $current_term->parent ) : ?>
+				<?php if ( $is_category_term && $current_term->parent ) : ?>
 					<?php $parent_term = get_term( (int) $current_term->parent, 'product_cat' ); ?>
 					<?php if ( $parent_term && ! is_wp_error( $parent_term ) ) : ?>
 						<a class="catalog__parent" href="<?php echo esc_url( get_term_link( $parent_term ) ); ?>">
@@ -79,7 +81,15 @@ add_action( 'woocommerce_shop_loop_header', 'woocommerce_product_taxonomy_archiv
 				<?php endif; ?>
 				<h1 class="catalog__title"><?php echo esc_html( $page_title ); ?></h1>
 				<p class="catalog__lead">
-					<?php echo $is_term ? esc_html__( 'Выберите подходящую лицензию — электронные товары приходят на e-mail после оплаты.', 'itsoft' ) : esc_html__( 'Лицензии и программное обеспечение для дома и бизнеса с понятным оформлением заказа.', 'itsoft' ); ?>
+					<?php
+					if ( $is_tag_term ) {
+						echo esc_html( sprintf( __( 'Лицензии и программы с меткой «%s». Электронные товары приходят на e-mail после оплаты.', 'itsoft' ), $current_term->name ) );
+					} elseif ( $is_category_term ) {
+						esc_html_e( 'Выберите подходящую лицензию — электронные товары приходят на e-mail после оплаты.', 'itsoft' );
+					} else {
+						esc_html_e( 'Лицензии и программное обеспечение для дома и бизнеса с понятным оформлением заказа.', 'itsoft' );
+					}
+					?>
 				</p>
 			</div>
 		</header>
@@ -118,8 +128,10 @@ add_action( 'woocommerce_shop_loop_header', 'woocommerce_product_taxonomy_archiv
 							<input class="catalog-filters__input" type="search" name="s" value="<?php echo esc_attr( $search_value ); ?>" placeholder="<?php esc_attr_e( 'Найти программу или лицензию', 'itsoft' ); ?>" autocomplete="off" />
 						</label>
 						<input type="hidden" name="post_type" value="product" />
-						<?php if ( $is_term ) : ?>
+						<?php if ( $is_category_term ) : ?>
 							<input type="hidden" name="product_cat" value="<?php echo esc_attr( $current_term->slug ); ?>" />
+						<?php elseif ( $is_tag_term ) : ?>
+							<input type="hidden" name="product_tag" value="<?php echo esc_attr( $current_term->slug ); ?>" />
 						<?php endif; ?>
 						<?php foreach ( $preserved_query as $key => $value ) : ?>
 							<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>" />

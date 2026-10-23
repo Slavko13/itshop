@@ -30,7 +30,7 @@
         </div>
     </div>
     <?php
-    $itsoft_is_catalog_archive = ( function_exists( 'is_shop' ) && ( is_shop() || is_tax( 'product_cat' ) ) )
+    $itsoft_is_catalog_archive = ( function_exists( 'is_shop' ) && ( is_shop() || is_tax( array( 'product_cat', 'product_tag' ) ) ) )
         || is_singular( 'distribution' )
         || is_post_type_archive( 'distribution' )
         || is_tax( 'download' )

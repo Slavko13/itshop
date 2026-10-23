@@ -244,7 +244,9 @@ function itsoft_assets() {
         );
     }
 
-	$is_storefront_view        = is_front_page() || ( function_exists( 'is_shop' ) && is_shop() ) || is_tax( 'product_cat' );
+	$is_storefront_view        = is_front_page()
+		|| ( function_exists( 'is_shop' ) && is_shop() )
+		|| is_tax( array( 'product_cat', 'product_tag' ) );
 	$needs_storefront_styles   = $is_storefront_view || is_search();
 
 	if ( $needs_storefront_styles ) {

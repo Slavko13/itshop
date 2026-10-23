@@ -7,6 +7,7 @@ const chromePath = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome
 const baseUrl = process.env.ITSOFT_BASE_URL || 'http://localhost:8080';
 const categoryPath = process.env.ITSOFT_CATEGORY_PATH || '/product-category/microsoft-office/office-2021/';
 const pagedCategoryPath = process.env.ITSOFT_PAGED_CATEGORY_PATH || '/product-category/microsoft-windows/windows-11/page/1/';
+const productTagPath = process.env.ITSOFT_PRODUCT_TAG_PATH || '/product-tag/outlook/';
 const artifactDir = join(process.cwd(), 'artifacts', 'storefront-redesign');
 const profileDir = mkdtempSync(join(tmpdir(), 'itsoft-storefront-'));
 const failures = [];
@@ -290,6 +291,37 @@ try {
 	assert('desktop category hero gap stays compact', pagedCategory.heroToLayoutGap <= 30, `${pagedCategory.heroToLayoutGap}px`);
 	assert('paged category has no horizontal overflow', pagedCategory.overflow <= 1, `${pagedCategory.overflow}px`);
 	await capture('category-windows11-page1-1440.png');
+
+	for (const width of [393, 1280]) {
+		await navigate(new URL(productTagPath, baseUrl).toString(), width);
+		const productTag = await evaluate(`(() => {
+			const header = document.querySelector('.header')?.getBoundingClientRect();
+			const breadcrumbs = document.querySelector('.catalog__breadcrumbs')?.getBoundingClientRect();
+			const searchForm = document.querySelector('.catalog-filters__search');
+			const searchTag = searchForm?.querySelector('input[name="product_tag"]');
+			const cards = [...document.querySelectorAll('.catalog-card')];
+			return {
+				title: document.querySelector('.catalog__title')?.textContent.trim() || '',
+				style: Boolean(document.querySelector('link[href*="storefront-redesign.css"]')),
+				catalogScript: Boolean(document.querySelector('script[src*="catalog-page.js"]')),
+				layout: Boolean(document.querySelector('.catalog__layout')),
+				cards: cards.length,
+				tagValue: searchTag?.value || '',
+				hasLegacyInnerHero: Boolean(document.querySelector('.header .hero-small')),
+				headerToBreadcrumbGap: header && breadcrumbs ? breadcrumbs.top - header.bottom : 0,
+				overflow: document.documentElement.scrollWidth - window.innerWidth,
+			};
+		})()`);
+		assert(`${width}px product tag uses its own H1`, productTag.title.toLowerCase() === 'outlook', productTag.title);
+		assert(`${width}px product tag loads catalog assets`, productTag.style && productTag.catalogScript, JSON.stringify(productTag));
+		assert(`${width}px product tag uses catalog layout`, productTag.layout && productTag.cards > 0, JSON.stringify(productTag));
+		assert(`${width}px product-tag search preserves its scope`, productTag.tagValue === 'outlook', productTag.tagValue);
+		assert(`${width}px product tag does not render legacy hero`, !productTag.hasLegacyInnerHero);
+		assert(`${width}px product tag has compact header gap`, productTag.headerToBreadcrumbGap <= 24, `${productTag.headerToBreadcrumbGap}px`);
+		assert(`${width}px product tag has no horizontal overflow`, productTag.overflow <= 1, `${productTag.overflow}px`);
+		if (width === 393) await capture('product-tag-outlook-393.png');
+		if (width === 1280) await capture('product-tag-outlook-1280.png');
+	}
 
 	await navigate(new URL('/shop/', baseUrl).toString(), 1280);
 	const catalogMenu = await evaluate(`(() => {
