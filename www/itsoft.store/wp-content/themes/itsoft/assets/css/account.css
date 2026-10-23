@@ -161,7 +161,8 @@
 .account-auth {
 	display: grid;
 	grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.96fr);
-	max-width: 1120px;
+	width: 100%;
+	max-width: none;
 	min-height: 600px;
 	margin: 0 auto;
 	border: 1px solid rgba(103, 91, 155, 0.14);
@@ -306,6 +307,11 @@
 	border-color: var(--account-purple);
 	box-shadow: 0 0 0 4px rgba(104, 68, 255, 0.1);
 	outline: none;
+}
+
+.account-page .account-form input.input-text[aria-invalid="true"] {
+	border-color: var(--account-danger);
+	box-shadow: 0 0 0 4px rgba(217, 57, 84, 0.1);
 }
 
 .account-form__password-control {
@@ -623,11 +629,12 @@
 
 .account-recovery {
 	display: grid;
-	grid-template-columns: minmax(0, 620px) minmax(260px, 340px);
+	grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
 	justify-content: center;
 	gap: 20px;
-	max-width: 1000px;
-	margin: 0 auto;
+	width: 100%;
+	max-width: none;
+	margin: 0;
 }
 
 .account-recovery__card,

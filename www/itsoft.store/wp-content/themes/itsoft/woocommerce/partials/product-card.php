@@ -113,6 +113,9 @@ $button_url     = $product->add_to_cart_url();
 $button_text    = $product->add_to_cart_text();
 $button_aria    = $product->add_to_cart_description();
 $is_available   = $product->is_purchasable() && $product->is_in_stock();
+$quick_buy_url  = ! is_product() && function_exists( 'itsoft_get_quick_buy_url' )
+	? itsoft_get_quick_buy_url( $product )
+	: '';
 
 $card_classes = 'catalog-grid__item catalog-card';
 if ( ! empty( $extra_class ) ) {
@@ -196,6 +199,16 @@ if ( ! empty( $extra_class ) ) {
 					<span class="catalog-card__buy-label"><?php echo esc_html( $button_text ); ?></span>
 					<span class="catalog-card__buy-icon" aria-hidden="true">→</span>
 				</a>
+				<?php if ( $quick_buy_url ) : ?>
+					<a
+						class="catalog-card__quick-buy button"
+						href="<?php echo esc_url( $quick_buy_url ); ?>"
+						aria-label="<?php echo esc_attr( sprintf( __( 'Купить «%s» в 1 клик', 'itsoft' ), get_the_title( $product->get_id() ) ) ); ?>"
+						rel="nofollow"
+					>
+						<?php esc_html_e( 'Купить в 1 клик', 'itsoft' ); ?>
+					</a>
+				<?php endif; ?>
 				<span class="catalog-card__stock-note<?php echo $is_available ? ' catalog-card__stock-note--placeholder' : ''; ?>"<?php echo $is_available ? ' aria-hidden="true"' : ''; ?>>
 					<?php echo $is_available ? '&nbsp;' : esc_html__( 'Сейчас недоступен для покупки', 'itsoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>

@@ -1178,11 +1178,12 @@
 
 /* Purpose-built empty state: there is no checkout journey until a product exists. */
 .cart-page--empty {
+	padding-top: 30px;
 	padding-bottom: 80px;
 }
 
 .cart-page--empty .cart-page__hero {
-	margin-bottom: 24px;
+	display: none;
 }
 
 .cart-page--empty .cart-page__heading {

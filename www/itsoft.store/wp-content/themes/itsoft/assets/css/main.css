@@ -464,9 +464,12 @@ blockquote p {
     align-items: center;
 }
 .user-nav__item {
-    display: flex;
+    display: grid;
+    grid-template-rows: 22px 20px;
+    align-items: center;
+    justify-items: center;
+    gap: 2px;
     text-decoration: none;
-    flex-direction: column;
 }
 .user-nav__cart-count {}
 .user-nav__icon {
@@ -476,6 +479,14 @@ blockquote p {
     justify-content: center;
     text-align: center;
     line-height: 0;
+    width: 24px;
+    height: 22px;
+}
+
+.user-nav__icon svg {
+    display: block;
+    width: 21px;
+    height: 20px;
 }
 .user-nav__cart-count {
     position: absolute;
@@ -515,6 +526,7 @@ blockquote p {
     text-align: center;
     color: #fff;
     line-height: 1;
+    align-self: center;
 }
 .user-nav__text {
     display: block;
@@ -534,7 +546,7 @@ blockquote p {
 
 .user-nav__login {
     position: relative;
-    top: -3px;
+    top: 0;
 }
 
 .hero-small__container {
@@ -2728,7 +2740,7 @@ blockquote p {
 
 .cart__btn-top {
     font-weight: 600;
-    font-size: 20px;
+    font-size: 15px;
     text-align: center;
     color: #fff;
 }
@@ -2737,7 +2749,7 @@ blockquote p {
     text-align: center;
     color: #fff;
     font-weight: 300;
-    font-size: 18px;
+    font-size: 13px;
 }
 
 .cart__btn_in-cart {

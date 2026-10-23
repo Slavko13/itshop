@@ -74,6 +74,75 @@
 		});
 	}
 
+	function showRequiredFieldsNotice(form, fields) {
+		var english = document.cookie.split(';').some(function (item) {
+			return item.trim().indexOf('googtrans=/ru/en') === 0;
+		}) || document.documentElement.classList.contains('translated-ltr') || document.querySelector('[data-gt-lang="en"].gt-current-lang');
+		var englishLabels = {
+			username: 'email or username',
+			password: 'password',
+			reg_username: 'username',
+			reg_email: 'email',
+			reg_password: 'password',
+			user_login: 'email or username'
+		};
+		var labels = fields.map(function (field) {
+			var label = form.querySelector('label[for="' + field.id + '"]');
+			if (english && englishLabels[field.id]) return englishLabels[field.id];
+			if (!label) return '';
+			var cleanLabel = label.cloneNode(true);
+			cleanLabel.querySelectorAll('.required, .screen-reader-text').forEach(function (node) { node.remove(); });
+			return cleanLabel.textContent.trim().toLowerCase();
+		}).filter(Boolean);
+		var message = english
+			? (labels.length ? 'Please complete the required fields: ' + labels.join(' and ') + '.' : 'Please complete the required fields.')
+			: (labels.length ? 'Заполните обязательные поля: ' + labels.join(' и ') + '.' : 'Заполните обязательные поля.');
+		var scope = form.closest('.woocommerce') || form.parentElement;
+		var wrapper = scope ? scope.querySelector('.woocommerce-notices-wrapper') : null;
+
+		if (!wrapper && scope) {
+			wrapper = document.createElement('div');
+			wrapper.className = 'woocommerce-notices-wrapper';
+			scope.insertBefore(wrapper, scope.firstChild);
+		}
+
+		if (wrapper) {
+			wrapper.innerHTML = '';
+			var list = document.createElement('ul');
+			list.className = 'woocommerce-error';
+			list.setAttribute('role', 'alert');
+			var item = document.createElement('li');
+			item.textContent = message;
+			list.appendChild(item);
+			wrapper.appendChild(list);
+			wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+
+		fields.forEach(function (field) {
+			field.setAttribute('aria-invalid', 'true');
+			field.addEventListener('input', function clearInvalid() {
+				if (field.value.trim()) field.removeAttribute('aria-invalid');
+			}, { once: true });
+		});
+
+		fields[0].focus();
+	}
+
+	function initRequiredFieldValidation() {
+		document.querySelectorAll('.account-form').forEach(function (form) {
+			form.addEventListener('submit', function (event) {
+				var empty = Array.prototype.slice.call(form.querySelectorAll('[required]')).filter(function (field) {
+					return !String(field.value || '').trim();
+				});
+
+				if (!empty.length) return;
+
+				event.preventDefault();
+				showRequiredFieldsNotice(form, empty);
+			});
+		});
+	}
+
 	function initAccountNavigation() {
 		var select = document.querySelector('[data-account-nav-select]');
 		if (!select) {
@@ -151,6 +220,7 @@
 	document.addEventListener('DOMContentLoaded', function () {
 		document.querySelectorAll('[data-account-auth]').forEach(initAuthTabs);
 		initPasswordToggles();
+		initRequiredFieldValidation();
 		initAccountNavigation();
 		initLicenseControls();
 	});

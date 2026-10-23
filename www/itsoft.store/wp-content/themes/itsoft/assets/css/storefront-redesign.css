@@ -748,7 +748,14 @@
 
 .catalog-filters__search:focus-within {
     border-color: var(--main-perple);
-    box-shadow: 0 0 0 3px rgba(108, 76, 255, 0.12);
+    box-shadow: 0 0 0 2px rgba(108, 76, 255, 0.12);
+}
+
+.catalog-filters__field:focus-within,
+.catalog-filters__input:focus,
+.catalog-filters__submit:focus {
+    outline: 0;
+    box-shadow: none;
 }
 
 .catalog-filters__field {
@@ -993,8 +1000,43 @@
     align-items: stretch;
     flex-direction: column;
     gap: 7px;
-    min-height: 68px;
+	min-height: 117px;
     margin: 0;
+}
+
+.catalog-card__quick-buy,
+.woocommerce a.button.catalog-card__quick-buy,
+.woocommerce-page a.button.catalog-card__quick-buy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid rgba(108, 76, 255, 0.42);
+    border-radius: 13px;
+    box-sizing: border-box;
+    background: #fff;
+    color: var(--main-perple);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.catalog-card__quick-buy:hover,
+.catalog-card__quick-buy:focus-visible,
+.woocommerce a.button.catalog-card__quick-buy:hover,
+.woocommerce a.button.catalog-card__quick-buy:focus-visible,
+.woocommerce-page a.button.catalog-card__quick-buy:hover,
+.woocommerce-page a.button.catalog-card__quick-buy:focus-visible {
+    border-color: var(--main-perple);
+    background: var(--storefront-soft);
+    color: var(--main-perple-hover);
 }
 
 .catalog-card__buy,
@@ -1643,6 +1685,16 @@
         padding: 0 8px;
         border-radius: 11px;
         font-size: 11px;
+    }
+
+    .catalog-card__quick-buy,
+    .woocommerce a.button.catalog-card__quick-buy,
+    .woocommerce-page a.button.catalog-card__quick-buy {
+        height: 40px;
+        min-height: 40px;
+        padding: 0 7px;
+        border-radius: 11px;
+        font-size: 10px;
     }
 
     .catalog-card__buy-icon {

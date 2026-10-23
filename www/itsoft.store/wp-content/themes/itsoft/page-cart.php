@@ -25,6 +25,7 @@ $itsoft_cart_is_empty = function_exists( 'WC' ) && WC()->cart && WC()->cart->is_
 		data-empty-lead="<?php echo esc_attr__( 'Выберите нужный продукт — мы сохраним его здесь и проведём вас до получения заказа.', 'itsoft' ); ?>"
 		data-filled-lead="<?php echo esc_attr__( 'Проверьте состав заказа — дальше останется указать контакты и выбрать способ оплаты.', 'itsoft' ); ?>"
 	>
+		<?php if ( ! $itsoft_cart_is_empty ) : ?>
 		<header class="cart-page__hero">
 			<div class="grid-container cart-page__hero-grid">
 				<div class="cart-page__heading">
@@ -58,6 +59,7 @@ $itsoft_cart_is_empty = function_exists( 'WC' ) && WC()->cart && WC()->cart->is_
 				<?php endif; ?>
 			</div>
 		</header>
+		<?php endif; ?>
 
 		<div class="grid-container">
 			<div class="cart-page__content">

@@ -166,6 +166,21 @@ try {
 		console.log(`${pass ? 'PASS' : 'FAIL'} guest ${width}px overflow=${overflow}px clipped=${clipped}px card=${guest.cardLeft}-${guest.cardRight}`);
 	}
 
+	const emptyLogin = await evaluate(`(() => {
+		const button = document.querySelector('button[name="login"]');
+		button?.click();
+		return {
+			message: document.querySelector('.woocommerce-error')?.innerText.trim() || '',
+			invalid: document.querySelectorAll('.account-form [aria-invalid="true"]').length,
+		};
+	})()`);
+	const emptyLoginPass = (
+		emptyLogin.message === 'Заполните обязательные поля: e-mail или имя пользователя и пароль.'
+		|| emptyLogin.message === 'Please complete the required fields: email or username and password.'
+	) && emptyLogin.invalid === 2;
+	checks.push({ page: 'guest-required-fields', width: 1280, pass: emptyLoginPass });
+	console.log(`${emptyLoginPass ? 'PASS' : 'FAIL'} empty login required-fields message=${JSON.stringify(emptyLogin.message)}`);
+
 	await login();
 
 	const cases = [

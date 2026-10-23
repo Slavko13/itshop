@@ -47,8 +47,13 @@
 
 		const isEmpty = Boolean( emptyState );
 		const lead = page.querySelector( '.cart-page__lead' );
+		const hero = page.querySelector( '.cart-page__hero' );
 
 		page.classList.toggle( 'cart-page--empty', isEmpty );
+
+		if ( hero ) {
+			hero.hidden = isEmpty;
+		}
 
 		if ( lead ) {
 			const nextLead = isEmpty ? page.dataset.emptyLead : page.dataset.filledLead;

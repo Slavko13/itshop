@@ -130,6 +130,30 @@ function itsoft_cleanup() {
 }
 
 /**
+ * Return a precise validation message when the login form is submitted empty.
+ * WooCommerce otherwise collapses some failed cases into a misleading
+ * "incorrect credentials" notice.
+ */
+add_filter( 'woocommerce_process_login_errors', 'itsoft_validate_required_login_fields', 10, 3 );
+function itsoft_validate_required_login_fields( $validation_error, $username, $password ) {
+	if ( '' !== trim( (string) $username ) && '' !== trim( (string) $password ) ) {
+		return $validation_error;
+	}
+
+	$validation_error = new WP_Error();
+
+	if ( '' === trim( (string) $username ) && '' === trim( (string) $password ) ) {
+		$validation_error->add( 'itsoft_required_login_fields', __( 'Заполните обязательные поля: e-mail или имя пользователя и пароль.', 'itsoft' ) );
+	} elseif ( '' === trim( (string) $username ) ) {
+		$validation_error->add( 'itsoft_required_username', __( 'Заполните поле «E-mail или имя пользователя».', 'itsoft' ) );
+	} else {
+		$validation_error->add( 'itsoft_required_password', __( 'Заполните поле «Пароль».', 'itsoft' ) );
+	}
+
+	return $validation_error;
+}
+
+/**
  * Do not let browsers heuristically cache dynamic pages in the local build.
  * Production caching remains untouched.
  */
@@ -421,6 +445,15 @@ function itsoft_assets() {
         true
     );
 
+	$english_copy_path = get_template_directory() . '/assets/js/english-copy.js';
+	wp_enqueue_script(
+		'itsoft-english-copy',
+		get_template_directory_uri() . '/assets/js/english-copy.js',
+		array( 'itsoft-script' ),
+		file_exists( $english_copy_path ) ? (string) filemtime( $english_copy_path ) : $ver,
+		true
+	);
+
 	wp_enqueue_script(
 		'itsoft-cart-badge',
 		get_template_directory_uri() . '/assets/js/cart-badge.js',
@@ -568,6 +601,67 @@ function itsoft_ajax_add_to_cart() {
 }
 add_action( 'wp_ajax_itsoft_add_to_cart', 'itsoft_ajax_add_to_cart' );
 add_action( 'wp_ajax_nopriv_itsoft_add_to_cart', 'itsoft_ajax_add_to_cart' );
+
+/**
+ * Builds a checkout URL that adds the product without opening its detail page.
+ * For variable products the first available/default variation is used.
+ *
+ * @param WC_Product $product Product shown in a catalog card.
+ * @return string
+ */
+function itsoft_get_quick_buy_url( $product ) {
+	if ( ! $product instanceof WC_Product || ! $product->is_purchasable() || ! $product->is_in_stock() ) {
+		return '';
+	}
+
+	$args = array(
+		'add-to-cart'    => $product->get_id(),
+		'quantity'       => 1,
+		'itsoft-buy-now' => 1,
+	);
+
+	if ( $product instanceof WC_Product_Variable ) {
+		$selected_variation = null;
+
+		foreach ( $product->get_available_variations( 'objects' ) as $variation ) {
+			if ( $variation instanceof WC_Product_Variation && $variation->is_purchasable() && $variation->is_in_stock() ) {
+				$selected_variation = $variation;
+				break;
+			}
+		}
+
+		if ( ! $selected_variation ) {
+			return '';
+		}
+
+		$args['variation_id'] = $selected_variation->get_id();
+		$defaults             = $product->get_default_attributes();
+		$available_attributes = $product->get_variation_attributes();
+
+		foreach ( $selected_variation->get_variation_attributes() as $attribute_name => $attribute_value ) {
+			$taxonomy_name = preg_replace( '/^attribute_/', '', $attribute_name );
+			$value         = $attribute_value;
+
+			if ( '' === $value && isset( $defaults[ $taxonomy_name ] ) ) {
+				$value = $defaults[ $taxonomy_name ];
+			}
+
+			if ( '' === $value && ! empty( $available_attributes[ $taxonomy_name ] ) ) {
+				$value = reset( $available_attributes[ $taxonomy_name ] );
+			}
+
+			if ( '' === (string) $value ) {
+				return '';
+			}
+
+			$args[ $attribute_name ] = $value;
+		}
+	} elseif ( ! $product instanceof WC_Product_Simple ) {
+		return '';
+	}
+
+	return add_query_arg( $args, wc_get_checkout_url() );
+}
 
 /**
  * Advertise the native WordPress sitemap to search crawlers.

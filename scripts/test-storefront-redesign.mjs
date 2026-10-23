@@ -168,16 +168,26 @@ try {
 				const labelRect = label.getBoundingClientRect();
 				return Math.abs((buttonRect.top + buttonRect.bottom) / 2 - (labelRect.top + labelRect.bottom) / 2);
 			});
+			const userIconTops = [...document.querySelectorAll('.header-main__user .user-nav__icon')]
+				.filter((icon) => icon.getBoundingClientRect().width > 0 && getComputedStyle(icon).visibility !== 'hidden')
+				.map((icon) => Math.round(icon.getBoundingClientRect().top));
 			return {
 				title: document.querySelector('.catalog__title')?.textContent.trim() || '',
 				style: Boolean(document.querySelector('link[href*="storefront-redesign.css"]')),
 				overflow: document.documentElement.scrollWidth - window.innerWidth,
 				cards: cards.length,
 				buttons: document.querySelectorAll('.catalog-card__buy').length,
+				availableCards: cards.filter((card) => card.querySelector('.catalog-card__stock-note--placeholder')).length,
+				quickBuyButtons: document.querySelectorAll('.catalog-card__quick-buy').length,
+				validQuickBuyLinks: [...document.querySelectorAll('.catalog-card__quick-buy')].filter((link) => {
+					const url = new URL(link.href);
+					return url.pathname.includes('/checkout') && url.searchParams.has('add-to-cart');
+				}).length,
 				columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length : 0,
 				rightmost,
 				maxRowHeightSpread: Math.max(0, ...rowHeightSpreads),
 				maxButtonLabelOffset: Math.max(0, ...buttonLabelOffsets),
+				userIconTopSpread: userIconTops.length ? Math.max(...userIconTops) - Math.min(...userIconTops) : 0,
 				desktopColumnTopOffset: filters && sidebarBody ? Math.abs(filters.top - sidebarBody.top) : 0,
 				headerToBreadcrumbGap: header && breadcrumbList ? breadcrumbList.top - header.bottom : 0,
 				hasLegacyInnerHero: Boolean(document.querySelector('.header .hero-small')),
@@ -192,10 +202,13 @@ try {
 		assert(`${width}px no horizontal overflow`, state.overflow <= 1, `${state.overflow}px`);
 		assert(`${width}px product cards render`, state.cards > 0, String(state.cards));
 		assert(`${width}px every card has an action`, state.buttons === state.cards, `${state.buttons}/${state.cards}`);
+		assert(`${width}px every available card has quick buy`, state.quickBuyButtons === state.availableCards, `${state.quickBuyButtons}/${state.availableCards}`);
+		assert(`${width}px quick-buy links go straight to checkout`, state.validQuickBuyLinks === state.quickBuyButtons, `${state.validQuickBuyLinks}/${state.quickBuyButtons}`);
 		assert(`${width}px expected grid columns`, state.columns === expectedColumns, `${state.columns}, expected ${expectedColumns}`);
 		assert(`${width}px cards fit viewport`, state.rightmost <= width + 1, `${state.rightmost}px`);
 		assert(`${width}px cards have equal height within rows`, state.maxRowHeightSpread <= 1, `${state.maxRowHeightSpread}px`);
 		assert(`${width}px action labels are vertically centered`, state.maxButtonLabelOffset <= 1, `${state.maxButtonLabelOffset}px`);
+		assert(`${width}px header icons share one baseline`, state.userIconTopSpread <= 1, `${state.userIconTopSpread}px`);
 		assert(`${width}px category toggle visibility`, state.toggleVisible === (width < 860));
 		assert(`${width}px no nested interactive elements`, !state.nestedInteractive);
 		assert(`${width}px catalog does not render legacy inner hero`, !state.hasLegacyInnerHero);
@@ -333,6 +346,18 @@ try {
 			};
 		})()`);
 		assert('AJAX add-to-cart completes', added.added && added.label === 'В корзине', JSON.stringify(added));
+	}
+
+	const quickBuyUrl = await evaluate(`document.querySelector('.catalog-card__quick-buy')?.href || ''`);
+	assert('catalog exposes a direct quick-buy checkout URL', Boolean(quickBuyUrl), quickBuyUrl);
+	if (quickBuyUrl) {
+		await navigate(quickBuyUrl, 1280);
+		const quickBuyCheckout = await evaluate(`(() => ({
+			path: location.pathname,
+			checkout: Boolean(document.querySelector('.woocommerce-checkout, .checkout-page')),
+			cartCount: Number.parseInt(document.querySelector('[data-cart-count]')?.textContent || '0', 10),
+		}))()`);
+		assert('quick buy adds the product and opens checkout', quickBuyCheckout.path.includes('/checkout') && quickBuyCheckout.checkout && quickBuyCheckout.cartCount > 0, JSON.stringify(quickBuyCheckout));
 	}
 
 	for (const width of [393, 768, 1280, 1440]) {
