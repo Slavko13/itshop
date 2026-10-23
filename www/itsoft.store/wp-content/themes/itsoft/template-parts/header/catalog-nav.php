@@ -6,11 +6,74 @@
         'hide_empty' => false,
         'parent'     => 0,
     ));
+
+    $category_priority = static function ( $term ) {
+        $name = isset( $term->name ) ? trim( (string) $term->name ) : '';
+        $slug = isset( $term->slug ) ? strtolower( (string) $term->slug ) : '';
+
+        if ( 'microsoft-office' === $slug || 0 === strcasecmp( $name, 'Microsoft Office' ) ) {
+            return 0;
+        }
+
+        if ( 'microsoft-windows' === $slug || 0 === strcasecmp( $name, 'Microsoft Windows' ) ) {
+            return 1;
+        }
+
+        return 100;
+    };
+
+    if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
+        $original_positions = array_flip( wp_list_pluck( $categories, 'term_id' ) );
+        usort(
+            $categories,
+            static function ( $left, $right ) use ( $category_priority, $original_positions ) {
+                $priority_comparison = $category_priority( $left ) <=> $category_priority( $right );
+                if ( 0 !== $priority_comparison ) {
+                    return $priority_comparison;
+                }
+
+                return ( $original_positions[ $left->term_id ] ?? 0 ) <=> ( $original_positions[ $right->term_id ] ?? 0 );
+            }
+        );
+    }
+
+    $sort_release_terms = static function ( array &$terms, $product_family ) {
+        usort(
+            $terms,
+            static function ( $left, $right ) use ( $product_family ) {
+                $release_rank = static function ( $term ) use ( $product_family ) {
+                    $name = (string) $term->name;
+
+                    if ( 'office' === $product_family && preg_match( '/\b(20\d{2})\b/u', $name, $matches ) ) {
+                        return array( 0, (int) $matches[1] );
+                    }
+
+                    if ( 'windows' === $product_family && preg_match( '/\bWindows\s+(\d{1,2})\b/ui', $name, $matches ) ) {
+                        return array( 0, (int) $matches[1] );
+                    }
+
+                    return array( 1, PHP_INT_MAX );
+                };
+
+                $left_rank  = $release_rank( $left );
+                $right_rank = $release_rank( $right );
+                $comparison = $left_rank <=> $right_rank;
+
+                return 0 !== $comparison ? $comparison : strnatcasecmp( $left->name, $right->name );
+            }
+        );
+    };
     ?>
+
+    <button class="catalog-nav__close" type="button" aria-label="Закрыть каталог" data-catalog-close>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </button>
 
     <!-- Mobile Header (Visible only on mobile) -->
     <div class="catalog-nav__mobile-header">
-        <button class="catalog-nav__mobile-close" type="button" aria-label="Закрыть каталог">
+        <button class="catalog-nav__mobile-close" type="button" aria-label="Закрыть каталог" data-catalog-close>
             <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 30L30 10M10 10L30 30" stroke="#4B2FD7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
@@ -63,6 +126,10 @@
                         'hide_empty' => false,
                         'parent'     => $category->term_id,
                     ));
+                    $category_family = 0 === $category_priority( $category ) ? 'office' : ( 1 === $category_priority( $category ) ? 'windows' : '' );
+                    if ( $category_family && ! empty( $children ) && ! is_wp_error( $children ) ) {
+                        $sort_release_terms( $children, $category_family );
+                    }
                     $has_children = !empty($children) && !is_wp_error($children);
                 ?>
                     <li class="catalog-nav__parent-item <?php echo $has_children ? 'has-children' : ''; ?>">
@@ -168,6 +235,32 @@
             display: none;
         }
 
+        .catalog-nav__close {
+            position: absolute;
+            z-index: 6;
+            top: 14px;
+            right: 14px;
+            display: grid;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid #e1dcff;
+            border-radius: 12px;
+            background: #fff;
+            color: var(--main-perple, #6c4cff);
+            cursor: pointer;
+            place-items: center;
+            transition: border-color .2s ease, background-color .2s ease, color .2s ease;
+        }
+
+        .catalog-nav__close:hover,
+        .catalog-nav__close:focus-visible {
+            border-color: var(--main-perple, #6c4cff);
+            background: #f2efff;
+            color: var(--main-perple-hover, #4b2fd7);
+            outline: none;
+        }
+
         /* Column 1: Parents */
         .catalog-nav__parents {
             width: 33.333%;
@@ -239,7 +332,7 @@
                 width: 66.666%;
                 height: 100%;
                 background: #fff;
-                padding: 30px;
+                padding: 30px 70px 30px 30px;
                 box-sizing: border-box;
                 border-radius: 0 20px 20px 0;
                 overflow-y: auto;
@@ -298,6 +391,10 @@
 
         /* Mobile Styles (< 1024px) */
         @media (max-width: 1024px) {
+
+            .catalog-nav__close {
+                display: none;
+            }
 
             .admin-bar .catalog__nav {
                 /* padding-top: 32px;
@@ -524,24 +621,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const nav = document.querySelector('.catalog__nav');
-            const closeBtn = document.querySelector('.catalog-nav__mobile-close');
-            const catalogBtn = document.querySelector('.catalog-btn');
-            const mobileButton = document.querySelector('.mobile-nav__burger');
             const toggleBtns = document.querySelectorAll('.catalog-nav__toggle-btn');
-            
-            // Mobile Close Button
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    nav.classList.remove('active');
-                    if(catalogBtn) catalogBtn.classList.remove('active');
-                    if (mobileButton) {
-                        mobileButton.setAttribute('aria-expanded', 'false');
-                        mobileButton.setAttribute('aria-label', 'Открыть каталог');
-                    }
-                    document.body.classList.remove('no-scroll');
-                    document.body.style.overflowY = '';
-                });
-            }
 
             // Accordion Toggles
             toggleBtns.forEach(btn => {

@@ -130,6 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (catalogBtn && popNav) {
+		const closeCatalog = () => {
+			popNav.classList.remove('active');
+			catalogBtn.classList.remove('active');
+			catalogBtn.setAttribute('aria-expanded', 'false');
+			document.querySelectorAll('.mobile-nav__burger').forEach((button) => {
+				button.setAttribute('aria-expanded', 'false');
+				button.setAttribute('aria-label', 'Открыть каталог');
+			});
+			document.body.classList.remove('no-scroll');
+			document.body.style.overflowY = '';
+		};
+
         catalogBtn.addEventListener('click', function() {
             const isOpen = popNav.classList.toggle('active');
             this.classList.toggle('active', isOpen);
@@ -137,6 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isOpen) positionCatalogMenu();
         });
+
+		popNav.querySelectorAll('[data-catalog-close]').forEach((button) => {
+			button.addEventListener('click', closeCatalog);
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if ('Escape' === event.key && popNav.classList.contains('active')) {
+				closeCatalog();
+				catalogBtn.focus();
+			}
+		});
 
         window.addEventListener('resize', () => {
             if (popNav.classList.contains('active')) positionCatalogMenu();

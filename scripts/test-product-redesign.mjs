@@ -101,6 +101,8 @@ async function openProduct(path, width, height, name) {
 				return { className: element.className || '', left: Math.round(rect.left), right: Math.round(rect.right) };
 			})
 			.filter((rect) => rect.left < -1 || rect.right > document.documentElement.clientWidth + 1);
+		const upsellCards = [...document.querySelectorAll('.product-upsells .catalog-card')];
+		const upsellButtons = [...document.querySelectorAll('.product-upsells .catalog-card__buy')];
 		return {
 			title: page?.querySelector('.product-title')?.textContent.trim() || '',
 			h1Count: page?.querySelectorAll('h1').length || 0,
@@ -115,6 +117,13 @@ async function openProduct(path, width, height, name) {
 			viewport: document.documentElement.clientWidth,
 			widest: widest ? { tag: widest.element.tagName, className: widest.element.className || '', right: Math.round(widest.right) } : null,
 			layoutOverflow,
+			upsells: {
+				count: upsellCards.length,
+				cardHeights: upsellCards.map((card) => Math.round(card.getBoundingClientRect().height)),
+				buttonHeights: upsellButtons.map((upsellButton) => Math.round(upsellButton.getBoundingClientRect().height)),
+				buttonColors: upsellButtons.map((upsellButton) => getComputedStyle(upsellButton).backgroundColor),
+				buttonTransforms: upsellButtons.map((upsellButton) => getComputedStyle(upsellButton).transform),
+			},
 			rects: Object.fromEntries(['.product-page', '.breadcrumbs', '.breadcrumbs__list', '.product-top', '.product-purchase', '.product-title'].map((selector) => {
 				const rect = document.querySelector(selector)?.getBoundingClientRect();
 				return [selector, rect ? { x: Math.round(rect.x), width: Math.round(rect.width), right: Math.round(rect.right) } : null];
@@ -128,6 +137,17 @@ async function openProduct(path, width, height, name) {
 	}
 	if (result.overflow > 0 || result.layoutOverflow.length > 0) {
 		throw new Error(`${name} horizontal overflow: ${JSON.stringify(result)}`);
+	}
+	if (result.upsells.count) {
+		const buttonsAreStable = result.upsells.buttonHeights.every((height) => height === 46)
+			&& result.upsells.buttonColors.every((color) => color === 'rgb(108, 76, 255)')
+			&& result.upsells.buttonTransforms.every((transform) => transform === 'none');
+		if (!buttonsAreStable) {
+			throw new Error(`${name} upsell button styles failed: ${JSON.stringify(result.upsells)}`);
+		}
+		if (width >= 1024 && new Set(result.upsells.cardHeights).size !== 1) {
+			throw new Error(`${name} upsell cards have unequal heights: ${JSON.stringify(result.upsells.cardHeights)}`);
+		}
 	}
 
 	if (capture) {

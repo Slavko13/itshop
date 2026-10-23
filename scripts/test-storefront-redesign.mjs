@@ -285,9 +285,20 @@ try {
 		const container = document.querySelector('.header-main__row.grid-container');
 		const menuRect = menu?.getBoundingClientRect();
 		const containerRect = container?.getBoundingClientRect();
+		const parentItems = [...(menu?.querySelectorAll('.catalog-nav__parent-item') || [])];
+		const parentLabels = parentItems.map((item) => item.querySelector('.catalog-nav__parent-text')?.textContent.trim() || '');
+		const childrenFor = (label) => {
+			const item = parentItems.find((candidate) => candidate.querySelector('.catalog-nav__parent-text')?.textContent.trim() === label);
+			return [...(item?.querySelectorAll('.catalog-nav__child-link') || [])].map((link) => link.textContent.trim());
+		};
+		const closeButton = menu?.querySelector('.catalog-nav__close');
 		return {
 			open: Boolean(menu?.classList.contains('active')),
 			expanded: document.querySelector('.catalog-btn')?.getAttribute('aria-expanded'),
+			parentLabels,
+			officeChildren: childrenFor('Microsoft Office'),
+			windowsChildren: childrenFor('Microsoft Windows'),
+			closeVisible: Boolean(closeButton) && getComputedStyle(closeButton).display !== 'none',
 			left: menuRect?.left || 0,
 			right: menuRect?.right || 0,
 			containerLeft: containerRect?.left || 0,
@@ -295,8 +306,19 @@ try {
 		};
 	})()`);
 	assert('desktop catalog menu opens inside header container', catalogMenu.open && catalogMenu.expanded === 'true' && catalogMenu.left >= catalogMenu.containerLeft - 1 && catalogMenu.right <= catalogMenu.containerRight + 1, JSON.stringify(catalogMenu));
+	assert('catalog starts with Office then Windows', catalogMenu.parentLabels[0] === 'Microsoft Office' && catalogMenu.parentLabels[1] === 'Microsoft Windows', catalogMenu.parentLabels.join(' | '));
+	assert('Office releases run oldest to newest', JSON.stringify(catalogMenu.officeChildren.slice(0, 4)) === JSON.stringify(['Office 2016', 'Office 2019', 'Office 2021', 'Office 2024']), catalogMenu.officeChildren.join(' | '));
+	assert('Windows releases run oldest to newest', JSON.stringify(catalogMenu.windowsChildren.slice(0, 2)) === JSON.stringify(['Windows 10', 'Windows 11']), catalogMenu.windowsChildren.join(' | '));
+	assert('desktop catalog has a visible close button', catalogMenu.closeVisible);
 	await capture('catalog-menu-1280.png');
-	await evaluate(`document.querySelector('.catalog-btn')?.click()`);
+	const catalogClosed = await evaluate(`(() => {
+		document.querySelector('.catalog-nav__close')?.click();
+		return {
+			open: document.querySelector('.catalog__nav')?.classList.contains('active'),
+			expanded: document.querySelector('.catalog-btn')?.getAttribute('aria-expanded'),
+		};
+	})()`);
+	assert('catalog close button closes the menu', !catalogClosed.open && catalogClosed.expanded === 'false', JSON.stringify(catalogClosed));
 
 	const ajaxButtonExists = await evaluate(`Boolean(document.querySelector('.catalog-card__buy.ajax_add_to_cart'))`);
 	assert('simple product has AJAX add button', ajaxButtonExists);

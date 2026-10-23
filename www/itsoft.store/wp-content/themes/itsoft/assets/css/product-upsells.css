@@ -14,11 +14,219 @@
 
 .product-upsells-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 81px 24px;
+    align-items: stretch;
 }
 
 .product-upsells .catalog-grid__item::after {
+    display: none;
+}
+
+.product-upsells .catalog-grid__item {
+    min-width: 0;
+    height: 100%;
+}
+
+.product-upsells .catalog-card {
+    display: flex;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #dfe1ea;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 9px 28px rgba(34, 28, 73, .055);
+    box-sizing: border-box;
+    transform: none;
+}
+
+.product-upsells .catalog-card:hover {
+    border-color: rgba(108, 76, 255, .28);
+    box-shadow: 0 14px 34px rgba(34, 28, 73, .09);
+    transform: none;
+}
+
+.product-upsells .catalog-card__media {
+    flex: none;
+    padding: 10px 10px 0;
+}
+
+.product-upsells .catalog-card__image-link {
+    display: grid;
+    width: 100%;
+    aspect-ratio: 1 / .88;
+    overflow: hidden;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #f4f2ff 0%, #f8f9fd 58%, #eef1f8 100%);
+    place-items: center;
+    box-sizing: border-box;
+}
+
+.product-upsells .catalog-card__image {
+    width: 100%;
+    height: 100%;
+    padding: 14px;
+    border-radius: 0;
+    object-fit: contain;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+.product-upsells .catalog-card__badges {
+    z-index: 2;
+    top: 20px;
+    left: 20px;
+    max-width: calc(100% - 72px);
+}
+
+.product-upsells .catalog-card__badge {
+    padding: 4px 9px;
+    font-size: 10px;
+    letter-spacing: .02em;
+    box-shadow: 0 3px 10px rgba(15, 17, 22, .1);
+}
+
+.product-upsells .catalog-card__discount {
+    z-index: 2;
+    right: 18px;
+    bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 9px;
+    font-size: 12px;
+}
+
+.product-upsells .catalog-card__body {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    gap: 10px;
+    padding: 16px;
+}
+
+.product-upsells .catalog-card__title {
+    min-height: calc(1.35em * 2);
+    margin: 0;
+    overflow: hidden;
+    font-size: 16px;
+    line-height: 1.35;
+}
+
+.product-upsells .catalog-card__link {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.product-upsells .catalog-card__meta {
+    min-height: 24px;
+    gap: 12px;
+}
+
+.product-upsells .catalog-card__rating-value,
+.product-upsells .catalog-card__reviews-count {
+    font-size: 13px;
+}
+
+.product-upsells .catalog-card__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.product-upsells .catalog-card__pricing {
+    flex-wrap: wrap;
+    gap: 7px;
+    min-height: 25px;
+    font-size: 22px;
+    letter-spacing: -.035em;
+}
+
+.product-upsells .catalog-card__price-old {
+    font-size: 13px;
+}
+
+.product-upsells .catalog-card__actions {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 7px;
+    min-height: 68px;
+    margin: 0;
+}
+
+.product-upsells .catalog-card__buy,
+.woocommerce .product-upsells a.button.catalog-card__buy,
+.woocommerce-page .product-upsells a.button.catalog-card__buy {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 46px;
+    min-height: 46px;
+    margin: 0;
+    padding: 0 38px 0 16px;
+    border: 0;
+    border-radius: 13px;
+    background: var(--main-perple, #6c4cff);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    box-sizing: border-box;
+    box-shadow: none;
+    transform: none;
+    transition: background-color .2s ease, opacity .2s ease;
+}
+
+.product-upsells .catalog-card__buy:hover,
+.product-upsells .catalog-card__buy:focus-visible,
+.woocommerce .product-upsells a.button.catalog-card__buy:hover,
+.woocommerce .product-upsells a.button.catalog-card__buy:focus-visible,
+.woocommerce-page .product-upsells a.button.catalog-card__buy:hover,
+.woocommerce-page .product-upsells a.button.catalog-card__buy:focus-visible {
+    background: var(--main-perple-hover, #4b2fd7);
+    color: #fff;
+    box-shadow: none;
+    transform: none;
+}
+
+.product-upsells .catalog-card__buy-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    line-height: 1;
+    transform: translateY(-50%);
+}
+
+.product-upsells .catalog-card__buy-label {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    line-height: 1;
+    text-overflow: ellipsis;
+}
+
+.product-upsells .catalog-card__stock-note {
+    display: block;
+    min-height: 15px;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.product-upsells .catalog-card__stock-note--placeholder {
+    visibility: hidden;
+}
+
+.product-upsells .catalog-card__actions > .added_to_cart.wc-forward {
     display: none;
 }
 
@@ -37,5 +245,9 @@
 @media (max-width: 575px) {
     .product-upsells-grid {
         grid-template-columns: 1fr;
+    }
+
+    .product-upsells .catalog-card__title {
+        min-height: 0;
     }
 }
