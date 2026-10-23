@@ -49,6 +49,7 @@ define( 'SCRIPT_DEBUG', true );
 define( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED', '0' !== getenv( 'ITSOFT_EXTERNAL_INTEGRATIONS_DISABLED' ) );
 $itsoft_payment_integrations_enabled = '1' === getenv( 'ITSOFT_PAYMENT_INTEGRATIONS_ENABLED' );
 define( 'ITSOFT_PAYMENT_INTEGRATIONS_ENABLED', $itsoft_payment_integrations_enabled );
+define( 'ITSOFT_MOCK_PAYMENT_ENABLED', '1' === getenv( 'ITSOFT_MOCK_PAYMENT_ENABLED' ) );
 // Preserve this value when restoring a backup or existing encrypted keys become unreadable.
 define( 'ITSOFT_LICENSE_ENCRYPTION_KEY', getenv( 'ITSOFT_LICENSE_ENCRYPTION_KEY' ) ?: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=' );
 // Persistent local fixture storage. Production should point this outside the public web-root.

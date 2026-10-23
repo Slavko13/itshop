@@ -3,8 +3,18 @@
 defined( 'ABSPATH' ) || exit;
 
 final class ITSoft_LF_Mock_Payment {
+	public static function is_enabled(): bool {
+		$environment = wp_get_environment_type();
+		if ( 'production' === $environment ) {
+			return false;
+		}
+
+		return 'local' === $environment
+			|| ( 'staging' === $environment && defined( 'ITSOFT_MOCK_PAYMENT_ENABLED' ) && ITSOFT_MOCK_PAYMENT_ENABLED );
+	}
+
 	public static function register_hooks(): void {
-		if ( 'local' !== wp_get_environment_type() ) {
+		if ( ! self::is_enabled() ) {
 			return;
 		}
 		add_filter( 'woocommerce_payment_gateways', array( self::class, 'register_gateway' ) );

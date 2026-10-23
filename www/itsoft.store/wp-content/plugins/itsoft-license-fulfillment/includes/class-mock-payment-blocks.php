@@ -8,13 +8,13 @@ final class ITSoft_LF_Mock_Payment_Blocks extends Automattic\WooCommerce\Blocks\
 	public function initialize(): void {
 		$this->settings = array(
 			'enabled'     => 'yes',
-			'title'       => 'Тестовая оплата (без денег)',
-			'description' => 'Только локальная проверка: платёж подтверждается сразу.',
+			'title'       => 'Тестовая оплата — деньги не списываются',
+			'description' => 'Только для тестового стенда: платёж подтверждается сразу без обращения к банку.',
 		);
 	}
 
 	public function is_active(): bool {
-		return 'local' === wp_get_environment_type();
+		return ITSoft_LF_Mock_Payment::is_enabled();
 	}
 
 	public function get_payment_method_script_handles(): array {
