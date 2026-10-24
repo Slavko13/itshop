@@ -31,6 +31,22 @@ final class ITSoft_LF_Search {
 		'профессиональный' => 'professional',
 		'домашняя'         => 'home',
 		'домашний'         => 'home',
+		'хоум'             => 'home',
+		'проект'           => 'project',
+		'проджект'         => 'project',
+		'вижио'            => 'visio',
+		'висио'            => 'visio',
+		'визио'            => 'visio',
+		'ворд'             => 'word',
+		'эксель'           => 'excel',
+		'аутлук'           => 'outlook',
+		'оутлук'           => 'outlook',
+		'сервер'           => 'server',
+		'серверный'        => 'server',
+		'рдс'              => 'rds',
+		'корпоративная'    => 'enterprise',
+		'корпоративный'    => 'enterprise',
+		'энтерпрайз'       => 'enterprise',
 	);
 
 	private const STOP_TOKENS = array(
@@ -45,6 +61,11 @@ final class ITSoft_LF_Search {
 		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'render_synonyms_field' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( $this, 'save_synonyms_field' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ), 40 );
+	}
+
+	/** @return array<string, string> */
+	public static function client_aliases(): array {
+		return self::TOKEN_ALIASES;
 	}
 
 	public function configure_search_query( WP_Query $query ): void {
@@ -248,7 +269,7 @@ final class ITSoft_LF_Search {
 		$value = preg_replace( '/[^\p{L}\p{N}]+/u', ' ', (string) $value );
 		$tokens = preg_split( '/\s+/u', trim( (string) $value ) ) ?: array();
 		foreach ( $tokens as &$token ) {
-			$token = self::TOKEN_ALIASES[ $token ] ?? $token;
+			$token = $this->resolve_alias( $token );
 		}
 		unset( $token );
 		return trim( implode( ' ', $tokens ) );
@@ -257,6 +278,60 @@ final class ITSoft_LF_Search {
 	/** @return string[] */
 	private function tokens( string $value ): array {
 		return array_values( array_filter( preg_split( '/\s+/u', trim( $value ) ) ?: array(), 'strlen' ) );
+	}
+
+	private function resolve_alias( string $token ): string {
+		if ( isset( self::TOKEN_ALIASES[ $token ] ) ) {
+			return self::TOKEN_ALIASES[ $token ];
+		}
+
+		$length = mb_strlen( $token );
+		if ( $length < 4 || ! preg_match( '/^[\p{L}]+$/u', $token ) ) {
+			return $token;
+		}
+
+		$limit         = $length >= 8 ? 2 : 1;
+		$best_distance = $limit + 1;
+		$best_value    = $token;
+		foreach ( self::TOKEN_ALIASES as $alias => $canonical ) {
+			if ( abs( mb_strlen( $alias ) - $length ) > $limit || ! $this->uses_same_alphabet( $token, $alias ) ) {
+				continue;
+			}
+
+			$distance = $this->multibyte_levenshtein( $token, $alias );
+			if ( $distance < $best_distance ) {
+				$best_distance = $distance;
+				$best_value    = $canonical;
+			}
+		}
+
+		return $best_distance <= $limit ? $best_value : $token;
+	}
+
+	private function uses_same_alphabet( string $left, string $right ): bool {
+		$left_is_cyrillic  = (bool) preg_match( '/\p{Cyrillic}/u', $left );
+		$right_is_cyrillic = (bool) preg_match( '/\p{Cyrillic}/u', $right );
+		return $left_is_cyrillic === $right_is_cyrillic;
+	}
+
+	private function multibyte_levenshtein( string $left, string $right ): int {
+		$left_chars  = preg_split( '//u', $left, -1, PREG_SPLIT_NO_EMPTY ) ?: array();
+		$right_chars = preg_split( '//u', $right, -1, PREG_SPLIT_NO_EMPTY ) ?: array();
+		$previous    = range( 0, count( $right_chars ) );
+
+		foreach ( $left_chars as $left_index => $left_char ) {
+			$current = array( $left_index + 1 );
+			foreach ( $right_chars as $right_index => $right_char ) {
+				$current[] = min(
+					$current[ $right_index ] + 1,
+					$previous[ $right_index + 1 ] + 1,
+					$previous[ $right_index ] + ( $left_char === $right_char ? 0 : 1 )
+				);
+			}
+			$previous = $current;
+		}
+
+		return $previous[ count( $right_chars ) ];
 	}
 
 	private function keyboard_ru_to_en( string $value ): string {

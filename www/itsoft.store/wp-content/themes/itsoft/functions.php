@@ -466,42 +466,86 @@ function itsoft_assets() {
 		true
 	);
 
-	$search_categories = array();
-	$catalog_tree      = function_exists( 'itsoft_get_catalog_category_tree' ) ? itsoft_get_catalog_category_tree() : array();
-	$collect_categories = static function ( array $nodes, array $parents = array() ) use ( &$collect_categories, &$search_categories ) : void {
-		foreach ( $nodes as $node ) {
-			$term = $node['term'] ?? null;
+	$search_products = array();
+	if ( function_exists( 'wc_get_products' ) ) {
+		$product_ids = wc_get_products(
+			array(
+				'status'  => 'publish',
+				'limit'   => -1,
+				'orderby' => 'title',
+				'order'   => 'ASC',
+				'return'  => 'ids',
+			)
+		);
 
-			if ( ! $term instanceof WP_Term ) {
+		foreach ( $product_ids as $product_id ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product || ! in_array( $product->get_catalog_visibility(), array( 'visible', 'search' ), true ) ) {
 				continue;
 			}
 
-			$term_link = get_term_link( $term );
-			if ( is_wp_error( $term_link ) ) {
-				continue;
+			$terms      = get_the_terms( $product_id, 'product_cat' );
+			$term_names = array();
+			$term_slugs = array();
+			if ( is_array( $terms ) ) {
+				foreach ( $terms as $term ) {
+					$term_names[] = $term->name;
+					$term_slugs[] = $term->slug;
+				}
 			}
 
-			$trail = array_merge( $parents, array( $term->name ) );
-			$search_categories[] = array(
-				'name'   => implode( ' › ', $trail ),
-				'search' => implode( ' ', array_merge( $trail, array( $term->slug ) ) ),
-				'url'    => $term_link,
+			$image_url = $product->get_image_id()
+				? wp_get_attachment_image_url( $product->get_image_id(), 'woocommerce_thumbnail' )
+				: '';
+			if ( ! $image_url ) {
+				$image_url = wc_placeholder_img_src( 'woocommerce_thumbnail' );
+			}
+
+			$search_products[] = array(
+				'id'        => $product->get_id(),
+				'name'      => wp_strip_all_tags( $product->get_name() ),
+				'url'       => esc_url_raw( get_permalink( $product->get_id() ) ),
+				'image'     => esc_url_raw( $image_url ),
+				'priceHtml' => wp_kses_post( $product->get_price_html() ),
+				'category'  => (string) ( $term_names[0] ?? '' ),
+				'search'    => implode(
+					' ',
+					array_filter(
+						array_merge(
+							array(
+								$product->get_name(),
+								$product->get_slug(),
+								$product->get_sku(),
+								get_post_meta( $product->get_id(), '_itsoft_search_synonyms', true ),
+							),
+							$term_names,
+							$term_slugs
+						)
+					)
+				),
 			);
-
-			if ( ! empty( $node['children'] ) ) {
-				$collect_categories( $node['children'], $trail );
-			}
 		}
-	};
-	$collect_categories( $catalog_tree );
+	}
+
+	$search_aliases = class_exists( 'ITSoft_LF_Search' )
+		? ITSoft_LF_Search::client_aliases()
+		: array(
+			'виндовс' => 'windows',
+			'виндоус' => 'windows',
+			'офис'    => 'office',
+		);
 
 	wp_localize_script(
 		'itsoft-search-suggestions',
 		'ITSOFT_SEARCH_SUGGESTIONS',
 		array(
-			'categories' => $search_categories,
-			'i18n'       => array(
-				'categoryLabel' => esc_html__( 'Категории', 'itsoft' ),
+			'products' => $search_products,
+			'aliases'  => $search_aliases,
+			'i18n'     => array(
+				'productsLabel' => esc_html__( 'Товары', 'itsoft' ),
+				'noResults'     => esc_html__( 'Подходящие товары не найдены', 'itsoft' ),
+				'allResults'    => esc_html__( 'Показать все результаты', 'itsoft' ),
+				'openProduct'   => esc_html__( 'Открыть товар', 'itsoft' ),
 			),
 		)
 	);
