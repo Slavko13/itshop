@@ -1268,10 +1268,73 @@
 }
 
 .account-page .account-order-card__actions .button {
-	min-height: 34px;
-	padding: 8px 14px;
-	border-radius: 9px;
-	font-size: 10px;
+	display: inline-flex;
+	box-sizing: border-box;
+	width: auto;
+	min-width: 132px;
+	min-height: 42px;
+	padding: 7px 8px 7px 16px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	border: 1px solid var(--account-purple);
+	border-radius: 12px;
+	background: var(--account-purple);
+	box-shadow: 0 8px 20px rgba(104, 68, 255, 0.18);
+	color: #fff;
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 750;
+	line-height: 1;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.account-page .account-order-card__actions .button:hover,
+.account-page .account-order-card__actions .button:focus-visible {
+	border-color: var(--account-purple-dark);
+	background: var(--account-purple-dark);
+	box-shadow: 0 10px 24px rgba(81, 50, 223, 0.25);
+	color: #fff;
+	transform: translateY(-1px);
+}
+
+.account-order-card__action-arrow {
+	display: inline-flex;
+	width: 26px;
+	height: 26px;
+	flex: 0 0 26px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.16);
+	font-size: 14px;
+	line-height: 1;
+	transition: background 160ms ease, transform 160ms ease;
+}
+
+.account-page .account-order-card__actions .button:hover .account-order-card__action-arrow,
+.account-page .account-order-card__actions .button:focus-visible .account-order-card__action-arrow {
+	background: rgba(255, 255, 255, 0.24);
+	transform: translateX(2px);
+}
+
+.account-page .account-order-card__actions .account-order-card__action--cancel {
+	padding-right: 16px;
+	border-color: var(--account-line);
+	background: #fff;
+	box-shadow: none;
+	color: var(--account-text);
+	justify-content: center;
+}
+
+.account-page .account-order-card__actions .account-order-card__action--cancel:hover,
+.account-page .account-order-card__actions .account-order-card__action--cancel:focus-visible {
+	border-color: #cbc5e3;
+	background: var(--account-purple-soft);
+	box-shadow: none;
+	color: var(--account-purple-dark);
 }
 
 .account-pagination {

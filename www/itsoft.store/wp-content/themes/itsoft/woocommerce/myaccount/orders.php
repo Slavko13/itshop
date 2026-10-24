@@ -65,7 +65,10 @@ do_action( 'woocommerce_before_account_orders', $has_orders );
 					<div class="account-order-card__actions">
 						<?php foreach ( $actions as $key => $action ) : ?>
 							<?php $action_names = array( 'view' => 'Подробнее', 'pay' => 'Оплатить', 'cancel' => 'Отменить' ); ?>
-							<a class="button <?php echo esc_attr( sanitize_html_class( $key ) ); ?>" href="<?php echo esc_url( $action['url'] ); ?>" aria-label="<?php echo esc_attr( $action['aria-label'] ?? $action['name'] ); ?>"><?php echo esc_html( $action_names[ $key ] ?? $action['name'] ); ?></a>
+							<a class="button account-order-card__action account-order-card__action--<?php echo esc_attr( sanitize_html_class( $key ) ); ?> <?php echo esc_attr( sanitize_html_class( $key ) ); ?>" href="<?php echo esc_url( $action['url'] ); ?>" aria-label="<?php echo esc_attr( $action['aria-label'] ?? $action['name'] ); ?>">
+								<span><?php echo esc_html( $action_names[ $key ] ?? $action['name'] ); ?></span>
+								<?php if ( in_array( $key, array( 'view', 'pay' ), true ) ) : ?><span class="account-order-card__action-arrow" aria-hidden="true">→</span><?php endif; ?>
+							</a>
 						<?php endforeach; ?>
 					</div>
 				</footer>
