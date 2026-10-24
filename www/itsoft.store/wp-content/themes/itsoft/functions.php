@@ -439,6 +439,15 @@ function itsoft_assets() {
 		);
 	}
 
+	// The shared token layer is intentionally enqueued after all page-specific CSS.
+	$design_system_path = get_template_directory() . '/assets/css/design-system.css';
+	wp_enqueue_style(
+		'itsoft-design-system',
+		get_template_directory_uri() . '/assets/css/design-system.css',
+		array( 'itsoft-style' ),
+		file_exists( $design_system_path ) ? (string) filemtime( $design_system_path ) : $ver
+	);
+
     wp_enqueue_script(
         'itsoft-script',
         get_template_directory_uri() . '/assets/js/main.js',
@@ -446,6 +455,55 @@ function itsoft_assets() {
         $ver,
         true
     );
+
+	$search_suggestions_path = get_template_directory() . '/assets/js/search-suggestions.js';
+	wp_enqueue_script(
+		'itsoft-search-suggestions',
+		get_template_directory_uri() . '/assets/js/search-suggestions.js',
+		array( 'itsoft-script' ),
+		file_exists( $search_suggestions_path ) ? (string) filemtime( $search_suggestions_path ) : $ver,
+		true
+	);
+
+	$search_categories = array();
+	$catalog_tree      = function_exists( 'itsoft_get_catalog_category_tree' ) ? itsoft_get_catalog_category_tree() : array();
+	$collect_categories = static function ( array $nodes, array $parents = array() ) use ( &$collect_categories, &$search_categories ) : void {
+		foreach ( $nodes as $node ) {
+			$term = $node['term'] ?? null;
+
+			if ( ! $term instanceof WP_Term ) {
+				continue;
+			}
+
+			$term_link = get_term_link( $term );
+			if ( is_wp_error( $term_link ) ) {
+				continue;
+			}
+
+			$trail = array_merge( $parents, array( $term->name ) );
+			$search_categories[] = array(
+				'name'   => implode( ' › ', $trail ),
+				'search' => implode( ' ', array_merge( $trail, array( $term->slug ) ) ),
+				'url'    => $term_link,
+			);
+
+			if ( ! empty( $node['children'] ) ) {
+				$collect_categories( $node['children'], $trail );
+			}
+		}
+	};
+	$collect_categories( $catalog_tree );
+
+	wp_localize_script(
+		'itsoft-search-suggestions',
+		'ITSOFT_SEARCH_SUGGESTIONS',
+		array(
+			'categories' => $search_categories,
+			'i18n'       => array(
+				'categoryLabel' => esc_html__( 'Категории', 'itsoft' ),
+			),
+		)
+	);
 
 	$english_copy_path = get_template_directory() . '/assets/js/english-copy.js';
 	wp_enqueue_script(

@@ -177,5 +177,13 @@ try {
     try { await client?.send('Browser.close'); } catch { chrome.kill(); }
     client?.close();
     await delay(400);
-    rmSync(profileDir, { recursive: true, force: true });
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+        try {
+            rmSync(profileDir, { recursive: true, force: true });
+            break;
+        } catch (error) {
+            if (attempt === 4 || error?.code !== 'EPERM') throw error;
+            await delay(250 * (attempt + 1));
+        }
+    }
 }

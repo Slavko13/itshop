@@ -377,15 +377,12 @@ if ( ! class_exists( 'Itsoft_Product_Card_Controller' ) ) {
 				$current_price = $sale_price;
 			}
 
-			$currency_symbol = get_woocommerce_currency_symbol();
-
-			$format_price_value = static function( float $price ) use ( $currency_symbol ) : string {
+			$format_price_value = static function( float $price ) : string {
 				if ( $price <= 0 ) {
 					return '';
 				}
 
-				$localized = wc_format_localized_price( $price );
-				return trim( $localized . ' ' . $currency_symbol );
+				return self::format_plain_price( $price, get_bloginfo( 'charset' ) );
 			};
 
 			return array(
@@ -437,13 +434,11 @@ if ( ! class_exists( 'Itsoft_Product_Card_Controller' ) ) {
 				return '';
 			}
 
-			$value = wc_price( $price );
+			$numeric_price = (float) $price;
+			$decimals      = abs( $numeric_price - round( $numeric_price ) ) > 0.00001 ? 2 : 0;
+			$number        = number_format( $numeric_price, $decimals, ',', "\u{00A0}" );
 
-			return html_entity_decode(
-				wp_strip_all_tags( $value ),
-				ENT_QUOTES,
-				$charset
-			);
+			return $number . "\u{00A0}" . get_woocommerce_currency_symbol();
 		}
 
 		/**

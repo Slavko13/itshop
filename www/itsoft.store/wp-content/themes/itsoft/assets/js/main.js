@@ -161,6 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 
+		document.addEventListener('pointerdown', (event) => {
+			if (!popNav.classList.contains('active')) return;
+			if (popNav.contains(event.target) || catalogBtn.contains(event.target)) return;
+			if (event.target.closest('.mobile-nav__burger')) return;
+
+			closeCatalog();
+		});
+
         window.addEventListener('resize', () => {
             if (popNav.classList.contains('active')) positionCatalogMenu();
         });

@@ -1,72 +1,34 @@
 <nav class="catalog__nav" id="itsoft-catalog-navigation" aria-label="Каталог товаров">
     <?php
-    // Get top-level WooCommerce product categories
-    $categories = get_terms(array(
-        'taxonomy'   => 'product_cat',
-        'hide_empty' => false,
-        'parent'     => 0,
-    ));
+    // The header and catalog sidebar intentionally share the same sorted tree.
+    $category_nodes = function_exists( 'itsoft_get_catalog_category_tree' )
+        ? itsoft_get_catalog_category_tree()
+        : array();
 
-    $category_priority = static function ( $term ) {
-        $name = isset( $term->name ) ? trim( (string) $term->name ) : '';
-        $slug = isset( $term->slug ) ? strtolower( (string) $term->slug ) : '';
+    $flatten_children = static function ( array $nodes, int $depth = 0 ) use ( &$flatten_children ) : array {
+        $items = array();
 
-        if ( 'microsoft-office' === $slug || 0 === strcasecmp( $name, 'Microsoft Office' ) ) {
-            return 0;
+        foreach ( $nodes as $node ) {
+            if ( empty( $node['term'] ) || ! $node['term'] instanceof WP_Term ) {
+                continue;
+            }
+
+            $items[] = array(
+                'term'  => $node['term'],
+                'depth' => $depth,
+            );
+
+            if ( ! empty( $node['children'] ) ) {
+                $items = array_merge( $items, $flatten_children( $node['children'], $depth + 1 ) );
+            }
         }
 
-        if ( 'microsoft-windows' === $slug || 0 === strcasecmp( $name, 'Microsoft Windows' ) ) {
-            return 1;
-        }
-
-        return 100;
-    };
-
-    if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
-        $original_positions = array_flip( wp_list_pluck( $categories, 'term_id' ) );
-        usort(
-            $categories,
-            static function ( $left, $right ) use ( $category_priority, $original_positions ) {
-                $priority_comparison = $category_priority( $left ) <=> $category_priority( $right );
-                if ( 0 !== $priority_comparison ) {
-                    return $priority_comparison;
-                }
-
-                return ( $original_positions[ $left->term_id ] ?? 0 ) <=> ( $original_positions[ $right->term_id ] ?? 0 );
-            }
-        );
-    }
-
-    $sort_release_terms = static function ( array &$terms, $product_family ) {
-        usort(
-            $terms,
-            static function ( $left, $right ) use ( $product_family ) {
-                $release_rank = static function ( $term ) use ( $product_family ) {
-                    $name = (string) $term->name;
-
-                    if ( 'office' === $product_family && preg_match( '/\b(20\d{2})\b/u', $name, $matches ) ) {
-                        return array( 0, (int) $matches[1] );
-                    }
-
-                    if ( 'windows' === $product_family && preg_match( '/\bWindows\s+(\d{1,2})\b/ui', $name, $matches ) ) {
-                        return array( 0, (int) $matches[1] );
-                    }
-
-                    return array( 1, PHP_INT_MAX );
-                };
-
-                $left_rank  = $release_rank( $left );
-                $right_rank = $release_rank( $right );
-                $comparison = $left_rank <=> $right_rank;
-
-                return 0 !== $comparison ? $comparison : strnatcasecmp( $left->name, $right->name );
-            }
-        );
+        return $items;
     };
     ?>
 
     <button class="catalog-nav__close" type="button" aria-label="Закрыть каталог" data-catalog-close>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
     </button>
@@ -118,19 +80,12 @@
     </div>
 
     <div class="catalog-nav__layout">
-        <?php if (!empty($categories) && !is_wp_error($categories)) : ?>
+        <?php if ( ! empty( $category_nodes ) ) : ?>
             <ul class="catalog-nav__parents">
-                <?php foreach ($categories as $category) : 
-                    $children = get_terms(array(
-                        'taxonomy'   => 'product_cat',
-                        'hide_empty' => false,
-                        'parent'     => $category->term_id,
-                    ));
-                    $category_family = 0 === $category_priority( $category ) ? 'office' : ( 1 === $category_priority( $category ) ? 'windows' : '' );
-                    if ( $category_family && ! empty( $children ) && ! is_wp_error( $children ) ) {
-                        $sort_release_terms( $children, $category_family );
-                    }
-                    $has_children = !empty($children) && !is_wp_error($children);
+                <?php foreach ( $category_nodes as $category_node ) :
+                    $category    = $category_node['term'];
+                    $children    = $flatten_children( $category_node['children'] ?? array() );
+                    $has_children = ! empty( $children );
                 ?>
                     <li class="catalog-nav__parent-item <?php echo $has_children ? 'has-children' : ''; ?>">
                         <div class="catalog-nav__parent-row">
@@ -157,10 +112,16 @@
                                     <?php echo esc_html($category->name); ?>
                                 </div>
                                 <ul class="catalog-nav__children-list">
-                                    <?php foreach ($children as $child) : ?>
-                                        <li class="catalog-nav__child-item">
-                                            <a href="<?php echo get_term_link($child); ?>" class="catalog-nav__child-link">
-                                                <?php echo esc_html($child->name); ?>
+                                    <?php foreach ( $children as $child_node ) :
+                                        $child      = $child_node['term'];
+                                        $child_link = get_term_link( $child );
+                                        if ( is_wp_error( $child_link ) ) {
+                                            continue;
+                                        }
+                                    ?>
+                                        <li class="catalog-nav__child-item catalog-nav__child-item--depth-<?php echo esc_attr( $child_node['depth'] ); ?>">
+                                            <a href="<?php echo esc_url( $child_link ); ?>" class="catalog-nav__child-link">
+                                                <?php echo esc_html( $child->name ); ?>
                                             </a>
                                         </li>
                                     <?php endforeach; ?>
@@ -241,8 +202,8 @@
             top: 14px;
             right: 14px;
             display: grid;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             padding: 0;
             border: 1px solid #e1dcff;
             border-radius: 12px;
@@ -487,7 +448,9 @@
             .catalog-nav__mobile-close {
                 background: none;
                 border: none;
-                padding: 0;
+                width: 44px;
+                height: 44px;
+                padding: 2px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;

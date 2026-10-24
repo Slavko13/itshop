@@ -32,21 +32,32 @@ if ( $badge_terms && ! is_wp_error( $badge_terms ) ) {
 	}
 
 	$ordered_terms = array_merge( $top_level, $nested );
+	$normalized_badge_names = array();
 
 	foreach ( $ordered_terms as $term ) {
-		$term_color = get_field( 'color', $term );
-		if ( ! $term_color ) {
-			$term_color = 'var(--main-perple)';
-		}
-
 		$term_name = get_field( 'short_name', $term );
 		if ( ! $term_name ) {
 			$term_name = $term->name;
 		}
 
+		if ( 'microsoft-office' === $term->slug ) {
+			$term_name = 'Microsoft Office';
+		} elseif ( 'microsoft-windows' === $term->slug ) {
+			$term_name = 'Microsoft Windows';
+		}
+
+		$term_name = preg_replace( '/^Office\s+(20\d{2})$/ui', '$1', trim( (string) $term_name ) );
+		$term_name = preg_replace( '/^Microsoft\s+Office$/ui', 'Microsoft Office', trim( (string) $term_name ) );
+		$normalized_name = strtolower( preg_replace( '/[^\p{L}\p{N}]+/u', '', (string) $term_name ) );
+
+		if ( '' === $normalized_name || in_array( $normalized_name, $normalized_badge_names, true ) ) {
+			continue;
+		}
+
+		$normalized_badge_names[] = $normalized_name;
+
 		$badges[] = array(
-			'name'  => $term_name,
-			'color' => $term_color,
+			'name' => $term_name,
 		);
 
 		if ( count( $badges ) >= 2 ) {
@@ -130,7 +141,7 @@ if ( ! empty( $extra_class ) ) {
 				<?php if ( $badges ) : ?>
 				<div class="catalog-card__badges">
 					<?php foreach ( $badges as $badge ) : ?>
-						<span class="catalog-card__badge" style="background-color: <?php echo esc_attr( $badge['color'] ); ?>"><?php echo esc_html( $badge['name'] ); ?></span>
+						<span class="catalog-card__badge"><?php echo esc_html( $badge['name'] ); ?></span>
 					<?php endforeach; ?>
 				</div>
 				<?php endif; ?>

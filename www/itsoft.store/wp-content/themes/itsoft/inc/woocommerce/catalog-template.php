@@ -9,6 +9,98 @@ defined( 'ABSPATH' ) || exit;
 
 if ( ! function_exists( 'itsoft_get_catalog_category_tree' ) ) {
 	/**
+	 * Returns the stable display rank used by every catalog navigation.
+	 *
+	 * @param WP_Term $term Product category.
+	 * @param int     $depth Tree depth.
+	 * @return array<int, int|string>
+	 */
+	function itsoft_get_catalog_term_sort_key( WP_Term $term, int $depth = 0 ) : array {
+		$name = trim( (string) $term->name );
+		$slug = strtolower( (string) $term->slug );
+
+		if ( 0 === $depth ) {
+			$priority = array(
+				'microsoft-office'     => 0,
+				'microsoft-windows'    => 1,
+				'microsoft-project'    => 2,
+				'microsoft-visio'      => 3,
+				'windows-server'       => 4,
+				'windows-server-rds'   => 5,
+			);
+
+			if ( isset( $priority[ $slug ] ) ) {
+				return array( 0, $priority[ $slug ], $name );
+			}
+
+			foreach ( $priority as $needle => $rank ) {
+				if ( 0 === strcasecmp( str_replace( '-', ' ', $needle ), $name ) ) {
+					return array( 0, $rank, $name );
+				}
+			}
+
+			return array( 1, PHP_INT_MAX, $name );
+		}
+
+		if ( preg_match( '/\b(20\d{2})\b/u', $name, $matches ) ) {
+			return array( 0, (int) $matches[1], $name );
+		}
+
+		if ( preg_match( '/\bWindows\s+(\d{1,2})\b/ui', $name, $matches ) ) {
+			return array( 0, (int) $matches[1], $name );
+		}
+
+		$is_macos = false !== stripos( $name, 'mac' ) || false !== stripos( $slug, 'mac' );
+
+		return array( $is_macos ? 1 : 2, PHP_INT_MAX, $name );
+	}
+
+	/**
+	 * Sorts a nested category tree without changing its hierarchy.
+	 *
+	 * @param array $nodes Category nodes.
+	 * @param int   $depth Tree depth.
+	 * @return array
+	 */
+	function itsoft_sort_catalog_category_tree( array $nodes, int $depth = 0 ) : array {
+		foreach ( $nodes as &$node ) {
+			if ( ! empty( $node['children'] ) ) {
+				$node['children'] = itsoft_sort_catalog_category_tree( $node['children'], $depth + 1 );
+			}
+		}
+		unset( $node );
+
+		usort(
+			$nodes,
+			static function ( array $left, array $right ) use ( $depth ) : int {
+				$left_term  = $left['term'] ?? null;
+				$right_term = $right['term'] ?? null;
+
+				if ( ! $left_term instanceof WP_Term || ! $right_term instanceof WP_Term ) {
+					return 0;
+				}
+
+				$left_key  = itsoft_get_catalog_term_sort_key( $left_term, $depth );
+				$right_key = itsoft_get_catalog_term_sort_key( $right_term, $depth );
+
+				for ( $index = 0; $index < count( $left_key ); $index++ ) {
+					if ( $left_key[ $index ] === $right_key[ $index ] ) {
+						continue;
+					}
+
+					return is_string( $left_key[ $index ] )
+						? strnatcasecmp( $left_key[ $index ], $right_key[ $index ] )
+						: $left_key[ $index ] <=> $right_key[ $index ];
+				}
+
+				return 0;
+			}
+		);
+
+		return $nodes;
+	}
+
+	/**
 	 * Returns a nested array of product categories for the sidebar tree.
 	 *
 	 * @return array<int, array{term: WP_Term, children: array}>
@@ -65,6 +157,7 @@ if ( ! function_exists( 'itsoft_get_catalog_category_tree' ) ) {
 
 		$tree_cache = $build_branch( 0 );
 		$tree_cache = itsoft_prune_catalog_category_tree( $tree_cache );
+		$tree_cache = itsoft_sort_catalog_category_tree( $tree_cache );
 
 		return $tree_cache;
 	}

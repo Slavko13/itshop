@@ -140,7 +140,7 @@ try {
 		writeFileSync(join(artifactDir, name), Buffer.from(result.data, 'base64'));
 	};
 
-	for (const width of [320, 393, 768, 1280, 1440]) {
+	for (const width of [375, 768, 1024, 1440]) {
 		await navigate(new URL('/shop/', baseUrl).toString(), width);
 		const state = await evaluate(`(() => {
 			const grid = document.querySelector('.catalog-grid__list');
@@ -169,6 +169,23 @@ try {
 				const labelRect = label.getBoundingClientRect();
 				return Math.abs((buttonRect.top + buttonRect.bottom) / 2 - (labelRect.top + labelRect.bottom) / 2);
 			});
+			const buttonHorizontalOffsets = cards.map((card) => {
+				const button = card.querySelector('.catalog-card__buy');
+				const label = button?.querySelector('.catalog-card__buy-label');
+				if (!button || !label) return 0;
+				const buttonRect = button.getBoundingClientRect();
+				const labelRect = label.getBoundingClientRect();
+				return Math.abs((buttonRect.left + buttonRect.right) / 2 - (labelRect.left + labelRect.right) / 2);
+			});
+			const firstCard = cards[0];
+			const firstImage = firstCard?.querySelector('.catalog-card__image-link')?.getBoundingClientRect();
+			const firstBadge = firstCard?.querySelector('.catalog-card__badge');
+			const firstButton = firstCard?.querySelector('.catalog-card__buy');
+			const firstTitle = firstCard?.querySelector('.catalog-card__link');
+			const catalogTitle = document.querySelector('.catalog__title');
+			const catalogLead = document.querySelector('.catalog__lead');
+			const catalogSearch = document.querySelector('.catalog-filters__search');
+			const pageContainer = document.querySelector('.catalog__shell');
 			const userIconTops = [...document.querySelectorAll('.header-main__user .user-nav__icon')]
 				.filter((icon) => icon.getBoundingClientRect().width > 0 && getComputedStyle(icon).visibility !== 'hidden')
 				.map((icon) => Math.round(icon.getBoundingClientRect().top));
@@ -177,6 +194,7 @@ try {
 				style: Boolean(document.querySelector('link[href*="storefront-redesign.css"]')),
 				overflow: document.documentElement.scrollWidth - window.innerWidth,
 				cards: cards.length,
+				minCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
 				buttons: document.querySelectorAll('.catalog-card__buy').length,
 				availableCards: cards.filter((card) => card.querySelector('.catalog-card__stock-note--placeholder')).length,
 				quickBuyButtons: document.querySelectorAll('.catalog-card__quick-buy').length,
@@ -188,6 +206,28 @@ try {
 				rightmost,
 				maxRowHeightSpread: Math.max(0, ...rowHeightSpreads),
 				maxButtonLabelOffset: Math.max(0, ...buttonLabelOffsets),
+				maxButtonHorizontalOffset: Math.max(0, ...buttonHorizontalOffsets),
+				imageRatio: firstImage ? firstImage.width / firstImage.height : 0,
+				badgeStyle: firstBadge ? {
+					height: firstBadge.getBoundingClientRect().height,
+					color: getComputedStyle(firstBadge).color,
+					background: getComputedStyle(firstBadge).backgroundColor,
+				} : null,
+				buttonStyle: firstButton ? {
+					height: firstButton.getBoundingClientRect().height,
+					background: getComputedStyle(firstButton).backgroundColor,
+					paddingLeft: getComputedStyle(firstButton).paddingLeft,
+					paddingRight: getComputedStyle(firstButton).paddingRight,
+				} : null,
+				titleClamp: firstTitle ? getComputedStyle(firstTitle).webkitLineClamp : '',
+				typography: catalogTitle && catalogLead ? {
+					h1Size: parseFloat(getComputedStyle(catalogTitle).fontSize),
+					h1Line: parseFloat(getComputedStyle(catalogTitle).lineHeight),
+					bodySize: parseFloat(getComputedStyle(catalogLead).fontSize),
+					bodyLine: parseFloat(getComputedStyle(catalogLead).lineHeight),
+				} : null,
+				searchHeight: catalogSearch?.getBoundingClientRect().height || 0,
+				containerWidth: pageContainer?.getBoundingClientRect().width || 0,
 				userIconTopSpread: userIconTops.length ? Math.max(...userIconTops) - Math.min(...userIconTops) : 0,
 				desktopColumnTopOffset: filters && sidebarBody ? Math.abs(filters.top - sidebarBody.top) : 0,
 				headerToBreadcrumbGap: header && breadcrumbList ? breadcrumbList.top - header.bottom : 0,
@@ -197,7 +237,7 @@ try {
 			};
 		})()`);
 
-		const expectedColumns = width <= 340 ? 1 : width < 860 ? 2 : 3;
+		const expectedColumns = width < 480 ? 1 : 3;
 		assert(`${width}px catalog title`, ['Каталог', 'Catalog'].includes(state.title), state.title);
 		assert(`${width}px redesign stylesheet`, state.style);
 		assert(`${width}px no horizontal overflow`, state.overflow <= 1, `${state.overflow}px`);
@@ -207,18 +247,30 @@ try {
 		assert(`${width}px quick-buy links go straight to checkout`, state.validQuickBuyLinks === state.quickBuyButtons, `${state.validQuickBuyLinks}/${state.quickBuyButtons}`);
 		assert(`${width}px expected grid columns`, state.columns === expectedColumns, `${state.columns}, expected ${expectedColumns}`);
 		assert(`${width}px cards fit viewport`, state.rightmost <= width + 1, `${state.rightmost}px`);
+		assert(`${width}px cards use the available column width`, state.minCardWidth >= (width < 480 ? width - 64 : 200), `${state.minCardWidth}px`);
 		assert(`${width}px cards have equal height within rows`, state.maxRowHeightSpread <= 1, `${state.maxRowHeightSpread}px`);
 		assert(`${width}px action labels are vertically centered`, state.maxButtonLabelOffset <= 1, `${state.maxButtonLabelOffset}px`);
+		assert(`${width}px action labels are horizontally centered`, state.maxButtonHorizontalOffset <= 1, `${state.maxButtonHorizontalOffset}px`);
+		assert(`${width}px product image area is square`, Math.abs(state.imageRatio - 1) <= 0.01, String(state.imageRatio));
+		assert(`${width}px product title is not line-clamped`, !state.titleClamp || state.titleClamp === 'none', state.titleClamp);
+		if (state.badgeStyle) {
+			assert(`${width}px badges use shared geometry and palette`, Math.abs(state.badgeStyle.height - 24) <= 1 && state.badgeStyle.color === 'rgb(108, 76, 255)' && state.badgeStyle.background === 'rgb(240, 236, 255)', JSON.stringify(state.badgeStyle));
+		}
+		assert(`${width}px primary card button uses shared component`, Math.abs(state.buttonStyle.height - 46) <= 1 && state.buttonStyle.background === 'rgb(108, 76, 255)' && state.buttonStyle.paddingLeft === state.buttonStyle.paddingRight, JSON.stringify(state.buttonStyle));
+		const expectedH1 = width < 768 ? [28, 36] : width < 1024 ? [36, 44] : [44, 56];
+		assert(`${width}px shared page typography`, Math.abs(state.typography.h1Size - expectedH1[0]) <= 0.1 && Math.abs(state.typography.h1Line - expectedH1[1]) <= 0.1 && state.typography.bodySize === 16 && state.typography.bodyLine === 26, JSON.stringify(state.typography));
+		assert(`${width}px shared catalog field height`, Math.abs(state.searchHeight - 48) <= 1, `${state.searchHeight}px`);
+		assert(`${width}px shared container width`, state.containerWidth <= Math.min(width, 1222) + 1, `${state.containerWidth}px`);
 		assert(`${width}px header icons share one baseline`, state.userIconTopSpread <= 1, `${state.userIconTopSpread}px`);
-		assert(`${width}px category toggle visibility`, state.toggleVisible === (width < 860));
+		assert(`${width}px category toggle visibility`, state.toggleVisible === (width < 1024));
 		assert(`${width}px no nested interactive elements`, !state.nestedInteractive);
 		assert(`${width}px catalog does not render legacy inner hero`, !state.hasLegacyInnerHero);
 		assert(`${width}px compact header-to-content gap`, state.headerToBreadcrumbGap <= 24, `${state.headerToBreadcrumbGap}px`);
-		if (width >= 1280) {
+		if (width >= 1024) {
 			assert(`${width}px search aligns with category panel`, state.desktopColumnTopOffset <= 1, `${state.desktopColumnTopOffset}px`);
 		}
 
-		if (width >= 1280) {
+		if (width >= 1024) {
 			const hoverTarget = await evaluate(`(() => {
 				const card = document.querySelector('.catalog-card');
 				const rect = card.getBoundingClientRect();
@@ -234,7 +286,7 @@ try {
 			await client.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 });
 		}
 
-		if (width < 860) {
+		if (width < 1024) {
 			await evaluate(`document.querySelector('.catalog-sidebar__toggle').click()`);
 			await delay(350);
 			const opened = await evaluate(`(() => {
@@ -249,8 +301,7 @@ try {
 			assert(`${width}px category accordion opens`, opened.open && opened.expanded === 'true' && opened.height > 40, JSON.stringify(opened));
 		}
 
-		if (width === 393) await capture('catalog-393.png');
-		if (width === 1280) await capture('catalog-1280.png');
+		await capture(`catalog-${width}.png`);
 	}
 
 	await navigate(new URL(categoryPath, baseUrl).toString(), 393);
@@ -337,6 +388,7 @@ try {
 			return [...(item?.querySelectorAll('.catalog-nav__child-link') || [])].map((link) => link.textContent.trim());
 		};
 		const closeButton = menu?.querySelector('.catalog-nav__close');
+		const closeRect = closeButton?.getBoundingClientRect();
 		return {
 			open: Boolean(menu?.classList.contains('active')),
 			expanded: document.querySelector('.catalog-btn')?.getAttribute('aria-expanded'),
@@ -344,6 +396,7 @@ try {
 			officeChildren: childrenFor('Microsoft Office'),
 			windowsChildren: childrenFor('Microsoft Windows'),
 			closeVisible: Boolean(closeButton) && getComputedStyle(closeButton).display !== 'none',
+			closeSize: closeRect ? { width: closeRect.width, height: closeRect.height } : null,
 			left: menuRect?.left || 0,
 			right: menuRect?.right || 0,
 			containerLeft: containerRect?.left || 0,
@@ -355,6 +408,7 @@ try {
 	assert('Office releases run oldest to newest', JSON.stringify(catalogMenu.officeChildren.slice(0, 4)) === JSON.stringify(['Office 2016', 'Office 2019', 'Office 2021', 'Office 2024']), catalogMenu.officeChildren.join(' | '));
 	assert('Windows releases run oldest to newest', JSON.stringify(catalogMenu.windowsChildren.slice(0, 2)) === JSON.stringify(['Windows 10', 'Windows 11']), catalogMenu.windowsChildren.join(' | '));
 	assert('desktop catalog has a visible close button', catalogMenu.closeVisible);
+	assert('catalog close button has a 44px target', Math.abs(catalogMenu.closeSize.width - 44) <= 1 && Math.abs(catalogMenu.closeSize.height - 44) <= 1, JSON.stringify(catalogMenu.closeSize));
 	await capture('catalog-menu-1280.png');
 	const catalogClosed = await evaluate(`(() => {
 		document.querySelector('.catalog-nav__close')?.click();
@@ -364,6 +418,74 @@ try {
 		};
 	})()`);
 	assert('catalog close button closes the menu', !catalogClosed.open && catalogClosed.expanded === 'false', JSON.stringify(catalogClosed));
+
+	const suggestions = await evaluate(`(async () => {
+		const input = document.querySelector('#itsoft-header-search');
+		input.value = 'Windows';
+		input.dispatchEvent(new Event('input', { bubbles: true }));
+		await new Promise((resolve) => setTimeout(resolve, 350));
+		const options = [...document.querySelectorAll('.header-main__search .search-suggestions__option')];
+		input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+		return {
+			open: input.getAttribute('aria-expanded'),
+			labels: options.map((option) => option.textContent.trim()),
+			selected: options.filter((option) => option.getAttribute('aria-selected') === 'true').length,
+		};
+	})()`);
+	assert('Windows search suggests matching categories', suggestions.open === 'true' && suggestions.labels.some((label) => label.includes('Windows 10')) && suggestions.labels.some((label) => label.includes('Windows 11')), JSON.stringify(suggestions));
+	assert('search suggestions support keyboard selection', suggestions.selected === 1, JSON.stringify(suggestions));
+
+	const outsideClose = await evaluate(`(() => {
+		document.querySelector('.catalog-btn')?.click();
+		document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+		return !document.querySelector('.catalog__nav')?.classList.contains('active');
+	})()`);
+	assert('catalog closes after a click outside the panel', outsideClose);
+
+	await navigate(new URL('/shop/', baseUrl).toString(), 1440, 900);
+	const dynamicBefore = await evaluate(`(() => ({
+		cards: document.querySelectorAll('.catalog-grid__list .catalog-card').length,
+		page: Number(document.querySelector('[data-catalog-grid]')?.dataset.currentPage || 1),
+		max: Number(document.querySelector('[data-catalog-grid]')?.dataset.maxPages || 1),
+	}))()`);
+	if (dynamicBefore.max > dynamicBefore.page) {
+		await evaluate(`document.querySelector('.catalog-grid__sentinel')?.scrollIntoView({ block: 'center' }); true`);
+		await delay(1800);
+		const dynamicAfter = await evaluate(`(() => ({
+			cards: document.querySelectorAll('.catalog-grid__list .catalog-card').length,
+			page: Number(document.querySelector('[data-catalog-grid]')?.dataset.currentPage || 1),
+		}))()`);
+		assert('dynamic catalog loading appends shared cards', dynamicAfter.page > dynamicBefore.page && dynamicAfter.cards > dynamicBefore.cards, JSON.stringify({ dynamicBefore, dynamicAfter }));
+	}
+
+	await navigate(new URL('/shop/page/2/', baseUrl).toString(), 1440);
+	const secondPage = await evaluate(`(() => ({
+		cards: document.querySelectorAll('.catalog-card').length,
+		breadcrumb: [...document.querySelectorAll('.catalog__breadcrumbs .breadcrumbs__item')].map((item) => item.textContent.trim()),
+		overflow: document.documentElement.scrollWidth - window.innerWidth,
+	}))()`);
+	assert('second catalog page renders shared cards', secondPage.cards > 0 && secondPage.overflow <= 1, JSON.stringify(secondPage));
+	await capture('catalog-page-2-1440.png');
+
+	await navigate(new URL('/shop/?orderby=price', baseUrl).toString(), 1440);
+	const sortedCatalog = await evaluate(`(() => ({
+		ordering: document.querySelector('.catalog-filters__ordering select')?.value || '',
+		cards: document.querySelectorAll('.catalog-card').length,
+		overflow: document.documentElement.scrollWidth - window.innerWidth,
+	}))()`);
+	assert('catalog sorting preserves shared grid', sortedCatalog.ordering === 'price' && sortedCatalog.cards > 0 && sortedCatalog.overflow <= 1, JSON.stringify(sortedCatalog));
+	await capture('catalog-sorted-price-1440.png');
+
+	await navigate(new URL('/?s=codex-no-such-license-92841', baseUrl).toString(), 1440);
+	const noResults = await evaluate(`(() => ({
+		empty: Boolean(document.querySelector('.itsoft-search__empty')),
+		cards: document.querySelectorAll('.catalog-card').length,
+		overflow: document.documentElement.scrollWidth - window.innerWidth,
+	}))()`);
+	assert('no-results search renders the intentional empty state', noResults.empty && noResults.cards === 0 && noResults.overflow <= 1, JSON.stringify(noResults));
+	await capture('search-no-results-1440.png');
+
+	await navigate(new URL('/shop/', baseUrl).toString(), 1280);
 
 	const ajaxButtonExists = await evaluate(`Boolean(document.querySelector('.catalog-card__buy.ajax_add_to_cart'))`);
 	assert('simple product has AJAX add button', ajaxButtonExists);
@@ -487,7 +609,7 @@ try {
 		};
 	})()`);
 	assert('search loads storefront and search styles', populatedSearch.storefrontStyles && populatedSearch.searchStyles, JSON.stringify(populatedSearch));
-	assert('search renders full-size product cards', populatedSearch.cards > 0 && populatedSearch.columns === 3 && populatedSearch.minCardWidth > 250, JSON.stringify(populatedSearch));
+	assert('search renders the shared four-column product grid', populatedSearch.cards > 0 && populatedSearch.columns === 4 && populatedSearch.minCardWidth > 250, JSON.stringify(populatedSearch));
 	assert('populated search has no horizontal overflow', populatedSearch.overflow <= 1, `${populatedSearch.overflow}px`);
 
 	await client.send('Emulation.setScriptExecutionDisabled', { value: true });
