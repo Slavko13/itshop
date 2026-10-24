@@ -185,6 +185,8 @@ try {
 			const catalogTitle = document.querySelector('.catalog__title');
 			const catalogLead = document.querySelector('.catalog__lead');
 			const catalogSearch = document.querySelector('.catalog-filters__search');
+			const catalogSearchInput = document.querySelector('.catalog-filters__input');
+			const catalogSearchIcon = document.querySelector('.catalog-filters__icon');
 			const pageContainer = document.querySelector('.catalog__shell');
 			const userIconTops = [...document.querySelectorAll('.header-main__user .user-nav__icon')]
 				.filter((icon) => icon.getBoundingClientRect().width > 0 && getComputedStyle(icon).visibility !== 'hidden')
@@ -232,6 +234,9 @@ try {
 					bodyLine: parseFloat(getComputedStyle(catalogLead).lineHeight),
 				} : null,
 				searchHeight: catalogSearch?.getBoundingClientRect().height || 0,
+				searchIconClearance: catalogSearchInput && catalogSearchIcon
+					? (catalogSearchInput.getBoundingClientRect().left + parseFloat(getComputedStyle(catalogSearchInput).paddingLeft)) - catalogSearchIcon.getBoundingClientRect().right
+					: 0,
 				containerWidth: pageContainer?.getBoundingClientRect().width || 0,
 				userIconTopSpread: userIconTops.length ? Math.max(...userIconTops) - Math.min(...userIconTops) : 0,
 				desktopColumnTopOffset: filters && sidebarBody ? Math.abs(filters.top - sidebarBody.top) : 0,
@@ -266,6 +271,7 @@ try {
 		const expectedH1 = width < 768 ? [28, 36] : width < 1024 ? [36, 44] : [44, 56];
 		assert(`${width}px shared page typography`, Math.abs(state.typography.h1Size - expectedH1[0]) <= 0.1 && Math.abs(state.typography.h1Line - expectedH1[1]) <= 0.1 && state.typography.bodySize === 16 && state.typography.bodyLine === 26, JSON.stringify(state.typography));
 		assert(`${width}px shared catalog field height`, Math.abs(state.searchHeight - 48) <= 1, `${state.searchHeight}px`);
+		assert(`${width}px search icon does not overlap text`, state.searchIconClearance >= 8, `${state.searchIconClearance}px`);
 		assert(`${width}px shared container width`, state.containerWidth <= Math.min(width, 1222) + 1, `${state.containerWidth}px`);
 		assert(`${width}px header icons share one baseline`, state.userIconTopSpread <= 1, `${state.userIconTopSpread}px`);
 		assert(`${width}px category toggle visibility`, state.toggleVisible === (width < 1024));
@@ -415,6 +421,20 @@ try {
 	assert('Windows releases run oldest to newest', JSON.stringify(catalogMenu.windowsChildren.slice(0, 2)) === JSON.stringify(['Windows 10', 'Windows 11']), catalogMenu.windowsChildren.join(' | '));
 	assert('desktop catalog has a visible close button', catalogMenu.closeVisible);
 	assert('catalog close button has a 44px target', Math.abs(catalogMenu.closeSize.width - 44) <= 1 && Math.abs(catalogMenu.closeSize.height - 44) <= 1, JSON.stringify(catalogMenu.closeSize));
+	const desktopSubcategories = await evaluate(`(() => {
+		const button = document.querySelector('.catalog-nav__toggle-btn');
+		const item = button?.closest('.catalog-nav__parent-item');
+		const panel = item?.querySelector('.catalog-nav__children-panel');
+		const beforeUrl = window.location.href;
+		button?.click();
+		return {
+			urlUnchanged: window.location.href === beforeUrl,
+			open: Boolean(item?.classList.contains('open')),
+			expanded: button?.getAttribute('aria-expanded'),
+			panelVisible: Boolean(panel) && getComputedStyle(panel).display !== 'none',
+		};
+	})()`);
+	assert('desktop subcategory toggle opens in place without navigation', desktopSubcategories.urlUnchanged && desktopSubcategories.open && desktopSubcategories.expanded === 'true' && desktopSubcategories.panelVisible, JSON.stringify(desktopSubcategories));
 	await capture('catalog-menu-1280.png');
 	const catalogClosed = await evaluate(`(() => {
 		document.querySelector('.catalog-nav__close')?.click();
@@ -425,20 +445,69 @@ try {
 	})()`);
 	assert('catalog close button closes the menu', !catalogClosed.open && catalogClosed.expanded === 'false', JSON.stringify(catalogClosed));
 
+	for (const width of [393, 1280]) {
+		await navigate(new URL('/reviews/', baseUrl).toString(), width, 1000);
+		const reviewsPage = await evaluate(`(() => {
+			const card = document.querySelector('.page-reviews__form-card');
+			const form = document.querySelector('.page-reviews__form');
+			const submit = document.querySelector('.page-reviews__submit');
+			return {
+				overflow: document.documentElement.scrollWidth - window.innerWidth,
+				card: Boolean(card),
+				form: Boolean(form),
+				product: Boolean(form?.querySelector('[name="comment_post_ID"]')),
+				rating: Boolean(form?.querySelector('[name="rating"]')),
+				comment: Boolean(form?.querySelector('[name="comment"]')),
+				submitBackground: submit ? getComputedStyle(submit).backgroundColor : '',
+			};
+		})()`);
+		assert(`${width}px reviews form uses the branded layout`, reviewsPage.card && reviewsPage.form && reviewsPage.product && reviewsPage.rating && reviewsPage.comment && reviewsPage.submitBackground === 'rgb(108, 76, 255)', JSON.stringify(reviewsPage));
+		assert(`${width}px reviews page has no horizontal overflow`, reviewsPage.overflow <= 1, `${reviewsPage.overflow}px`);
+		await capture(`reviews-form-${width}.png`);
+	}
+
+	await navigate(new URL('/checkout/?add-to-cart=327', baseUrl).toString(), 1280, 1000);
+	await delay(2500);
+	await evaluate(`document.querySelector('.wc-block-components-totals-coupon .wc-block-components-panel__button')?.click(); true`);
+	await delay(500);
+	const checkoutPolish = await evaluate(`(() => {
+		const couponForm = document.querySelector('.wc-block-components-totals-coupon__form');
+		const couponInput = couponForm?.querySelector('input');
+		const couponButton = couponForm?.querySelector('.wc-block-components-totals-coupon__button');
+		const notice = document.createElement('ul');
+		notice.className = 'woocommerce-error';
+		notice.innerHTML = '<li>Вы не можете добавить это количество в корзину.</li>';
+		document.querySelector('main')?.prepend(notice);
+		const noticeStyle = getComputedStyle(notice);
+		const buttonStyle = couponButton ? getComputedStyle(couponButton) : null;
+		return {
+			couponVisible: Boolean(couponForm) && getComputedStyle(couponForm).display !== 'none',
+			couponAligned: Boolean(couponInput && couponButton) && Math.abs(couponInput.getBoundingClientRect().height - couponButton.getBoundingClientRect().height) <= 1,
+			couponRadius: buttonStyle?.borderRadius || '',
+			couponBackground: buttonStyle?.backgroundColor || '',
+			noticeRadius: noticeStyle.borderRadius,
+			noticeFont: noticeStyle.fontFamily,
+			noticeBackground: noticeStyle.backgroundColor,
+		};
+	})()`);
+	assert('checkout coupon action uses the branded control', checkoutPolish.couponVisible && checkoutPolish.couponAligned && checkoutPolish.couponRadius === '12px' && checkoutPolish.couponBackground !== 'rgb(54, 57, 63)', JSON.stringify(checkoutPolish));
+	assert('technical notices use shared brand styles', checkoutPolish.noticeRadius === '14px' && checkoutPolish.noticeFont.toLowerCase().includes('manrope') && checkoutPolish.noticeBackground === 'rgb(255, 245, 246)', JSON.stringify(checkoutPolish));
+	await capture('checkout-coupon-1280.png');
+
 	const suggestions = await evaluate(`(async () => {
 		const input = document.querySelector('#itsoft-header-search');
 		input.value = 'Windows';
 		input.dispatchEvent(new Event('input', { bubbles: true }));
 		await new Promise((resolve) => setTimeout(resolve, 350));
-		const options = [...document.querySelectorAll('.header-main__search .search-suggestions__option')];
+		const options = [...document.querySelectorAll('.header-main__search .search-suggestions__product')];
 		input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
 		return {
 			open: input.getAttribute('aria-expanded'),
-			labels: options.map((option) => option.textContent.trim()),
+			labels: options.map((option) => option.querySelector('.search-suggestions__title')?.textContent.trim() || ''),
 			selected: options.filter((option) => option.getAttribute('aria-selected') === 'true').length,
 		};
 	})()`);
-	assert('Windows search suggests matching categories', suggestions.open === 'true' && suggestions.labels.some((label) => label.includes('Windows 10')) && suggestions.labels.some((label) => label.includes('Windows 11')), JSON.stringify(suggestions));
+	assert('Windows search suggests matching product cards', suggestions.open === 'true' && suggestions.labels.length > 0 && suggestions.labels.every((label) => label.includes('Windows')), JSON.stringify(suggestions));
 	assert('search suggestions support keyboard selection', suggestions.selected === 1, JSON.stringify(suggestions));
 
 	const outsideClose = await evaluate(`(() => {

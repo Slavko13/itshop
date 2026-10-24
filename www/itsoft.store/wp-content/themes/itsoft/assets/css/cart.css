@@ -408,10 +408,80 @@
 	font-weight: 650;
 }
 
+.checkout-page--form .wc-block-components-totals-coupon__form {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 10px;
+	align-items: stretch;
+	padding-top: 12px;
+}
+
+.checkout-page--form .wc-block-components-totals-coupon__input {
+	min-width: 0;
+}
+
+.checkout-page--form .wc-block-components-totals-coupon__input input {
+	min-height: 50px;
+	border: 1px solid #dfe2ec;
+	border-radius: 12px;
+	background: #fff;
+	color: #11131a;
+}
+
+.checkout-page--form .wc-block-components-totals-coupon__button {
+	min-width: 124px;
+	min-height: 50px;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--main-perple, #6c4cff);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 700;
+	box-shadow: 0 10px 22px rgba(108, 76, 255, 0.2);
+	transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.checkout-page--form .wc-block-components-totals-coupon__button:hover:not(:disabled),
+.checkout-page--form .wc-block-components-totals-coupon__button:focus-visible:not(:disabled) {
+	background: var(--main-perple-hover, #4b2fd7);
+	box-shadow: 0 12px 26px rgba(108, 76, 255, 0.28);
+	transform: translateY(-1px);
+}
+
+.checkout-page--form .wc-block-components-totals-coupon__button:disabled {
+	background: #ece8fb;
+	color: #817997;
+	box-shadow: none;
+	cursor: not-allowed;
+	opacity: 1;
+}
+
 .checkout-page--form .wc-block-components-notice-banner {
 	border: 1px solid #e1dcff;
 	border-radius: 14px;
 	background: #f5f2ff;
+	color: #352f68;
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 1.5;
+	box-shadow: 0 8px 24px rgba(45, 34, 104, 0.07);
+}
+
+.checkout-page--form .wc-block-components-notice-banner.is-error {
+	border-color: #f4ccd1;
+	background: #fff5f6;
+	color: #9f1d30;
+}
+
+@media (max-width: 480px) {
+	.checkout-page--form .wc-block-components-totals-coupon__form {
+		grid-template-columns: 1fr;
+	}
+
+	.checkout-page--form .wc-block-components-totals-coupon__button {
+		width: 100%;
+	}
 }
 
 /* Order received — stage 3. */
@@ -1139,6 +1209,13 @@
 	border-radius: 14px;
 	background: #f5f2ff;
 	box-shadow: none;
+}
+
+.cart-page .woocommerce-error,
+.checkout-page .woocommerce-error {
+	border-color: #f4ccd1;
+	background: #fff5f6;
+	color: #9f1d30;
 }
 
 .cart-page .woocommerce-message .button {

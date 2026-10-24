@@ -302,10 +302,25 @@
             .catalog-nav__parent-item:hover .catalog-nav__children-panel {
                 display: block;
             }
-            
-            /* Ensure toggle button doesn't capture events on desktop */
-            .catalog-nav__toggle-btn {
-                pointer-events: none;
+
+            .catalog-nav__parent-item.open .catalog-nav__parent-row {
+                background: #e5deff;
+            }
+
+            .catalog-nav__parent-item.open .catalog-nav__parent-link {
+                color: var(--main-perple, #6C4CFF);
+            }
+
+            .catalog-nav__parent-item.open .catalog-nav__children-panel {
+                display: block;
+            }
+
+            .catalog-nav__toggle-btn svg {
+                transition: transform 0.2s ease;
+            }
+
+            .catalog-nav__parent-item.open .catalog-nav__toggle-btn svg {
+                transform: rotate(90deg);
             }
         }
 
@@ -603,13 +618,21 @@
             // Accordion Toggles
             toggleBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    // Only enable click toggle on mobile
-                    if (window.innerWidth > 1024) return;
-
                     e.preventDefault();
                     e.stopPropagation();
-                    
+
                     const parentItem = this.closest('.catalog-nav__parent-item');
+                    if (!parentItem) return;
+
+                    parentItem.parentElement
+                        .querySelectorAll('.catalog-nav__parent-item.open')
+                        .forEach(item => {
+                            if (item === parentItem) return;
+                            item.classList.remove('open');
+                            const itemToggle = item.querySelector('.catalog-nav__toggle-btn');
+                            if (itemToggle) itemToggle.setAttribute('aria-expanded', 'false');
+                        });
+
                     const isOpen = parentItem.classList.toggle('open');
                     this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
                 });
