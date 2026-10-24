@@ -311,12 +311,12 @@ blockquote p {
     justify-content: flex-start;
     list-style: none;
     margin: 0;
-    padding: 12px 0 12px;
+    padding: 13px 0;
     width: fit-content;
 }
 
 .topnav__item:not(.topnav__item-first) {
-    margin-left: 28px;
+    margin-left: 32px;
 }
 
 .topnav__item {
@@ -382,12 +382,12 @@ blockquote p {
 }
 
 .header-main {
-    padding: 34px 0;
+    padding: 36px 0;
 }
 .header-main__row {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 30px;
     position: relative;
 }
 
@@ -542,8 +542,15 @@ blockquote p {
     justify-content: space-between;
     flex: 0 0 auto;
     min-height: 44px;
-    gap: 30px;
+    gap: 32px;
     align-items: center;
+}
+
+@media (min-width: 1025px) {
+    .topbar__content.grid-container,
+    .header-main__row.grid-container {
+        padding-inline: 24px;
+    }
 }
 .user-nav__item {
     display: grid;

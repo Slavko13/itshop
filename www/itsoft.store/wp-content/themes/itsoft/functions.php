@@ -178,11 +178,12 @@ add_action( 'wp_enqueue_scripts', 'itsoft_assets' );
 function itsoft_assets() {
     $ver = wp_get_theme()->get( 'Version' ); // кешируем по версии темы
 	$store_api_root = trailingslashit( get_rest_url( null, 'wc/store/v1' ) );
+	$main_style_path = get_template_directory() . '/assets/css/main.css';
 
     // 3.1 Основной CSS
     wp_enqueue_style(
         'itsoft-style',
-        get_template_directory_uri() . '/assets/css/main.css', [], $ver
+		get_template_directory_uri() . '/assets/css/main.css', [], file_exists( $main_style_path ) ? (string) filemtime( $main_style_path ) : $ver
     );
 
 	if (

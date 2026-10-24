@@ -149,6 +149,8 @@ try {
 			const filters = document.querySelector('.catalog__filters')?.getBoundingClientRect();
 			const sidebarBody = document.querySelector('.catalog-sidebar__body')?.getBoundingClientRect();
 			const header = document.querySelector('.header')?.getBoundingClientRect();
+			const headerMain = document.querySelector('.header-main');
+			const headerRow = document.querySelector('.header-main__row');
 			const breadcrumbList = document.querySelector('.catalog__breadcrumbs .breadcrumbs__list')?.getBoundingClientRect();
 			const rightmost = Math.max(0, ...cards.map((card) => card.getBoundingClientRect().right));
 			const rowHeights = cards.reduce((rows, card) => {
@@ -248,6 +250,9 @@ try {
 				userIconTopSpread: userIconTops.length ? Math.max(...userIconTops) - Math.min(...userIconTops) : 0,
 				desktopColumnTopOffset: filters && sidebarBody ? Math.abs(filters.top - sidebarBody.top) : 0,
 				headerToBreadcrumbGap: header && breadcrumbList ? breadcrumbList.top - header.bottom : 0,
+				headerMainPaddingTop: headerMain ? parseFloat(getComputedStyle(headerMain).paddingTop) : 0,
+				headerRowGap: headerRow ? parseFloat(getComputedStyle(headerRow).columnGap) : 0,
+				headerRowPaddingLeft: headerRow ? parseFloat(getComputedStyle(headerRow).paddingLeft) : 0,
 				hasLegacyInnerHero: Boolean(document.querySelector('.header .hero-small')),
 				toggleVisible: Boolean(toggle && getComputedStyle(toggle).display !== 'none'),
 				nestedInteractive: Boolean(document.querySelector('a button, button a')),
@@ -288,6 +293,9 @@ try {
 		assert(`${width}px compact header-to-content gap`, state.headerToBreadcrumbGap <= 24, `${state.headerToBreadcrumbGap}px`);
 		if (width >= 1024) {
 			assert(`${width}px search aligns with category panel`, state.desktopColumnTopOffset <= 1, `${state.desktopColumnTopOffset}px`);
+		}
+		if (width > 1024) {
+			assert(`${width}px desktop header uses roomier spacing`, state.headerMainPaddingTop >= 36 && state.headerRowGap >= 30 && state.headerRowPaddingLeft >= 24, JSON.stringify({ padding: state.headerMainPaddingTop, gap: state.headerRowGap, side: state.headerRowPaddingLeft }));
 		}
 
 		await evaluate(`document.querySelector('.catalog-sort__button')?.click()`);
