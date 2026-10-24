@@ -210,7 +210,7 @@ main li,
 }
 
 /* Shared form control. Compact controls may override height only. */
-input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']):not([type='hidden']),
+input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']):not([type='hidden']):not(.cart__quantity),
 select,
 textarea,
 .woocommerce form .form-row .input-text,
@@ -227,7 +227,7 @@ textarea,
 	box-sizing: border-box;
 }
 
-input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']):not([type='hidden']),
+input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']):not([type='hidden']):not(.cart__quantity),
 select,
 .woocommerce form .form-row .input-text,
 .woocommerce form .form-row select {

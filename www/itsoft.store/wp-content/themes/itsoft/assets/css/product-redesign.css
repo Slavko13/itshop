@@ -431,6 +431,25 @@ body.single-product {
 	box-shadow: none;
 }
 
+.single-product .product__quantity .cart__quantity {
+	flex: 0 0 30px;
+	width: 30px;
+	min-width: 30px;
+	min-height: 0;
+	height: 100%;
+	margin: 0 10px;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: #fff;
+	color: #0f1116;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	-webkit-text-fill-color: #0f1116;
+}
+
 .single-product .product-assurances {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
