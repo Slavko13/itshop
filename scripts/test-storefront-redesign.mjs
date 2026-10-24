@@ -674,16 +674,33 @@ try {
 	const populatedSearch = await evaluate(`(() => {
 		const grid = document.querySelector('.itsoft-search__grid');
 		const cards = [...document.querySelectorAll('.catalog-card')];
+		const form = document.querySelector('.itsoft-search__form');
+		const input = form?.querySelector('.itsoft-search__input');
+		const icon = form?.querySelector('.itsoft-search__icon');
+		const submit = form?.querySelector('.itsoft-search__submit');
+		const formStyles = form ? getComputedStyle(form) : null;
+		const submitStyles = submit ? getComputedStyle(submit) : null;
+		const inputRect = input?.getBoundingClientRect();
+		const iconRect = icon?.getBoundingClientRect();
 		return {
 			storefrontStyles: Boolean(document.querySelector('link[href*="storefront-redesign.css"]')),
 			searchStyles: Boolean(document.querySelector('link[href*="search.css"]')),
 			cards: cards.length,
 			columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length : 0,
 			minCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
+			formHeight: form?.getBoundingClientRect().height || 0,
+			formRadius: parseFloat(formStyles?.borderRadius || '0'),
+			buttonHeight: submit?.getBoundingClientRect().height || 0,
+			buttonColor: submitStyles?.backgroundColor || '',
+			hasSearchIcon: Boolean(icon),
+			iconInputGap: inputRect && iconRect ? inputRect.left - iconRect.right : -1,
 			overflow: document.documentElement.scrollWidth - window.innerWidth,
 		};
 	})()`);
 	assert('search loads storefront and search styles', populatedSearch.storefrontStyles && populatedSearch.searchStyles, JSON.stringify(populatedSearch));
+	assert('search form uses branded rounded control', populatedSearch.formHeight >= 54 && populatedSearch.formRadius >= 13, JSON.stringify(populatedSearch));
+	assert('search submit uses branded purple button', populatedSearch.buttonHeight >= 42 && populatedSearch.buttonColor === 'rgb(108, 76, 255)', JSON.stringify(populatedSearch));
+	assert('search icon has dedicated space before input', populatedSearch.hasSearchIcon && populatedSearch.iconInputGap >= 8, JSON.stringify(populatedSearch));
 	assert('search renders the shared four-column product grid', populatedSearch.cards > 0 && populatedSearch.columns === 4 && populatedSearch.minCardWidth > 250, JSON.stringify(populatedSearch));
 	assert('populated search has no horizontal overflow', populatedSearch.overflow <= 1, `${populatedSearch.overflow}px`);
 

@@ -371,11 +371,12 @@ final class ITSoft_LF_Search {
 		if ( ! is_search() ) {
 			return;
 		}
+		$style_path = plugin_dir_path( ITSOFT_LF_FILE ) . 'assets/css/search.css';
 		wp_enqueue_style(
 			'itsoft-lf-search',
 			plugins_url( 'assets/css/search.css', ITSOFT_LF_FILE ),
 			array(),
-			ITSOFT_LF_VERSION
+			file_exists( $style_path ) ? (string) filemtime( $style_path ) : ITSOFT_LF_VERSION
 		);
 	}
 }

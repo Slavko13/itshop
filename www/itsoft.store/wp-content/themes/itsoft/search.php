@@ -34,8 +34,17 @@ $has_query_text = '' !== $query_text;
 			</div>
 			<form class="itsoft-search__form" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" role="search">
 				<label class="screen-reader-text" for="itsoft-search-results-input">Поиск</label>
+				<span class="itsoft-search__icon" aria-hidden="true">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6" />
+						<path d="M13.5 13.5L18 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					</svg>
+				</span>
 				<input id="itsoft-search-results-input" class="itsoft-search__input" type="search" name="s" value="<?php echo esc_attr( $query_text ); ?>" placeholder="Найти программу или лицензию" required />
-				<button class="itsoft-search__submit btn" type="submit">Найти</button>
+				<button class="itsoft-search__submit btn" type="submit">
+					<span>Найти</span>
+					<span class="itsoft-search__submit-arrow" aria-hidden="true">→</span>
+				</button>
 			</form>
 		</header>
 

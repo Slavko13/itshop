@@ -148,11 +148,90 @@
 		if (!select) {
 			return;
 		}
+		select.dataset.accountCurrentValue = select.value;
 
 		select.addEventListener('change', function () {
+			var selectedOption = select.options[select.selectedIndex];
+			if (selectedOption && selectedOption.hasAttribute('data-account-logout-option')) {
+				return;
+			}
 			if (select.value) {
 				window.location.assign(select.value);
 			}
+		});
+	}
+
+	function initLogoutConfirmation() {
+		var modal = document.querySelector('[data-account-logout-dialog]');
+		if (!modal) {
+			return;
+		}
+
+		var dialog = modal.querySelector('.account-logout-modal__dialog');
+		var confirm = modal.querySelector('[data-account-logout-confirm]');
+		var cancelButtons = Array.prototype.slice.call(modal.querySelectorAll('[data-account-logout-cancel]'));
+		var logoutLinks = Array.prototype.slice.call(document.querySelectorAll('[data-account-logout]'));
+		var select = document.querySelector('[data-account-nav-select]');
+		var lastFocused = null;
+
+		function openModal(url, trigger) {
+			if (!url || !confirm) {
+				return;
+			}
+
+			lastFocused = trigger || document.activeElement;
+			confirm.href = url;
+			modal.hidden = false;
+			document.body.classList.add('account-logout-open');
+			window.requestAnimationFrame(function () {
+				modal.classList.add('is-open');
+				var stayButton = modal.querySelector('.account-logout-modal__stay');
+				(stayButton || dialog).focus();
+			});
+		}
+
+		function closeModal() {
+			modal.classList.remove('is-open');
+			modal.hidden = true;
+			document.body.classList.remove('account-logout-open');
+			if (select && select.dataset.accountCurrentValue) {
+				select.value = select.dataset.accountCurrentValue;
+			}
+			if (lastFocused && typeof lastFocused.focus === 'function') {
+				lastFocused.focus();
+			}
+		}
+
+		logoutLinks.forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				event.preventDefault();
+				openModal(link.href, link);
+			});
+		});
+
+		if (select) {
+			select.addEventListener('change', function () {
+				var option = select.options[select.selectedIndex];
+				if (option && option.hasAttribute('data-account-logout-option')) {
+					openModal(option.value, select);
+				}
+			});
+		}
+
+		cancelButtons.forEach(function (button) {
+			button.addEventListener('click', closeModal);
+		});
+
+		confirm.addEventListener('click', function () {
+			confirm.setAttribute('aria-busy', 'true');
+		});
+
+		document.addEventListener('keydown', function (event) {
+			if (modal.hidden || event.key !== 'Escape') {
+				return;
+			}
+			event.preventDefault();
+			closeModal();
 		});
 	}
 
@@ -161,5 +240,6 @@
 		initPasswordToggles();
 		initRequiredFieldValidation();
 		initAccountNavigation();
+		initLogoutConfirmation();
 	});
 }());

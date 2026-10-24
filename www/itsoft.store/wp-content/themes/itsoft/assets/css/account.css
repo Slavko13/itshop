@@ -796,6 +796,167 @@
 	color: var(--account-danger);
 }
 
+body.account-logout-open {
+	overflow: hidden;
+}
+
+.account-logout-modal[hidden] {
+	display: none !important;
+}
+
+.account-logout-modal {
+	position: fixed;
+	isolation: isolate;
+	z-index: 10050;
+	inset: 0;
+	display: grid;
+	padding: 20px;
+	place-items: center;
+	opacity: 0;
+	transition: opacity 0.18s ease;
+}
+
+.account-logout-modal.is-open {
+	opacity: 1;
+}
+
+.account-logout-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 11, 40, 0.58);
+	backdrop-filter: blur(4px);
+}
+
+.account-logout-modal__dialog {
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	width: min(100%, 460px);
+	padding: 34px;
+	border: 1px solid #e4defe;
+	border-radius: 24px;
+	outline: 0;
+	background: #fff;
+	box-shadow: 0 24px 70px rgba(22, 16, 55, 0.24);
+	transform: translateY(10px) scale(0.98);
+	transition: transform 0.18s ease;
+}
+
+.account-logout-modal.is-open .account-logout-modal__dialog {
+	transform: translateY(0) scale(1);
+}
+
+.account-logout-modal__close {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	display: inline-flex;
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: 12px;
+	background: #f3f0ff;
+	color: var(--account-purple);
+	font-size: 26px;
+	font-weight: 400;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.account-logout-modal__kicker {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--account-purple);
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+
+.account-logout-modal__dialog h2 {
+	margin: 0 44px 10px 0;
+	color: var(--account-ink);
+	font-size: 28px;
+	font-weight: 750;
+	line-height: 1.2;
+}
+
+.account-logout-modal__dialog p {
+	margin: 0;
+	color: var(--account-muted);
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.account-logout-modal__actions {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin-top: 26px;
+}
+
+.account-logout-modal__stay,
+.account-logout-modal__confirm {
+	display: inline-flex;
+	min-height: 48px;
+	padding: 0 20px;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	font-size: 14px;
+	font-weight: 750;
+	text-decoration: none;
+	cursor: pointer;
+	box-sizing: border-box;
+}
+
+.account-logout-modal__stay {
+	border: 1px solid var(--account-line);
+	background: #fff;
+	color: var(--account-text);
+}
+
+.account-logout-modal__confirm {
+	border: 1px solid var(--account-purple);
+	background: var(--account-purple);
+	color: #fff;
+	box-shadow: 0 10px 22px rgba(108, 76, 255, 0.22);
+}
+
+.account-logout-modal__stay:hover,
+.account-logout-modal__stay:focus-visible {
+	border-color: #d7d0fa;
+	background: #f6f4ff;
+	color: var(--account-purple);
+}
+
+.account-logout-modal__confirm:hover,
+.account-logout-modal__confirm:focus-visible {
+	background: #5638dc;
+	color: #fff;
+}
+
+@media (max-width: 520px) {
+	.account-logout-modal {
+		padding: 14px;
+	}
+
+	.account-logout-modal__dialog {
+		padding: 28px 20px 20px;
+		border-radius: 20px;
+	}
+
+	.account-logout-modal__dialog h2 {
+		font-size: 24px;
+	}
+
+	.account-logout-modal__actions {
+		grid-template-columns: 1fr;
+	}
+}
+
 .account-shell__help {
 	display: flex;
 	align-items: center;

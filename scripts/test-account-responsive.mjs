@@ -195,6 +195,69 @@ try {
 	checks.push({ page: 'address-redirect', width: 1280, pass: addressRedirectPass, url: addressRedirectPath });
 	console.log(`${addressRedirectPass ? 'PASS' : 'FAIL'} legacy address endpoint redirects to personal data url=${addressRedirectPath}`);
 
+	await setViewport(1280, 1000);
+	await navigate('/my-account/');
+	const desktopLogoutTriggered = await evaluate(`(() => {
+		const link = document.querySelector('a[data-account-logout]');
+		if (!link) return false;
+		link.click();
+		return true;
+	})()`);
+	await delay(120);
+	const desktopLogoutModal = await evaluate(`(() => {
+		const modal = document.querySelector('[data-account-logout-dialog]');
+		const confirm = modal?.querySelector('[data-account-logout-confirm]');
+		return {
+			loggedIn: document.body.classList.contains('logged-in'),
+			hidden: modal?.hidden ?? true,
+			open: modal?.classList.contains('is-open') || false,
+			confirmHasNonce: /customer-logout|_wpnonce/.test(confirm?.href || ''),
+			focusedStay: document.activeElement?.classList.contains('account-logout-modal__stay') || false,
+		};
+	})()`);
+	const desktopLogoutPass = desktopLogoutTriggered
+		&& desktopLogoutModal.loggedIn
+		&& !desktopLogoutModal.hidden
+		&& desktopLogoutModal.open
+		&& desktopLogoutModal.confirmHasNonce
+		&& desktopLogoutModal.focusedStay;
+	checks.push({ page: 'logout-confirmation-desktop', width: 1280, pass: desktopLogoutPass });
+	console.log(`${desktopLogoutPass ? 'PASS' : 'FAIL'} desktop logout requires confirmation ${JSON.stringify(desktopLogoutModal)}`);
+	await evaluate(`document.querySelector('.account-logout-modal__stay')?.click()`);
+	await delay(80);
+	const desktopCancelPass = await evaluate(`document.body.classList.contains('logged-in') && document.querySelector('[data-account-logout-dialog]')?.hidden === true`);
+	checks.push({ page: 'logout-cancel-desktop', width: 1280, pass: desktopCancelPass });
+	console.log(`${desktopCancelPass ? 'PASS' : 'FAIL'} cancelling logout keeps the account session`);
+
+	await setViewport(393, 1000);
+	await navigate('/my-account/');
+	const mobileLogoutTriggered = await evaluate(`(() => {
+		const select = document.querySelector('[data-account-nav-select]');
+		const option = select ? [...select.options].find((item) => item.hasAttribute('data-account-logout-option')) : null;
+		if (!select || !option) return false;
+		select.value = option.value;
+		select.dispatchEvent(new Event('change', { bubbles: true }));
+		return true;
+	})()`);
+	await delay(120);
+	const mobileLogoutModal = await evaluate(`(() => {
+		const modal = document.querySelector('[data-account-logout-dialog]');
+		return {
+			loggedIn: document.body.classList.contains('logged-in'),
+			hidden: modal?.hidden ?? true,
+			open: modal?.classList.contains('is-open') || false,
+			overflow: document.documentElement.scrollWidth - innerWidth,
+		};
+	})()`);
+	const mobileLogoutPass = mobileLogoutTriggered
+		&& mobileLogoutModal.loggedIn
+		&& !mobileLogoutModal.hidden
+		&& mobileLogoutModal.open
+		&& mobileLogoutModal.overflow <= 1;
+	checks.push({ page: 'logout-confirmation-mobile', width: 393, pass: mobileLogoutPass });
+	console.log(`${mobileLogoutPass ? 'PASS' : 'FAIL'} mobile logout requires confirmation ${JSON.stringify(mobileLogoutModal)}`);
+	await evaluate(`document.querySelector('.account-logout-modal__stay')?.click()`);
+
 	const cases = [
 		{ path: '/my-account/', name: 'dashboard', widths: [393, 768, 1280] },
 		{ path: '/my-account/orders/', name: 'orders', widths: [393, 1280, 1440] },
