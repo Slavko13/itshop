@@ -15,53 +15,72 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 
-    document.querySelectorAll('code').forEach(codeEl => {
-        if (codeEl.closest('[data-license-control]')) return;
+	const copyTextFallback = (value) => new Promise((resolve, reject) => {
+		const textarea = document.createElement('textarea');
+		textarea.value = value;
+		textarea.setAttribute('readonly', '');
+		textarea.style.position = 'fixed';
+		textarea.style.left = '0';
+		textarea.style.top = '0';
+		textarea.style.opacity = '0';
+		document.body.appendChild(textarea);
+		textarea.focus();
+		textarea.select();
+		textarea.setSelectionRange(0, textarea.value.length);
 
-        const btn = document.createElement('div');
-        btn.className = 'code__copy';
-        btn.style.cursor = 'pointer';
+		try {
+			document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
+		} catch (error) {
+			reject(error);
+		} finally {
+			textarea.remove();
+		}
+	});
 
-        btn.addEventListener('click', () => {
-                btn.remove();
-                const text = codeEl.innerText;
-                navigator.clipboard.writeText(text).catch(() => {
-                    const ta = document.createElement('textarea');
-                    ta.value = text;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    ta.remove();
-                });
-            codeEl.appendChild(btn);
-        });
-
-        codeEl.appendChild(btn);
-    });
-
-	const copyLicenseText = (value) => {
+	const copyText = (value) => {
 		if (navigator.clipboard && window.isSecureContext) {
-			return navigator.clipboard.writeText(value);
+			return navigator.clipboard.writeText(value).catch(() => copyTextFallback(value));
 		}
 
-		return new Promise((resolve, reject) => {
-			const textarea = document.createElement('textarea');
-			textarea.value = value;
-			textarea.setAttribute('readonly', '');
-			textarea.style.position = 'fixed';
-			textarea.style.opacity = '0';
-			document.body.appendChild(textarea);
-			textarea.select();
-
-			try {
-				document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
-			} catch (error) {
-				reject(error);
-			} finally {
-				textarea.remove();
-			}
-		});
+		return copyTextFallback(value);
 	};
+
+	document.querySelectorAll('code').forEach((codeEl) => {
+		if (codeEl.closest('[data-license-control]') || codeEl.querySelector('.code__copy')) return;
+
+		const button = document.createElement('button');
+		button.className = 'code__copy';
+		button.type = 'button';
+		button.setAttribute('aria-label', 'Скопировать код');
+		button.setAttribute('title', 'Скопировать код');
+
+		button.addEventListener('click', () => {
+			const value = codeEl.dataset.copyValue || codeEl.textContent.trim();
+			if (!value || button.disabled) return;
+
+			button.disabled = true;
+			button.classList.remove('is-copied', 'is-error');
+
+			copyText(value).then(() => {
+				button.classList.add('is-copied');
+				button.setAttribute('aria-label', 'Скопировано');
+				button.setAttribute('title', 'Скопировано');
+			}).catch(() => {
+				button.classList.add('is-error');
+				button.setAttribute('aria-label', 'Не удалось скопировать');
+				button.setAttribute('title', 'Не удалось скопировать');
+			}).finally(() => {
+				button.disabled = false;
+				window.setTimeout(() => {
+					button.classList.remove('is-copied', 'is-error');
+					button.setAttribute('aria-label', 'Скопировать код');
+					button.setAttribute('title', 'Скопировать код');
+				}, 1800);
+			});
+		});
+
+		codeEl.appendChild(button);
+	});
 
 	const licenseLabels = () => {
 		const isEnglish = document.documentElement.lang.toLowerCase().startsWith('en')
@@ -97,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (copy) {
 			copy.addEventListener('click', () => {
 				const labels = licenseLabels();
-				copyLicenseText(output.dataset.value).then(() => {
+				copyText(output.dataset.value).then(() => {
 					if (feedback) feedback.textContent = labels.success;
 					copy.textContent = labels.copied;
 					window.setTimeout(() => {
