@@ -190,28 +190,30 @@ final class ITSoft_LF_Checkout {
 	}
 
 	public function enqueue_assets(): void {
-		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_order_received_page() ) {
+		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
 			return;
 		}
+		$script_path = ITSOFT_LF_DIR . 'assets/js/checkout-email.js';
+		$style_path  = ITSOFT_LF_DIR . 'assets/css/checkout-email.css';
 		wp_enqueue_script(
 			'itsoft-lf-checkout-email',
 			plugins_url( 'assets/js/checkout-email.js', ITSOFT_LF_FILE ),
 			array(),
-			ITSOFT_LF_VERSION,
+			file_exists( $script_path ) ? (string) filemtime( $script_path ) : ITSOFT_LF_VERSION,
 			true
 		);
 		wp_localize_script(
 			'itsoft-lf-checkout-email',
 			'ITSOFT_CHECKOUT',
 			array(
-				'digitalOnly' => $this->is_digital_only_cart(),
+				'digitalOnly' => true,
 			)
 		);
 		wp_enqueue_style(
 			'itsoft-lf-checkout-email',
 			plugins_url( 'assets/css/checkout-email.css', ITSOFT_LF_FILE ),
 			array(),
-			ITSOFT_LF_VERSION
+			file_exists( $style_path ) ? (string) filemtime( $style_path ) : ITSOFT_LF_VERSION
 		);
 	}
 

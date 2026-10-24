@@ -73,17 +73,40 @@
 		refresh();
 	}
 
+	function normalizeDigitalCheckoutLabels() {
+		if ( ! window.ITSOFT_CHECKOUT || ! window.ITSOFT_CHECKOUT.digitalOnly ) {
+			return;
+		}
+
+		const isEnglish = document.documentElement.lang.toLowerCase().startsWith( 'en' );
+		const buyerLabel = isEnglish ? 'Customer details' : 'Данные покупателя';
+		const billingLabels = [ 'платёжный адрес', 'платежный адрес', 'billing address' ];
+		const shippingLabels = [ 'адрес доставки', 'shipping address', 'delivery address' ];
+
+		document.querySelectorAll( '.wc-block-components-title, h1, h2, h3, h4, h5, h6, [role="heading"], font' ).forEach( function ( title ) {
+			const label = title.textContent.trim().toLowerCase();
+			if ( billingLabels.includes( label ) ) {
+				title.textContent = buyerLabel;
+				return;
+			}
+			if ( shippingLabels.includes( label ) ) {
+				const step = title.closest( '.wc-block-components-checkout-step, .wp-block-woocommerce-checkout-shipping-address-block' );
+				if ( step ) {
+					step.hidden = true;
+					step.setAttribute( 'aria-hidden', 'true' );
+				} else {
+					title.hidden = true;
+					title.setAttribute( 'aria-hidden', 'true' );
+				}
+			}
+		} );
+	}
+
 	function scan() {
 		document.querySelectorAll( 'input' ).forEach( attach );
-		if ( window.ITSOFT_CHECKOUT && window.ITSOFT_CHECKOUT.digitalOnly ) {
-			document.querySelectorAll( '.wc-block-components-title' ).forEach( function ( title ) {
-				if ( title.textContent.trim() === 'Платёжный адрес' || title.textContent.trim() === 'Billing address' ) {
-					title.textContent = 'Данные покупателя';
-				}
-			} );
-		}
+		normalizeDigitalCheckoutLabels();
 	}
 
 	document.addEventListener( 'DOMContentLoaded', scan );
-	new MutationObserver( scan ).observe( document.documentElement, { childList: true, subtree: true } );
+	new MutationObserver( scan ).observe( document.documentElement, { childList: true, characterData: true, subtree: true } );
 } )();

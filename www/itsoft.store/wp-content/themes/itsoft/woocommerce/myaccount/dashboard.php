@@ -21,10 +21,6 @@ $recent_orders = wc_get_orders(
 );
 $first_name = trim( (string) $current_user->first_name );
 $greeting   = $first_name ?: $current_user->display_name;
-$address    = wc_get_account_formatted_address( 'shipping' );
-if ( ! $address ) {
-	$address = wc_get_account_formatted_address( 'billing' );
-}
 ?>
 
 <section class="account-dashboard">
@@ -93,9 +89,7 @@ if ( ! $address ) {
 			<dl class="account-profile-summary">
 				<div><dt>E-mail</dt><dd><?php echo esc_html( $current_user->user_email ); ?></dd></div>
 				<div><dt>Телефон</dt><dd><?php echo esc_html( get_user_meta( $customer_id, 'billing_phone', true ) ?: 'Не указан' ); ?></dd></div>
-				<div><dt>Адрес доставки</dt><dd><?php echo $address ? wp_kses_post( $address ) : 'Не заполнен'; ?></dd></div>
 			</dl>
-			<a class="account-dashboard-card__address-link" href="<?php echo esc_url( wc_get_account_endpoint_url( 'edit-address' ) ); ?>">Настроить адрес</a>
 		</aside>
 	</div>
 </section>

@@ -774,22 +774,33 @@ function itsoft_catalog_loop_columns( $columns ) {
 	return 3;
 }
 
+/**
+ * The shop sells electronic licenses only. Some imported products still have
+ * the WooCommerce virtual flag disabled, so shipping is disabled centrally.
+ */
+add_filter( 'woocommerce_product_needs_shipping', 'itsoft_disable_product_shipping', 1000, 2 );
+function itsoft_disable_product_shipping( $needs_shipping, $product ) {
+	return false;
+}
+
+add_filter( 'woocommerce_cart_needs_shipping', '__return_false', 1000 );
+add_filter( 'woocommerce_cart_needs_shipping_address', '__return_false', 1000 );
+
 add_filter( 'woocommerce_checkout_fields', 'itsoft_require_checkout_contact_fields', 999 );
 function itsoft_require_checkout_contact_fields( $fields ) {
-	$required_keys = array(
-		'billing'  => array( 'billing_email', 'billing_phone' ),
-		'shipping' => array( 'shipping_email', 'shipping_phone' ),
-	);
+	$physical_fields = array( 'billing_company', 'billing_country', 'billing_address_1', 'billing_address_2', 'billing_city', 'billing_state', 'billing_postcode' );
 
-	foreach ( $required_keys as $section => $field_keys ) {
-		if ( ! isset( $fields[ $section ] ) || ! is_array( $fields[ $section ] ) ) {
-			continue;
+	foreach ( $physical_fields as $field_key ) {
+		if ( isset( $fields['billing'][ $field_key ] ) ) {
+			unset( $fields['billing'][ $field_key ] );
 		}
+	}
 
-		foreach ( $field_keys as $field_key ) {
-			if ( isset( $fields[ $section ][ $field_key ] ) ) {
-				$fields[ $section ][ $field_key ]['required'] = true;
-			}
+	$fields['shipping'] = array();
+
+	foreach ( array( 'billing_email', 'billing_phone' ) as $field_key ) {
+		if ( isset( $fields['billing'][ $field_key ] ) ) {
+			$fields['billing'][ $field_key ]['required'] = true;
 		}
 	}
 
@@ -813,22 +824,6 @@ function itsoft_validate_required_checkout_contacts() {
 	if ( '' === $billing_phone ) {
 		wc_add_notice( __( 'Пожалуйста, укажите телефон.', 'itsoft' ), 'error' );
 	}
-
-	$ship_to_different = isset( $_POST['ship_to_different_address'] ) && wc_string_to_bool( wp_unslash( $_POST['ship_to_different_address'] ) );
-	if ( ! $ship_to_different ) {
-		return;
-	}
-
-	$shipping_email = isset( $_POST['shipping_email'] ) ? wc_clean( wp_unslash( $_POST['shipping_email'] ) ) : '';
-	$shipping_phone = isset( $_POST['shipping_phone'] ) ? wc_clean( wp_unslash( $_POST['shipping_phone'] ) ) : '';
-
-	if ( array_key_exists( 'shipping_email', $_POST ) && '' === $shipping_email ) {
-		wc_add_notice( __( 'Пожалуйста, укажите email для доставки.', 'itsoft' ), 'error' );
-	}
-
-	if ( array_key_exists( 'shipping_phone', $_POST ) && '' === $shipping_phone ) {
-		wc_add_notice( __( 'Пожалуйста, укажите телефон для доставки.', 'itsoft' ), 'error' );
-	}
 }
 
 add_action( 'woocommerce_store_api_checkout_update_order_from_request', 'itsoft_validate_store_api_required_phones', 10, 2 );
@@ -839,10 +834,8 @@ function itsoft_validate_store_api_required_phones( $order, $request ) {
 		return;
 	}
 
-	$billing_address  = (array) $request->get_param( 'billing_address' );
-	$shipping_address = (array) $request->get_param( 'shipping_address' );
-	$billing_phone    = wc_clean( wp_unslash( $billing_address['phone'] ?? '' ) );
-	$shipping_phone   = wc_clean( wp_unslash( $shipping_address['phone'] ?? '' ) );
+	$billing_address = (array) $request->get_param( 'billing_address' );
+	$billing_phone   = wc_clean( wp_unslash( $billing_address['phone'] ?? '' ) );
 
 	if ( '' === $billing_phone && class_exists( '\Automattic\WooCommerce\StoreApi\Exceptions\RouteException' ) ) {
 		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException(
@@ -852,13 +845,6 @@ function itsoft_validate_store_api_required_phones( $order, $request ) {
 		);
 	}
 
-	if ( ! empty( $shipping_address ) && '' === $shipping_phone && class_exists( '\Automattic\WooCommerce\StoreApi\Exceptions\RouteException' ) ) {
-		throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException(
-			'itsoft_required_shipping_phone',
-			__( 'Пожалуйста, укажите телефон для доставки.', 'itsoft' ),
-			400
-		);
-	}
 }
 
 add_shortcode( 'posts', 'dummy_posts_shortcode' );

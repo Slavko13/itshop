@@ -73,7 +73,7 @@ $itsoft_cart_is_empty = function_exists( 'WC' ) && WC()->cart && WC()->cart->is_
 							<span class="cart-benefits__icon" aria-hidden="true">
 								<svg viewBox="0 0 24 24" focusable="false"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4.5 7.8 7.5 4.3 7.5-4.3M12 12.1V21"/></svg>
 							</span>
-							<span><strong><?php esc_html_e( 'Электронная доставка', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Без курьера и ожидания посылки', 'itsoft' ); ?></small></span>
+							<span><strong><?php esc_html_e( 'Получение ключа', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Сразу после подтверждения оплаты', 'itsoft' ); ?></small></span>
 						</div>
 						<div class="cart-benefits__item">
 							<span class="cart-benefits__icon" aria-hidden="true">

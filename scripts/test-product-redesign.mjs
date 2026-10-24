@@ -120,6 +120,11 @@ async function openProduct(path, width, height, name) {
 			upsells: {
 				count: upsellCards.length,
 				cardHeights: upsellCards.map((card) => Math.round(card.getBoundingClientRect().height)),
+				bottomGaps: upsellCards.map((card) => {
+					const cardRect = card.getBoundingClientRect();
+					const actionsRect = card.querySelector('.catalog-card__actions')?.getBoundingClientRect();
+					return actionsRect ? Math.round(cardRect.bottom - actionsRect.bottom) : 0;
+				}),
 				buttonHeights: upsellButtons.map((upsellButton) => Math.round(upsellButton.getBoundingClientRect().height)),
 				buttonColors: upsellButtons.map((upsellButton) => getComputedStyle(upsellButton).backgroundColor),
 				buttonTransforms: upsellButtons.map((upsellButton) => getComputedStyle(upsellButton).transform),
@@ -147,6 +152,9 @@ async function openProduct(path, width, height, name) {
 		}
 		if (width >= 1024 && new Set(result.upsells.cardHeights).size !== 1) {
 			throw new Error(`${name} upsell cards have unequal heights: ${JSON.stringify(result.upsells.cardHeights)}`);
+		}
+		if (result.upsells.bottomGaps.some((gap) => gap > 17)) {
+			throw new Error(`${name} upsell cards reserve empty space after actions: ${JSON.stringify(result.upsells.bottomGaps)}`);
 		}
 	}
 
@@ -185,8 +193,10 @@ try {
 	await openProduct('/product/windows-11-iot-enterprise-2024-ltsc-korporativnaya/', 1280, 900, 'digital-1280');
 	await openProduct('/product/windows-11-iot-enterprise-2024-ltsc-korporativnaya/', 1440, 900, 'digital-1440');
 
-	const physical = await openProduct('/product/microsoft-office-2021-professional-plus/', 1280, 900, 'physical-variable');
-	if (!/(достав|delivery)/i.test(physical.fulfilment)) throw new Error(`Physical fulfilment label failed: ${JSON.stringify(physical)}`);
+	const importedElectronic = await openProduct('/product/microsoft-office-2021-professional-plus/', 1280, 900, 'imported-electronic-variable');
+	if (!/(электрон|electronic)/i.test(importedElectronic.fulfilment) || /(товар с доставкой|physical delivery)/i.test(importedElectronic.fulfilment)) {
+		throw new Error(`Imported product did not use electronic fulfilment: ${JSON.stringify(importedElectronic)}`);
+	}
 
 	const variationResult = await evaluate(`(() => {
 		const options = [...document.querySelectorAll('[data-variation-option]')];

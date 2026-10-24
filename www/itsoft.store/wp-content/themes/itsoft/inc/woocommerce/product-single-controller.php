@@ -34,16 +34,16 @@ if ( ! class_exists( 'Itsoft_Product_Single_Controller' ) ) {
 		/**
 		 * Prepares the customer-facing purchase and fulfilment summary.
 		 *
-		 * WooCommerce's virtual flag controls shipping. License-pool mapping is
-		 * intentionally not used here because key fulfilment is an independent
-		 * business rule.
+		 * Every product in the store is delivered electronically. Older imports
+		 * may still have the WooCommerce virtual flag disabled, so presentation
+		 * follows the current business model rather than stale product data.
 		 *
 		 * @param WC_Product $product WooCommerce product instance.
 		 *
 		 * @return array<string, mixed>
 		 */
 		private static function prepare_purchase_context( WC_Product $product ) : array {
-			$is_virtual = $product->is_virtual();
+			$is_virtual = true;
 			$terms      = get_the_terms( $product->get_id(), 'product_cat' );
 			$category   = '';
 
@@ -65,24 +65,16 @@ if ( ! class_exists( 'Itsoft_Product_Single_Controller' ) ) {
 				'category'          => $category,
 				'sku'               => (string) $product->get_sku(),
 				'is_virtual'        => $is_virtual,
-				'fulfilment_label'  => $is_virtual ? 'Электронная лицензия' : 'Товар с доставкой',
-				'fulfilment_detail' => $is_virtual
-					? 'Ключ придёт на e-mail после подтверждения оплаты.'
-					: 'Адрес и способ доставки вы выберете при оформлении заказа.',
+				'fulfilment_label'  => 'Электронная лицензия',
+				'fulfilment_detail' => 'Ключ придёт на e-mail после подтверждения оплаты.',
 				'stock_label'       => $stock_label,
 				'stock_state'       => $stock_state,
 				'short_description' => '' !== $short_description ? wp_kses_post( wpautop( $short_description ) ) : '',
-				'steps'             => $is_virtual
-					? array(
-						array( 'title' => 'Оформите заказ', 'text' => 'Укажите актуальный e-mail получателя.' ),
-						array( 'title' => 'Подтвердите оплату', 'text' => 'Заказ перейдёт в обработку автоматически.' ),
-						array( 'title' => 'Получите ключ', 'text' => 'Письмо с лицензией и инструкцией придёт на e-mail.' ),
-					)
-					: array(
-						array( 'title' => 'Оформите заказ', 'text' => 'Заполните контактные данные и адрес.' ),
-						array( 'title' => 'Выберите доставку', 'text' => 'Доступные способы появятся при оформлении.' ),
-						array( 'title' => 'Получите заказ', 'text' => 'Статус покупки будет доступен в личном кабинете.' ),
-					),
+				'steps'             => array(
+					array( 'title' => 'Оформите заказ', 'text' => 'Укажите актуальный e-mail получателя.' ),
+					array( 'title' => 'Подтвердите оплату', 'text' => 'Заказ перейдёт в обработку автоматически.' ),
+					array( 'title' => 'Получите ключ', 'text' => 'Письмо с лицензией и инструкцией придёт на e-mail.' ),
+				),
 			);
 		}
 

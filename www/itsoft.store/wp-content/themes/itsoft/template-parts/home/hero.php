@@ -30,7 +30,8 @@ $title = $acf ? trim( (string) get_field( 'home_hero_title', $front_page_id ) ) 
 $text  = $acf ? trim( (string) get_field( 'home_hero_text', $front_page_id ) ) : '';
 
 $title = $title ?: __( 'Лицензионное ПО без сложного оформления', 'itsoft' );
-$text  = $text ?: __( 'Подберите программу, оплатите заказ и получите электронный ключ на e-mail. Для физических товаров доступна обычная доставка.', 'itsoft' );
+$text  = $text ?: __( 'Подберите программу, оплатите заказ и получите электронный ключ на e-mail.', 'itsoft' );
+$text  = preg_replace( '/\s*Для физических товаров[^.]*\.?/iu', '', $text );
 
 $primary_label   = $acf ? trim( (string) get_field( 'home_hero_primary_label', $front_page_id ) ) : '';
 $primary_url     = $acf ? trim( (string) get_field( 'home_hero_primary_url', $front_page_id ) ) : '';
@@ -80,7 +81,7 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 					<span class="home-license-card__caption"><?php esc_html_e( 'Электронная лицензия', 'itsoft' ); ?></span>
 					<strong><?php esc_html_e( 'Программное обеспечение', 'itsoft' ); ?></strong>
 					<div class="home-license-card__key">•••••-•••••-•••••-8K2P4</div>
-					<div class="home-license-card__footer"><span><?php esc_html_e( 'Доставка', 'itsoft' ); ?></span><b><?php esc_html_e( 'На e-mail', 'itsoft' ); ?></b></div>
+					<div class="home-license-card__footer"><span><?php esc_html_e( 'Получение', 'itsoft' ); ?></span><b><?php esc_html_e( 'На e-mail', 'itsoft' ); ?></b></div>
 				</div>
 				<span class="home-hero__floating home-hero__floating--mail">✉ <b><?php esc_html_e( 'После оплаты', 'itsoft' ); ?></b></span>
 				<span class="home-hero__floating home-hero__floating--support">✓ <b><?php esc_html_e( 'Поддержка заказа', 'itsoft' ); ?></b></span>
@@ -90,7 +91,7 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 
 	<div class="grid-container home-benefits">
 		<div class="home-benefits__item"><span>01</span><div><strong><?php esc_html_e( 'Быстрое оформление', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Только необходимые данные', 'itsoft' ); ?></small></div></div>
-		<div class="home-benefits__item"><span>02</span><div><strong><?php esc_html_e( 'Электронная доставка', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Ключ и заказ приходят на e-mail', 'itsoft' ); ?></small></div></div>
+		<div class="home-benefits__item"><span>02</span><div><strong><?php esc_html_e( 'Получение ключа', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Ключ и заказ приходят на e-mail', 'itsoft' ); ?></small></div></div>
 		<div class="home-benefits__item"><span>03</span><div><strong><?php esc_html_e( 'История покупок', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Заказы и лицензии в кабинете', 'itsoft' ); ?></small></div></div>
 	</div>
 </section>

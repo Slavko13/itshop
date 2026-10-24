@@ -196,7 +196,12 @@ try {
 				cards: cards.length,
 				minCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
 				buttons: document.querySelectorAll('.catalog-card__buy').length,
-				availableCards: cards.filter((card) => card.querySelector('.catalog-card__stock-note--placeholder')).length,
+				availableCards: cards.filter((card) => !card.querySelector('.catalog-card__stock-note')).length,
+				maxCardBottomGap: Math.max(0, ...cards.map((card) => {
+					const cardRect = card.getBoundingClientRect();
+					const actionsRect = card.querySelector('.catalog-card__actions')?.getBoundingClientRect();
+					return actionsRect ? cardRect.bottom - actionsRect.bottom : 0;
+				})),
 				quickBuyButtons: document.querySelectorAll('.catalog-card__quick-buy').length,
 				validQuickBuyLinks: [...document.querySelectorAll('.catalog-card__quick-buy')].filter((link) => {
 					const url = new URL(link.href);
@@ -249,6 +254,7 @@ try {
 		assert(`${width}px cards fit viewport`, state.rightmost <= width + 1, `${state.rightmost}px`);
 		assert(`${width}px cards use the available column width`, state.minCardWidth >= (width < 480 ? width - 64 : 200), `${state.minCardWidth}px`);
 		assert(`${width}px cards have equal height within rows`, state.maxRowHeightSpread <= 1, `${state.maxRowHeightSpread}px`);
+		assert(`${width}px cards do not reserve empty space after actions`, state.maxCardBottomGap <= 17, `${state.maxCardBottomGap}px`);
 		assert(`${width}px action labels are vertically centered`, state.maxButtonLabelOffset <= 1, `${state.maxButtonLabelOffset}px`);
 		assert(`${width}px action labels are horizontally centered`, state.maxButtonHorizontalOffset <= 1, `${state.maxButtonHorizontalOffset}px`);
 		assert(`${width}px product image area is square`, Math.abs(state.imageRatio - 1) <= 0.01, String(state.imageRatio));
@@ -611,6 +617,48 @@ try {
 	assert('search loads storefront and search styles', populatedSearch.storefrontStyles && populatedSearch.searchStyles, JSON.stringify(populatedSearch));
 	assert('search renders the shared four-column product grid', populatedSearch.cards > 0 && populatedSearch.columns === 4 && populatedSearch.minCardWidth > 250, JSON.stringify(populatedSearch));
 	assert('populated search has no horizontal overflow', populatedSearch.overflow <= 1, `${populatedSearch.overflow}px`);
+
+	const headerCases = [
+		['home', '/'],
+		['catalog', '/shop/'],
+		['product', '/product/windows-11-iot-enterprise-2024-ltsc-korporativnaya/'],
+		['search', '/?s=Windows'],
+		['checkout', '/checkout/?add-to-cart=327'],
+	];
+	let sharedHeaderStructure = '';
+	for (const [name, path] of headerCases) {
+		await navigate(new URL(path, baseUrl).toString(), 1280);
+		const headerState = await evaluate(`(() => {
+			const row = document.querySelector('.header-main__row');
+			const mark = row?.querySelector('.brand-logo__mark');
+			const wordmark = row?.querySelector('.brand-logo__wordmark');
+			const main = document.querySelector('.header-main');
+			return {
+				structure: row ? [...row.children].map((node) => node.className).join('|') : '',
+				mainHeight: Math.round(main?.getBoundingClientRect().height || 0),
+				rowHeight: Math.round(row?.getBoundingClientRect().height || 0),
+				markSize: Math.round(mark?.getBoundingClientRect().width || 0),
+				wordmarkFont: wordmark ? getComputedStyle(wordmark).fontFamily : '',
+				legacyLogo: Boolean(row?.querySelector('.logo__img')),
+				catalogButton: Boolean(row?.querySelector('.catalog-btn')),
+				search: Boolean(row?.querySelector('.header-main__search')),
+				userNav: Boolean(row?.querySelector('.header-main__user')),
+			};
+		})()`);
+		if (!sharedHeaderStructure) sharedHeaderStructure = headerState.structure;
+		assert(`${name} uses the shared approved header`,
+			headerState.structure === sharedHeaderStructure
+			&& headerState.mainHeight > 0
+			&& headerState.rowHeight >= 48
+			&& headerState.markSize === 40
+			&& headerState.wordmarkFont.includes('Manrope')
+			&& !headerState.legacyLogo
+			&& headerState.catalogButton
+			&& headerState.search
+			&& headerState.userNav,
+			JSON.stringify(headerState),
+		);
+	}
 
 	await client.send('Emulation.setScriptExecutionDisabled', { value: true });
 	await navigate(new URL('/shop/', baseUrl).toString(), 393);

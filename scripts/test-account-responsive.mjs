@@ -189,13 +189,17 @@ try {
 	console.log(`${recoveryPass ? 'PASS' : 'FAIL'} recovery has no decorative icon`);
 
 	await login();
+	await navigate('/my-account/edit-address/');
+	const addressRedirectPath = await evaluate('location.pathname');
+	const addressRedirectPass = addressRedirectPath.includes('/my-account/edit-account');
+	checks.push({ page: 'address-redirect', width: 1280, pass: addressRedirectPass, url: addressRedirectPath });
+	console.log(`${addressRedirectPass ? 'PASS' : 'FAIL'} legacy address endpoint redirects to personal data url=${addressRedirectPath}`);
 
 	const cases = [
 		{ path: '/my-account/', name: 'dashboard', widths: [393, 768, 1280] },
 		{ path: '/my-account/orders/', name: 'orders', widths: [393, 1280, 1440] },
 		{ path: '/my-account/licenses/', name: 'licenses', widths: [393, 1280, 1440] },
 		{ path: '/my-account/edit-account/', name: 'profile', widths: [393, 1280] },
-		{ path: '/my-account/edit-address/', name: 'addresses', widths: [393, 1280, 1440] },
 	];
 
 	for (const testCase of cases) {
@@ -225,6 +229,8 @@ try {
 					profileHasIcon: Boolean(document.querySelector('.user-nav__login--active .user-nav__icon svg')),
 					brandText: brandWordmark?.textContent.replace(/\\s+/g, ' ').trim() || '',
 					brandFont: brandWordmark ? getComputedStyle(brandWordmark).fontFamily : '',
+					addressNavigationLinks: navLinks.filter((link) => link.href.includes('/edit-address')).length,
+					physicalAddressCopy: /(адрес доставки|shipping address|billing address)/iu.test(document.body.innerText),
 					decorativeIcons: document.querySelectorAll('.account-shell__help > span, .account-empty-state__icon, .account-form-card__icon, .account-address-card__icon, .account-stat__arrow, .account-license-card__fallback').length,
 				};
 			})()`);
@@ -237,6 +243,8 @@ try {
 				&& metrics.columnTopSpread <= 1
 				&& metrics.headerItemTopSpread <= 1
 				&& metrics.profileHasIcon
+				&& metrics.addressNavigationLinks === 0
+				&& !metrics.physicalAddressCopy
 				&& metrics.decorativeIcons === 0
 				&& ['ITСОФТ', 'ITSOFT'].includes(metrics.brandText.replace(/\s+/g, ''))
 				&& metrics.brandFont.includes('Manrope');

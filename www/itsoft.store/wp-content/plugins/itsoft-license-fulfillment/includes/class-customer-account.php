@@ -18,6 +18,7 @@ final class ITSoft_LF_Customer_Account {
 	public function register_hooks(): void {
 		add_action( 'init', array( $this, 'register_endpoint' ), 9 );
 		add_filter( 'woocommerce_account_menu_items', array( $this, 'filter_menu_items' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_address_endpoint' ) );
 		add_action( 'woocommerce_account_' . self::ENDPOINT . '_endpoint', array( $this, 'render_endpoint' ) );
 		add_filter( 'itsoft_account_license_count', array( $this, 'filter_license_count' ), 10, 2 );
 	}
@@ -32,13 +33,12 @@ final class ITSoft_LF_Customer_Account {
 	}
 
 	public function filter_menu_items( array $items ): array {
-		unset( $items['downloads'] );
+		unset( $items['downloads'], $items['edit-address'] );
 
 		$labels = array(
 			'dashboard'       => 'Обзор',
 			'orders'          => 'Мои заказы',
 			self::ENDPOINT     => 'Лицензионные ключи',
-			'edit-address'    => 'Адрес доставки',
 			'edit-account'    => 'Личные данные',
 			'customer-logout' => 'Выйти',
 		);
@@ -56,6 +56,15 @@ final class ITSoft_LF_Customer_Account {
 		}
 
 		return $result;
+	}
+
+	public function redirect_address_endpoint(): void {
+		if ( ! function_exists( 'is_account_page' ) || ! is_account_page() || ! is_wc_endpoint_url( 'edit-address' ) ) {
+			return;
+		}
+
+		wp_safe_redirect( wc_get_account_endpoint_url( 'edit-account' ) );
+		exit;
 	}
 
 	public function filter_license_count( int $count, int $customer_id ): int {

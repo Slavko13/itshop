@@ -6,7 +6,9 @@ import { join, resolve } from 'node:path';
 
 const chromePath = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const baseUrl = process.env.ITSOFT_BASE_URL || 'http://localhost:8080';
-const checkoutUrl = new URL('/checkout/?add-to-cart=333', baseUrl).toString();
+// Product 327 is intentionally an older import without the virtual checkbox.
+// The storefront policy must still treat it as an electronic product.
+const checkoutUrl = new URL('/checkout/?add-to-cart=327', baseUrl).toString();
 const receivedUrl = process.argv[2];
 const orderEmail = process.env.ITSOFT_ORDER_EMAIL || '';
 const captureAll = process.env.ITSOFT_CAPTURE_ALL === '1';
@@ -131,6 +133,12 @@ async function inspect(label, url, width) {
 		const content = document.querySelector('.checkout-page__content');
 		const main = document.querySelector('.wc-block-checkout__main');
 		const sidebar = document.querySelector('.wc-block-checkout__sidebar');
+		const visibleText = document.body.innerText;
+		const physicalAddressPattern = /(адрес доставки|плат[её]жный адрес|shipping address|billing address|delivery address)/iu;
+		const physicalFields = [...document.querySelectorAll('input, select')].filter((field) => {
+			const marker = [field.name, field.id, field.autocomplete].filter(Boolean).join(' ');
+			return /(address[_ -]?[12]?|street-address|postal-code|postcode|shipping_country|billing_country|shipping_city|billing_city)/i.test(marker);
+		});
 		return {
 			label: ${JSON.stringify(label)},
 			width: window.innerWidth,
@@ -139,6 +147,9 @@ async function inspect(label, url, width) {
 			mainWidth: Math.round(main?.getBoundingClientRect().width || 0),
 			sidebarWidth: Math.round(sidebar?.getBoundingClientRect().width || 0),
 			stage: document.querySelector('.cart-steps__item--active')?.textContent.trim() || '',
+			physicalAddressCopy: physicalAddressPattern.test(visibleText),
+			physicalAddressLines: visibleText.split(/\\n+/).map((line) => line.trim()).filter((line) => physicalAddressPattern.test(line)),
+			physicalAddressFields: physicalFields.length,
 		};
 	})()`);
 
@@ -173,6 +184,12 @@ try {
 	}
 	for (const result of results) {
 		if (result.overflow > 1) exitCode = 1;
+		if (
+			result.contentWidth === 0
+			|| result.physicalAddressCopy
+			|| result.physicalAddressFields > 0
+		) exitCode = 1;
+		if (result.label === 'stage2' && (result.mainWidth === 0 || !result.stage)) exitCode = 1;
 	}
 	console.log(JSON.stringify(results, null, 2));
 } finally {

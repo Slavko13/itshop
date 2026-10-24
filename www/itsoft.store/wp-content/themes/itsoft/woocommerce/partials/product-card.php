@@ -220,9 +220,11 @@ if ( ! empty( $extra_class ) ) {
 						<?php esc_html_e( 'Купить в 1 клик', 'itsoft' ); ?>
 					</a>
 				<?php endif; ?>
-				<span class="catalog-card__stock-note<?php echo $is_available ? ' catalog-card__stock-note--placeholder' : ''; ?>"<?php echo $is_available ? ' aria-hidden="true"' : ''; ?>>
-					<?php echo $is_available ? '&nbsp;' : esc_html__( 'Сейчас недоступен для покупки', 'itsoft' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</span>
+				<?php if ( ! $is_available ) : ?>
+					<span class="catalog-card__stock-note">
+						<?php esc_html_e( 'Сейчас недоступен для покупки', 'itsoft' ); ?>
+					</span>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>

@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-get_header( 'shop' ); ?>
+get_header(); ?>
 
 	<?php while ( have_posts() ) : ?>
 		<?php the_post(); ?>

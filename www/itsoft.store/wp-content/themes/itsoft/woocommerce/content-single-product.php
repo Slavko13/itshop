@@ -179,9 +179,9 @@ $has_about_content = ! empty( $product_extra_context['attributes'] )
 					?>
 				</div>
 
-				<div class="product-fulfilment product-fulfilment--<?php echo $product_purchase_context['is_virtual'] ? 'digital' : 'physical'; ?>">
+				<div class="product-fulfilment product-fulfilment--digital">
 					<span class="product-fulfilment__icon" aria-hidden="true">
-						<?php if ( $product_purchase_context['is_virtual'] ) : ?>✉<?php else : ?>▣<?php endif; ?>
+						✉
 					</span>
 					<span class="product-fulfilment__copy">
 						<strong><?php echo esc_html( $product_purchase_context['fulfilment_label'] ); ?></strong>
@@ -209,7 +209,7 @@ $has_about_content = ! empty( $product_extra_context['attributes'] )
 	</section>
 
 	<div class="product-benefits" aria-label="Условия покупки">
-		<div class="product-benefit"><span class="product-benefit__icon" aria-hidden="true">01</span><span><strong><?php echo $product_purchase_context['is_virtual'] ? 'Получение на e-mail' : 'Доставка заказа'; ?></strong><small><?php echo $product_purchase_context['is_virtual'] ? 'После подтверждения оплаты' : 'Способ выбирается при оформлении'; ?></small></span></div>
+		<div class="product-benefit"><span class="product-benefit__icon" aria-hidden="true">01</span><span><strong>Получение на e-mail</strong><small>После подтверждения оплаты</small></span></div>
 		<div class="product-benefit"><span class="product-benefit__icon" aria-hidden="true">02</span><span><strong>Понятный статус</strong><small>Заказ виден в личном кабинете</small></span></div>
 		<div class="product-benefit"><span class="product-benefit__icon" aria-hidden="true">03</span><span><strong>Помощь специалиста</strong><small>Подскажем по покупке и активации</small></span></div>
 	</div>

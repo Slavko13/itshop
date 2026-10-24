@@ -317,6 +317,12 @@ label,
 	box-sizing: border-box;
 }
 
+/* Electronic orders never expose legacy physical address blocks. */
+.checkout-page--complete .woocommerce-customer-details,
+.checkout-page--complete .woocommerce-columns--addresses {
+	display: none !important;
+}
+
 /* One product grid and one card on every product listing. */
 .catalog__layout {
 	grid-template-columns: 260px minmax(0, 1fr);
@@ -523,11 +529,15 @@ label,
 .catalog-card__actions,
 .product-upsells .catalog-card__actions {
 	display: flex;
-	min-height: 117px;
+	min-height: 0;
 	align-items: stretch;
 	flex-direction: column;
 	gap: 7px;
 	margin: 0;
+}
+
+.catalog-card__stock-note--placeholder {
+	display: none;
 }
 
 .catalog-card__buy,
