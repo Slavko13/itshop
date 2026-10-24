@@ -157,12 +157,13 @@ try {
 				cardLeft: cardRect?.left || 0,
 				cardRight: cardRect?.right || 0,
 				formRight: formRect?.right || 0,
-				decorativeIcons: document.querySelectorAll('.account-form__notice-icon, .account-auth__benefits li > span, .account-recovery__icon').length,
+				mailNoticeIcons: document.querySelectorAll('.account-form__notice-icon svg').length,
+				benefitCheckIcons: document.querySelectorAll('.account-auth__benefit-icon svg').length,
 			};
 		})()`);
 		const overflow = Math.max(0, guest.scrollWidth - guest.viewport);
 		const clipped = Math.max(0, Math.max(guest.cardRight, guest.formRight) - guest.viewport);
-		const pass = guest.hasAuth && overflow <= 1 && clipped <= 1 && guest.decorativeIcons === 0;
+		const pass = guest.hasAuth && overflow <= 1 && clipped <= 1 && guest.mailNoticeIcons === 1 && guest.benefitCheckIcons === 3;
 		checks.push({ page: 'guest', width, overflow, clipped, pass });
 		console.log(`${pass ? 'PASS' : 'FAIL'} guest ${width}px overflow=${overflow}px clipped=${clipped}px card=${guest.cardLeft}-${guest.cardRight}`);
 	}

@@ -308,6 +308,189 @@ class CatalogSearch {
 	}
 }
 
+class CatalogOrdering {
+	constructor(root) {
+		this.root = root;
+		this.form = root.querySelector('.woocommerce-ordering');
+		this.select = root.querySelector('select.orderby');
+		this.button = null;
+		this.label = null;
+		this.menu = null;
+		this.items = [];
+		this.activeIndex = 0;
+	}
+
+	init() {
+		if (!this.form || !this.select || this.select.dataset.catalogSortReady === 'true') {
+			return;
+		}
+
+		this.select.dataset.catalogSortReady = 'true';
+		this.root.classList.add('catalog-ordering--enhanced');
+		this.build();
+		this.sync();
+
+		this.button.addEventListener('click', () => this.toggle());
+		this.button.addEventListener('keydown', (event) => this.handleButtonKeydown(event));
+		this.menu.addEventListener('keydown', (event) => this.handleMenuKeydown(event));
+		this.select.addEventListener('change', () => this.sync());
+
+		document.addEventListener('click', (event) => {
+			if (!this.root.contains(event.target)) {
+				this.close();
+			}
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && this.isOpen()) {
+				event.preventDefault();
+				this.close(true);
+			}
+		});
+	}
+
+	build() {
+		const wrapper = document.createElement('div');
+		wrapper.className = 'catalog-sort';
+
+		this.button = document.createElement('button');
+		this.button.className = 'catalog-sort__button';
+		this.button.type = 'button';
+		this.button.setAttribute('aria-haspopup', 'listbox');
+		this.button.setAttribute('aria-expanded', 'false');
+
+		this.label = document.createElement('span');
+		this.label.className = 'catalog-sort__label';
+		this.button.appendChild(this.label);
+
+		const chevron = document.createElement('span');
+		chevron.className = 'catalog-sort__chevron';
+		chevron.setAttribute('aria-hidden', 'true');
+		chevron.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 6.25L8 9.75L11.5 6.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>';
+		this.button.appendChild(chevron);
+
+		this.menu = document.createElement('div');
+		this.menu.className = 'catalog-sort__menu';
+		this.menu.id = `catalog-sort-options-${CatalogOrdering.instanceCount += 1}`;
+		this.menu.setAttribute('role', 'listbox');
+		this.menu.setAttribute('aria-label', this.select.getAttribute('aria-label') || 'Сортировка');
+		this.menu.hidden = true;
+		this.button.setAttribute('aria-controls', this.menu.id);
+
+		Array.from(this.select.options).forEach((option, index) => {
+			const item = document.createElement('button');
+			item.className = 'catalog-sort__option';
+			item.type = 'button';
+			item.tabIndex = -1;
+			item.dataset.value = option.value;
+			item.setAttribute('role', 'option');
+			item.setAttribute('aria-selected', 'false');
+
+			const text = document.createElement('span');
+			text.textContent = option.textContent.trim();
+			item.appendChild(text);
+
+			const check = document.createElement('span');
+			check.className = 'catalog-sort__check';
+			check.setAttribute('aria-hidden', 'true');
+			check.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 8.2L6.5 11L12.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>';
+			item.appendChild(check);
+
+			item.addEventListener('click', () => this.choose(index));
+			this.menu.appendChild(item);
+			this.items.push(item);
+		});
+
+		wrapper.append(this.button, this.menu);
+		this.form.appendChild(wrapper);
+	}
+
+	isOpen() {
+		return this.button && this.button.getAttribute('aria-expanded') === 'true';
+	}
+
+	open() {
+		this.menu.hidden = false;
+		this.button.setAttribute('aria-expanded', 'true');
+		this.root.classList.add('is-open');
+		window.requestAnimationFrame(() => this.items[this.activeIndex]?.focus());
+	}
+
+	close(returnFocus = false) {
+		if (!this.button || !this.menu) {
+			return;
+		}
+		this.menu.hidden = true;
+		this.button.setAttribute('aria-expanded', 'false');
+		this.root.classList.remove('is-open');
+		if (returnFocus) {
+			this.button.focus();
+		}
+	}
+
+	toggle() {
+		if (this.isOpen()) {
+			this.close();
+		} else {
+			this.open();
+		}
+	}
+
+	sync() {
+		const selectedIndex = Math.max(0, this.select.selectedIndex);
+		const selectedOption = this.select.options[selectedIndex];
+		this.activeIndex = selectedIndex;
+		this.label.textContent = selectedOption ? selectedOption.textContent.trim() : '';
+		this.items.forEach((item, index) => {
+			item.setAttribute('aria-selected', String(index === selectedIndex));
+		});
+	}
+
+	choose(index) {
+		const item = this.items[index];
+		if (!item) {
+			return;
+		}
+
+		this.select.value = item.dataset.value;
+		this.sync();
+		this.close();
+		this.select.dispatchEvent(new Event('change', { bubbles: true }));
+	}
+
+	focusItem(index) {
+		this.activeIndex = (index + this.items.length) % this.items.length;
+		this.items[this.activeIndex]?.focus();
+	}
+
+	handleButtonKeydown(event) {
+		if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+			return;
+		}
+
+		event.preventDefault();
+		this.open();
+		if (event.key === 'Home') this.focusItem(0);
+		if (event.key === 'End') this.focusItem(this.items.length - 1);
+		if (event.key === 'ArrowUp') this.focusItem(this.activeIndex - 1);
+		if (event.key === 'ArrowDown') this.focusItem(this.activeIndex);
+	}
+
+	handleMenuKeydown(event) {
+		const focusedIndex = this.items.indexOf(document.activeElement);
+		if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+			event.preventDefault();
+			this.focusItem(focusedIndex + (event.key === 'ArrowDown' ? 1 : -1));
+		}
+		if (event.key === 'Home' || event.key === 'End') {
+			event.preventDefault();
+			this.focusItem(event.key === 'Home' ? 0 : this.items.length - 1);
+		}
+	}
+}
+
+CatalogOrdering.instanceCount = 0;
+
 document.addEventListener('DOMContentLoaded', () => {
 	const sidebar = document.querySelector('[data-catalog-sidebar]');
 	if (sidebar) {
@@ -324,6 +507,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		new CatalogSearch(searchForm).init();
 	}
 
+	document.querySelectorAll('.catalog-filters__ordering').forEach((ordering) => {
+		new CatalogOrdering(ordering).init();
+	});
 
 	new CatalogPurchaseState().init();
 });

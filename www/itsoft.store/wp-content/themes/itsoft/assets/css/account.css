@@ -456,11 +456,22 @@
 .account-form__notice {
 	display: flex;
 	align-items: flex-start;
+	gap: 12px;
 	margin: 2px 0 18px;
 	padding: 14px;
 	border: 1px solid #e4deff;
 	border-radius: 12px;
 	background: #f8f6ff;
+}
+
+.account-form__notice-icon {
+	display: grid;
+	flex: 0 0 34px;
+	height: 34px;
+	border-radius: 10px;
+	background: var(--account-purple-soft);
+	color: var(--account-purple);
+	place-items: center;
 }
 
 .account-form__notice p {
@@ -565,12 +576,26 @@
 }
 
 .account-auth__benefits li {
+	display: flex;
+	align-items: flex-start;
+	gap: 13px;
 	margin: 0;
 	padding: 0;
 }
 
 .account-auth__benefits li::before {
 	display: none !important;
+}
+
+.account-auth__benefit-icon {
+	display: grid;
+	flex: 0 0 31px;
+	height: 31px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 10px;
+	background: rgba(126, 91, 255, 0.32);
+	color: #fff;
+	place-items: center;
 }
 
 .account-auth__benefits strong,

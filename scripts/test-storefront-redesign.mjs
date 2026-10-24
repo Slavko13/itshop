@@ -187,6 +187,9 @@ try {
 			const catalogSearch = document.querySelector('.catalog-filters__search');
 			const catalogSearchInput = document.querySelector('.catalog-filters__input');
 			const catalogSearchIcon = document.querySelector('.catalog-filters__icon');
+			const catalogSort = document.querySelector('.catalog-filters__ordering');
+			const catalogSortButton = catalogSort?.querySelector('.catalog-sort__button');
+			const nativeSort = catalogSort?.querySelector('select.orderby');
 			const pageContainer = document.querySelector('.catalog__shell');
 			const userIconTops = [...document.querySelectorAll('.header-main__user .user-nav__icon')]
 				.filter((icon) => icon.getBoundingClientRect().width > 0 && getComputedStyle(icon).visibility !== 'hidden')
@@ -237,6 +240,10 @@ try {
 				searchIconClearance: catalogSearchInput && catalogSearchIcon
 					? (catalogSearchInput.getBoundingClientRect().left + parseFloat(getComputedStyle(catalogSearchInput).paddingLeft)) - catalogSearchIcon.getBoundingClientRect().right
 					: 0,
+				sortEnhanced: Boolean(catalogSort?.classList.contains('catalog-ordering--enhanced')),
+				sortButtonHeight: catalogSortButton?.getBoundingClientRect().height || 0,
+				sortButtonRadius: catalogSortButton ? parseFloat(getComputedStyle(catalogSortButton).borderRadius) : 0,
+				nativeSortClipped: nativeSort ? getComputedStyle(nativeSort).clipPath === 'inset(50%)' : false,
 				containerWidth: pageContainer?.getBoundingClientRect().width || 0,
 				userIconTopSpread: userIconTops.length ? Math.max(...userIconTops) - Math.min(...userIconTops) : 0,
 				desktopColumnTopOffset: filters && sidebarBody ? Math.abs(filters.top - sidebarBody.top) : 0,
@@ -272,6 +279,7 @@ try {
 		assert(`${width}px shared page typography`, Math.abs(state.typography.h1Size - expectedH1[0]) <= 0.1 && Math.abs(state.typography.h1Line - expectedH1[1]) <= 0.1 && state.typography.bodySize === 16 && state.typography.bodyLine === 26, JSON.stringify(state.typography));
 		assert(`${width}px shared catalog field height`, Math.abs(state.searchHeight - 48) <= 1, `${state.searchHeight}px`);
 		assert(`${width}px search icon does not overlap text`, state.searchIconClearance >= 8, `${state.searchIconClearance}px`);
+		assert(`${width}px ordering uses branded custom control`, state.sortEnhanced && state.nativeSortClipped && Math.abs(state.sortButtonHeight - 52) <= 1 && state.sortButtonRadius >= 13, JSON.stringify(state));
 		assert(`${width}px shared container width`, state.containerWidth <= Math.min(width, 1222) + 1, `${state.containerWidth}px`);
 		assert(`${width}px header icons share one baseline`, state.userIconTopSpread <= 1, `${state.userIconTopSpread}px`);
 		assert(`${width}px category toggle visibility`, state.toggleVisible === (width < 1024));
@@ -281,6 +289,25 @@ try {
 		if (width >= 1024) {
 			assert(`${width}px search aligns with category panel`, state.desktopColumnTopOffset <= 1, `${state.desktopColumnTopOffset}px`);
 		}
+
+		await evaluate(`document.querySelector('.catalog-sort__button')?.click()`);
+		await delay(100);
+		const sortMenu = await evaluate(`(() => {
+			const button = document.querySelector('.catalog-sort__button');
+			const menu = document.querySelector('.catalog-sort__menu');
+			const selected = menu?.querySelector('[aria-selected="true"]');
+			const menuStyle = menu ? getComputedStyle(menu) : null;
+			return {
+				open: button?.getAttribute('aria-expanded') === 'true' && menu?.hidden === false,
+				options: menu?.querySelectorAll('.catalog-sort__option').length || 0,
+				selected: Boolean(selected),
+				background: menuStyle?.backgroundColor || '',
+				radius: parseFloat(menuStyle?.borderRadius || '0'),
+				overflow: document.documentElement.scrollWidth - innerWidth,
+			};
+		})()`);
+		assert(`${width}px ordering menu opens in brand style`, sortMenu.open && sortMenu.options >= 5 && sortMenu.selected && sortMenu.background === 'rgb(255, 255, 255)' && sortMenu.radius >= 15 && sortMenu.overflow <= 1, JSON.stringify(sortMenu));
+		await evaluate(`document.querySelector('.catalog-sort__button')?.click()`);
 
 		if (width >= 1024) {
 			const hoverTarget = await evaluate(`(() => {

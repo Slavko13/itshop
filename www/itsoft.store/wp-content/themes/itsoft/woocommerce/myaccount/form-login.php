@@ -89,6 +89,12 @@ do_action( 'woocommerce_before_customer_login_form' );
 							</p>
 						<?php else : ?>
 							<div class="account-form__notice">
+								<span class="account-form__notice-icon" aria-hidden="true">
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<rect x="3.5" y="5.5" width="17" height="13" rx="2.5" stroke="currentColor" stroke-width="1.7" />
+										<path d="M5 7L12 12.5L19 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+									</svg>
+								</span>
 								<p><strong>Пароль задаётся по ссылке</strong><br>После регистрации мы отправим письмо на указанный адрес.</p>
 							</div>
 						<?php endif; ?>
@@ -108,9 +114,9 @@ do_action( 'woocommerce_before_customer_login_form' );
 		<div class="account-auth__aside-content">
 			<h2>Всё важное после покупки — под рукой</h2>
 			<ul class="account-auth__benefits">
-				<li><div><strong>История заказов</strong><small>Статусы, суммы и состав покупок</small></div></li>
-				<li><div><strong>Лицензионные ключи</strong><small>Повторный доступ без поиска письма</small></div></li>
-				<li><div><strong>Быстрое оформление</strong><small>Контактные данные сохраняются безопасно</small></div></li>
+				<li><span class="account-auth__benefit-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 8.2L6.5 11L12.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></span><div><strong>История заказов</strong><small>Статусы, суммы и состав покупок</small></div></li>
+				<li><span class="account-auth__benefit-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 8.2L6.5 11L12.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></span><div><strong>Лицензионные ключи</strong><small>Повторный доступ без поиска письма</small></div></li>
+				<li><span class="account-auth__benefit-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 8.2L6.5 11L12.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></span><div><strong>Быстрое оформление</strong><small>Контактные данные сохраняются безопасно</small></div></li>
 			</ul>
 		</div>
 		<p class="account-auth__aside-help">Нужна помощь? <a href="<?php echo esc_url( home_url( '/otvety-na-voprosy/' ) ); ?>">Ответы на вопросы</a></p>
