@@ -68,6 +68,12 @@ let exitCode = 0;
 try {
 	await command('Page.enable');
 	await command('Runtime.enable');
+	await command('Emulation.setDeviceMetricsOverride', {
+		width: 393,
+		height: 1000,
+		deviceScaleFactor: 1,
+		mobile: true,
+	});
 	const loaded = once('Page.loadEventFired');
 	await command('Page.navigate', { url: articleUrl });
 	await loaded;
@@ -102,6 +108,13 @@ try {
 		expression: `(() => {
 			const code = document.querySelector('code:not([data-license-value])');
 			const button = code?.querySelector('.code__copy');
+			const product = document.querySelector('.plate-products__item');
+			const productTitle = product?.querySelector('.plate-products__link');
+			const productPrice = product?.querySelector('.plate-products__price');
+			const productButton = product?.querySelector('.plate-products__buy');
+			const titleRange = productTitle ? document.createRange() : null;
+			if (titleRange) titleRange.selectNodeContents(productTitle);
+			const titleLines = titleRange ? [...titleRange.getClientRects()] : [];
 			if (!code || !button) return { found: false };
 			return {
 				found: true,
@@ -109,13 +122,21 @@ try {
 				copiedState: button.classList.contains('is-copied'),
 				errorState: button.classList.contains('is-error'),
 				valueUnchanged: code.textContent.trim() === code.dataset.copyTestExpected,
+				pageFitsViewport: document.documentElement.scrollWidth <= window.innerWidth + 1,
+				productFitsViewport: Boolean(product) && product.scrollWidth <= product.clientWidth + 1,
+				productUsesMobileGrid: Boolean(product) && getComputedStyle(product).display === 'grid',
+				titleHasUsefulLastLine: titleLines.length > 0 && titleLines.at(-1).width >= 30,
+				priceStaysVisible: Boolean(productPrice) && productPrice.getBoundingClientRect().right <= product.getBoundingClientRect().right + 1,
+				buyButtonUsesFullRow: Boolean(productButton) && productButton.getBoundingClientRect().width >= product.getBoundingClientRect().width - 40,
 			};
 		})()`,
 		returnByValue: true,
 	});
 	const result = response.result.value;
 	console.log(JSON.stringify(result, null, 2));
-	if (!result?.found || !result.buttonStillPresent || !result.copiedState || result.errorState || !result.valueUnchanged) {
+	if (!result?.found || !result.buttonStillPresent || !result.copiedState || result.errorState || !result.valueUnchanged
+		|| !result.pageFitsViewport || !result.productFitsViewport || !result.productUsesMobileGrid
+		|| !result.titleHasUsefulLastLine || !result.priceStaysVisible || !result.buyButtonUsesFullRow) {
 		exitCode = 1;
 	}
 } finally {

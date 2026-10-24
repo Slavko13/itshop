@@ -3738,6 +3738,38 @@ blockquote p {
     .user-nav__login {
         display: none;
     }
+    .plate-products__item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px 16px;
+        align-items: start;
+        padding: 18px;
+    }
+    .plate-products__title {
+        min-width: 0;
+        max-width: none;
+    }
+    .plate-products__link {
+        display: block;
+        font-size: 16px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+    .plate-products__price {
+        flex-direction: column;
+        align-items: flex-end;
+        justify-self: end;
+        white-space: nowrap;
+    }
+    .plate-products__price-old {
+        margin-top: 4px;
+        margin-left: 0;
+    }
+    .plate-products__buy {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 44px;
+    }
     .plate-products__rating {
         display: none;
     }
@@ -3784,23 +3816,24 @@ blockquote p {
         display: none;
     }
     .plate-products__link {
-        font-size: 14px;
-        line-height: 1;
+        font-size: 15px;
+        line-height: 1.4;
     }
     .plate-products__title {
-        max-width: 160px;
+        max-width: none;
     }
     .plate-products__buy {
-        padding: 6px 10px;
+        padding: 10px 14px;
         font-size: 15px;
-        width: 100px;
+        width: 100%;
         line-height: 1.2;
     }
     .plate-products__price-current {
         font-size: 18px;
     }
     .plate-products__item {
-        padding: 12px 10px;
+        gap: 12px;
+        padding: 16px;
     }
 }
 
