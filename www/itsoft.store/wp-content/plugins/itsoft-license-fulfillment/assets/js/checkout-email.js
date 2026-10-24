@@ -24,6 +24,37 @@
 		return input.type === 'email' || marker.includes( 'billing_email' ) || input.autocomplete === 'email';
 	}
 
+	function setInputValue( input, value ) {
+		if ( input.value === value ) {
+			return;
+		}
+
+		const descriptor = Object.getOwnPropertyDescriptor( HTMLInputElement.prototype, 'value' );
+		if ( descriptor && descriptor.set ) {
+			descriptor.set.call( input, value );
+		} else {
+			input.value = value;
+		}
+
+		input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+		input.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+	}
+
+	function lockAccountEmail( input ) {
+		const checkout = window.ITSOFT_CHECKOUT || {};
+		const accountEmail = String( checkout.accountEmail || '' ).trim().toLowerCase();
+		if ( ! checkout.loggedIn || ! accountEmail ) {
+			return false;
+		}
+
+		setInputValue( input, accountEmail );
+		input.readOnly = true;
+		input.setAttribute( 'aria-readonly', 'true' );
+		input.setAttribute( 'title', 'E-mail подтверждён в личном кабинете' );
+		input.closest( '.wc-block-components-text-input, .form-row' )?.classList.add( 'itsoft-email-locked' );
+		return true;
+	}
+
 	function suggestionFor( value ) {
 		const normalized = String( value || '' ).trim().toLowerCase();
 		const separator = normalized.lastIndexOf( '@' );
@@ -35,7 +66,16 @@
 	}
 
 	function attach( input ) {
-		if ( input.dataset.itsoftEmailSuggestion === 'ready' || ! isPrimaryEmailInput( input ) ) {
+		if ( ! isPrimaryEmailInput( input ) ) {
+			return;
+		}
+
+		if ( lockAccountEmail( input ) ) {
+			input.dataset.itsoftEmailSuggestion = 'locked';
+			return;
+		}
+
+		if ( input.dataset.itsoftEmailSuggestion === 'ready' ) {
 			return;
 		}
 		input.dataset.itsoftEmailSuggestion = 'ready';

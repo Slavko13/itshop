@@ -98,11 +98,31 @@ final class ITSoft_LF_Checkout {
 		return strtolower( sanitize_email( trim( (string) $value ) ) );
 	}
 
+	private function get_logged_in_account_email(): string {
+		if ( ! is_user_logged_in() ) {
+			return '';
+		}
+
+		$user = wp_get_current_user();
+		return $user instanceof WP_User ? $this->sanitize_email_value( $user->user_email ) : '';
+	}
+
+	private function get_checkout_email( $submitted_email ): string {
+		$account_email = $this->get_logged_in_account_email();
+		return '' !== $account_email ? $account_email : $this->sanitize_email_value( $submitted_email );
+	}
+
 	public function validate_email_value( $value ): ?WP_Error {
 		$value = $this->sanitize_email_value( $value );
 		if ( '' === $value || ! is_email( $value ) ) {
 			return new WP_Error( 'itsoft_invalid_confirm_email', 'Введите корректный e-mail повторно.' );
 		}
+
+		$account_email = $this->get_logged_in_account_email();
+		if ( '' !== $account_email && $account_email !== $value ) {
+			return new WP_Error( 'itsoft_checkout_email_mismatch', 'Повторный e-mail должен совпадать с e-mail вашей учётной записи.' );
+		}
+
 		return null;
 	}
 
@@ -118,11 +138,19 @@ final class ITSoft_LF_Checkout {
 			'autocomplete' => 'email',
 			'class'        => array( 'form-row-wide' ),
 		);
+
+		$account_email = $this->get_logged_in_account_email();
+		if ( '' !== $account_email && isset( $fields['billing']['billing_email'] ) ) {
+			$fields['billing']['billing_email']['default'] = $account_email;
+			$fields['billing']['billing_email']['custom_attributes']['readonly'] = 'readonly';
+			$fields['billing']['billing_email']['custom_attributes']['aria-readonly'] = 'true';
+		}
+
 		return $fields;
 	}
 
 	public function validate_classic_checkout( array $data, WP_Error $errors ): void {
-		$email   = $this->sanitize_email_value( $data['billing_email'] ?? '' );
+		$email   = $this->get_checkout_email( $data['billing_email'] ?? '' );
 		$confirm = $this->sanitize_email_value( $data[ self::CLASSIC_CONFIRM_FIELD ] ?? '' );
 		if ( '' === $email || ! is_email( $email ) ) {
 			$errors->add( 'itsoft_invalid_billing_email', 'Введите корректный e-mail.' );
@@ -130,12 +158,17 @@ final class ITSoft_LF_Checkout {
 		if ( '' === $confirm || ! is_email( $confirm ) ) {
 			$errors->add( 'itsoft_invalid_confirm_email', 'Введите корректный e-mail повторно.' );
 		} elseif ( $email !== $confirm ) {
-			$errors->add( 'itsoft_checkout_email_mismatch', 'Адреса электронной почты не совпадают.' );
+			$errors->add(
+				'itsoft_checkout_email_mismatch',
+				'' !== $this->get_logged_in_account_email()
+					? 'Повторный e-mail должен совпадать с e-mail вашей учётной записи.'
+					: 'Адреса электронной почты не совпадают.'
+			);
 		}
 	}
 
 	public function sanitize_classic_order_email( WC_Order $order, array $data ): void {
-		$email = $this->sanitize_email_value( $data['billing_email'] ?? '' );
+		$email = $this->get_checkout_email( $data['billing_email'] ?? '' );
 		if ( '' !== $email ) {
 			$order->set_billing_email( $email );
 		}
@@ -148,7 +181,7 @@ final class ITSoft_LF_Checkout {
 
 		$billing    = (array) $request->get_param( 'billing_address' );
 		$additional = (array) $request->get_param( 'additional_fields' );
-		$email      = $this->sanitize_email_value( $billing['email'] ?? '' );
+		$email      = $this->get_checkout_email( $billing['email'] ?? '' );
 		$confirm    = $this->sanitize_email_value( $additional[ self::BLOCK_CONFIRM_FIELD ] ?? '' );
 
 		if ( '' === $email || ! is_email( $email ) ) {
@@ -168,7 +201,9 @@ final class ITSoft_LF_Checkout {
 		if ( $email !== $confirm ) {
 			return new WP_Error(
 				'itsoft_checkout_email_mismatch',
-				'Адреса электронной почты не совпадают.',
+				'' !== $this->get_logged_in_account_email()
+					? 'Повторный e-mail должен совпадать с e-mail вашей учётной записи.'
+					: 'Адреса электронной почты не совпадают.',
 				array( 'status' => 400 )
 			);
 		}
@@ -178,7 +213,7 @@ final class ITSoft_LF_Checkout {
 
 	public function clean_blocks_order_data( WC_Order $order, WP_REST_Request $request ): void {
 		$billing = (array) $request->get_param( 'billing_address' );
-		$email   = $this->sanitize_email_value( $billing['email'] ?? '' );
+		$email   = $this->get_checkout_email( $billing['email'] ?? '' );
 		if ( '' !== $email ) {
 			$order->set_billing_email( $email );
 		}
@@ -202,11 +237,15 @@ final class ITSoft_LF_Checkout {
 			file_exists( $script_path ) ? (string) filemtime( $script_path ) : ITSOFT_LF_VERSION,
 			true
 		);
+		$account_email = $this->get_logged_in_account_email();
+
 		wp_localize_script(
 			'itsoft-lf-checkout-email',
 			'ITSOFT_CHECKOUT',
 			array(
-				'digitalOnly' => true,
+				'digitalOnly'  => true,
+				'loggedIn'     => '' !== $account_email,
+				'accountEmail' => $account_email,
 			)
 		);
 		wp_enqueue_style(

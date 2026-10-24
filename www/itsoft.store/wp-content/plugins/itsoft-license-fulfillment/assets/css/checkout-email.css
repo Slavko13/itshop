@@ -17,3 +17,23 @@
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+/* WooCommerce moves filled-field labels upward and expects extra top padding. */
+.checkout-page--form .wc-block-components-text-input.is-active input,
+.checkout-page--form .wc-block-components-text-input input:-webkit-autofill {
+	padding: 24px 12px 8px !important;
+}
+
+.checkout-page--form .wc-block-components-text-input.is-active label,
+.checkout-page--form .wc-block-components-text-input input:-webkit-autofill + label {
+	top: 6px;
+	transform: scale(0.82);
+	transform-origin: top left;
+}
+
+.checkout-page--form .wc-block-components-text-input.itsoft-email-locked input {
+	background: #f3f4f8;
+	color: #363b47;
+	cursor: not-allowed;
+	-webkit-text-fill-color: #363b47;
+}
