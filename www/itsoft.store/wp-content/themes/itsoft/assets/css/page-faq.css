@@ -1,0 +1,73 @@
+/**
+ * FAQ page — shares the product-page accordion language without loading the
+ * complete product stylesheet.
+ */
+
+.page-template-page-faq .product-extra__faq {
+	width: 100%;
+}
+
+.page-template-page-faq .product-extra__faq-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.page-template-page-faq .product-extra__faq-item {
+	margin: 0;
+}
+
+.page-template-page-faq .product-extra__faq-question {
+	min-height: 56px;
+	padding: 16px 18px;
+	border: 1px solid #e7e9f0;
+	border-radius: 14px;
+	box-shadow: none;
+}
+
+.page-template-page-faq .product-extra__faq-question-text {
+	font-size: 15px;
+	font-weight: 650;
+	line-height: 1.45;
+}
+
+.page-template-page-faq .product-extra__faq-item.active .product-extra__faq-question {
+	border-color: #6542f5;
+	background: #6542f5;
+	box-shadow: 0 4px 20px rgba(108, 76, 255, 0.35);
+}
+
+.page-template-page-faq .product-extra__faq-answer-inner {
+	border-radius: 14px;
+	background: #f7f8fc;
+	font-size: 14px;
+	line-height: 1.65;
+	box-shadow: none;
+}
+
+.page-template-page-faq .product-extra__faq-answer-inner > :first-child {
+	margin-top: 0;
+}
+
+.page-template-page-faq .product-extra__faq-answer-inner > :last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+	.page-template-page-faq .product-extra__faq-list {
+		gap: 8px;
+	}
+
+	.page-template-page-faq .product-extra__faq-question {
+		min-height: 52px;
+		padding: 14px 16px;
+	}
+
+	.page-template-page-faq .product-extra__faq-question-text {
+		font-size: 14px;
+	}
+
+	.page-template-page-faq .product-extra__faq-item.active .product-extra__faq-answer-inner {
+		padding: 16px;
+	}
+}

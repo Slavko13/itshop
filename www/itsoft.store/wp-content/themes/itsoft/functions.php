@@ -404,6 +404,17 @@ function itsoft_assets() {
 			$ver,
 			true
 		);
+
+		if ( is_page_template( 'page-faq.php' ) ) {
+			$faq_page_style_path = get_template_directory() . '/assets/css/page-faq.css';
+
+			wp_enqueue_style(
+				'itsoft-page-faq',
+				get_template_directory_uri() . '/assets/css/page-faq.css',
+				array( 'itsoft-style' ),
+				file_exists( $faq_page_style_path ) ? (string) filemtime( $faq_page_style_path ) : $ver
+			);
+		}
 	}
 
 	if ( is_category() || is_page_template( 'page-all-posts.php' ) ) {
