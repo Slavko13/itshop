@@ -156,72 +156,10 @@
 		});
 	}
 
-	function copyText(value) {
-		if (navigator.clipboard && window.isSecureContext) {
-			return navigator.clipboard.writeText(value);
-		}
-
-		return new Promise(function (resolve, reject) {
-			var textarea = document.createElement('textarea');
-			textarea.value = value;
-			textarea.setAttribute('readonly', '');
-			textarea.style.position = 'fixed';
-			textarea.style.opacity = '0';
-			document.body.appendChild(textarea);
-			textarea.select();
-
-			try {
-				document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
-			} catch (error) {
-				reject(error);
-			} finally {
-				textarea.remove();
-			}
-		});
-	}
-
-	function initLicenseControls() {
-		document.querySelectorAll('[data-license-control]').forEach(function (control) {
-			var output = control.querySelector('[data-license-value]');
-			var reveal = control.querySelector('[data-license-reveal]');
-			var copy = control.querySelector('[data-license-copy]');
-			var feedback = control.querySelector('[data-license-feedback]');
-
-			if (!output) {
-				return;
-			}
-
-			if (reveal) {
-				reveal.addEventListener('click', function () {
-					var isOpen = reveal.getAttribute('aria-pressed') === 'true';
-					output.textContent = isOpen ? output.getAttribute('data-masked') : output.getAttribute('data-value');
-					reveal.setAttribute('aria-pressed', isOpen ? 'false' : 'true');
-					reveal.textContent = isOpen ? 'Показать' : 'Скрыть';
-				});
-			}
-
-			if (copy) {
-				copy.addEventListener('click', function () {
-					copyText(output.getAttribute('data-value')).then(function () {
-						if (feedback) feedback.textContent = 'Ключ скопирован';
-						copy.textContent = 'Скопировано';
-						window.setTimeout(function () {
-							copy.textContent = 'Скопировать';
-							if (feedback) feedback.textContent = '';
-						}, 1800);
-					}).catch(function () {
-						if (feedback) feedback.textContent = 'Не удалось скопировать';
-					});
-				});
-			}
-		});
-	}
-
 	document.addEventListener('DOMContentLoaded', function () {
 		document.querySelectorAll('[data-account-auth]').forEach(initAuthTabs);
 		initPasswordToggles();
 		initRequiredFieldValidation();
 		initAccountNavigation();
-		initLicenseControls();
 	});
 }());

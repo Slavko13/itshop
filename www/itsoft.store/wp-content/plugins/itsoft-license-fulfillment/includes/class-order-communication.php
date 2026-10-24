@@ -52,7 +52,7 @@ final class ITSoft_LF_Order_Communication {
 	}
 
 	public function render_account_keys( WC_Order $order ): void {
-		if ( ! is_user_logged_in() || (int) $order->get_customer_id() !== get_current_user_id() ) {
+		if ( ! $this->can_view_order_keys( $order ) ) {
 			return;
 		}
 
@@ -61,9 +61,7 @@ final class ITSoft_LF_Order_Communication {
 			return;
 		}
 
-		echo '<section class="woocommerce-order-details itsoft-license-keys">';
-		echo '<h2>Лицензионные ключи</h2>';
-		echo '<table class="woocommerce-table shop_table"><thead><tr><th>Товар</th><th>Ключ</th></tr></thead><tbody>';
+		$entries = array();
 		foreach ( $assignments as $assignment ) {
 			$item = $order->get_item( (int) $assignment->order_item_id );
 			if ( ! $item ) {
@@ -74,9 +72,62 @@ final class ITSoft_LF_Order_Communication {
 			} catch ( Throwable $exception ) {
 				continue;
 			}
-			echo '<tr><td>' . esc_html( $item->get_name() ) . '</td><td><code>' . esc_html( $key ) . '</code></td></tr>';
+
+			$entries[] = array(
+				'product_name' => $item->get_name(),
+				'masked'       => (string) $assignment->masked_value,
+				'value'        => $key,
+			);
 		}
-		echo '</tbody></table></section>';
+
+		if ( ! $entries ) {
+			return;
+		}
+		?>
+		<section class="woocommerce-order-details itsoft-license-keys" aria-labelledby="itsoft-license-keys-title-<?php echo esc_attr( (string) $order->get_id() ); ?>">
+			<header class="itsoft-license-keys__header">
+				<div>
+					<span class="itsoft-license-keys__eyebrow"><?php esc_html_e( 'Заказ выполнен', 'itsoft-license-fulfillment' ); ?></span>
+					<h2 id="itsoft-license-keys-title-<?php echo esc_attr( (string) $order->get_id() ); ?>"><?php esc_html_e( 'Лицензионные ключи', 'itsoft-license-fulfillment' ); ?></h2>
+				</div>
+				<p><?php esc_html_e( 'Ключи скрыты для безопасности. Нажмите «Показать», чтобы открыть значение.', 'itsoft-license-fulfillment' ); ?></p>
+			</header>
+
+			<div class="itsoft-license-keys__list">
+				<?php foreach ( $entries as $entry ) : ?>
+					<article class="itsoft-license-keys__item">
+						<div class="itsoft-license-keys__product">
+							<span><?php esc_html_e( 'Товар', 'itsoft-license-fulfillment' ); ?></span>
+							<strong><?php echo esc_html( $entry['product_name'] ); ?></strong>
+						</div>
+
+						<div class="itsoft-license-control" data-license-control>
+							<span class="itsoft-license-control__label"><?php esc_html_e( 'Лицензионный ключ', 'itsoft-license-fulfillment' ); ?></span>
+							<code class="itsoft-license-control__value" data-license-value data-masked="<?php echo esc_attr( $entry['masked'] ); ?>" data-value="<?php echo esc_attr( $entry['value'] ); ?>"><?php echo esc_html( $entry['masked'] ); ?></code>
+							<div class="itsoft-license-control__actions">
+								<button type="button" data-license-reveal aria-pressed="false"><?php esc_html_e( 'Показать', 'itsoft-license-fulfillment' ); ?></button>
+								<button type="button" data-license-copy><?php esc_html_e( 'Скопировать', 'itsoft-license-fulfillment' ); ?></button>
+							</div>
+							<span class="itsoft-license-control__feedback" data-license-feedback role="status" aria-live="polite"></span>
+						</div>
+					</article>
+				<?php endforeach; ?>
+			</div>
+		</section>
+		<?php
+	}
+
+	private function can_view_order_keys( WC_Order $order ): bool {
+		if ( is_user_logged_in() && (int) $order->get_customer_id() === get_current_user_id() ) {
+			return true;
+		}
+
+		if ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) {
+			return false;
+		}
+
+		$order_key = isset( $_GET['key'] ) ? wc_clean( wp_unslash( $_GET['key'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return '' !== $order_key && hash_equals( $order->get_order_key(), $order_key );
 	}
 
 	public function send_inventory_alert( int $pool_id, int $available, string $level ): void {

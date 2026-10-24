@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
     document.querySelectorAll('code').forEach(codeEl => {
+        if (codeEl.closest('[data-license-control]')) return;
+
         const btn = document.createElement('div');
         btn.className = 'code__copy';
         btn.style.cursor = 'pointer';
@@ -36,6 +38,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
         codeEl.appendChild(btn);
     });
+
+	const copyLicenseText = (value) => {
+		if (navigator.clipboard && window.isSecureContext) {
+			return navigator.clipboard.writeText(value);
+		}
+
+		return new Promise((resolve, reject) => {
+			const textarea = document.createElement('textarea');
+			textarea.value = value;
+			textarea.setAttribute('readonly', '');
+			textarea.style.position = 'fixed';
+			textarea.style.opacity = '0';
+			document.body.appendChild(textarea);
+			textarea.select();
+
+			try {
+				document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
+			} catch (error) {
+				reject(error);
+			} finally {
+				textarea.remove();
+			}
+		});
+	};
+
+	const licenseLabels = () => {
+		const isEnglish = document.documentElement.lang.toLowerCase().startsWith('en')
+			|| document.documentElement.classList.contains('translated-ltr')
+			|| document.cookie.split(';').some((item) => item.trim().startsWith('googtrans=/ru/en'));
+
+		return isEnglish
+			? { show: 'Show', hide: 'Hide', copy: 'Copy', copied: 'Copied', success: 'License key copied', error: 'Could not copy the key' }
+			: { show: 'Показать', hide: 'Скрыть', copy: 'Скопировать', copied: 'Скопировано', success: 'Ключ скопирован', error: 'Не удалось скопировать' };
+	};
+
+	document.querySelectorAll('[data-license-control]').forEach((control) => {
+		if (control.dataset.licenseControlReady === 'true') return;
+
+		const output = control.querySelector('[data-license-value]');
+		const reveal = control.querySelector('[data-license-reveal]');
+		const copy = control.querySelector('[data-license-copy]');
+		const feedback = control.querySelector('[data-license-feedback]');
+		if (!output) return;
+
+		control.dataset.licenseControlReady = 'true';
+
+		if (reveal) {
+			reveal.addEventListener('click', () => {
+				const labels = licenseLabels();
+				const isOpen = reveal.getAttribute('aria-pressed') === 'true';
+				output.textContent = isOpen ? output.dataset.masked : output.dataset.value;
+				reveal.setAttribute('aria-pressed', isOpen ? 'false' : 'true');
+				reveal.textContent = isOpen ? labels.show : labels.hide;
+			});
+		}
+
+		if (copy) {
+			copy.addEventListener('click', () => {
+				const labels = licenseLabels();
+				copyLicenseText(output.dataset.value).then(() => {
+					if (feedback) feedback.textContent = labels.success;
+					copy.textContent = labels.copied;
+					window.setTimeout(() => {
+						copy.textContent = licenseLabels().copy;
+						if (feedback) feedback.textContent = '';
+					}, 1800);
+				}).catch(() => {
+					if (feedback) feedback.textContent = labels.error;
+				});
+			});
+		}
+	});
 
     (() => {
         const buttons = [...document.querySelectorAll('.mobile-nav__burger')];

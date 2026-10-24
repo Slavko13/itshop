@@ -868,3 +868,159 @@ label,
 		transition: none;
 	}
 }
+
+/* Secure license delivery shared by checkout confirmation and My Account. */
+.itsoft-license-keys__header {
+	display: flex;
+	gap: 24px;
+	align-items: flex-end;
+	justify-content: space-between;
+	margin-bottom: 20px;
+}
+
+.itsoft-license-keys .itsoft-license-keys__header h2 {
+	margin: 4px 0 0;
+}
+
+.itsoft-license-keys__eyebrow,
+.itsoft-license-keys__product > span,
+.itsoft-license-control__label {
+	display: block;
+	color: var(--itsoft-primary, #6d43ff);
+	font-size: 11px;
+	font-weight: 750;
+	letter-spacing: 0.055em;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+.itsoft-license-keys__header p {
+	max-width: 460px;
+	margin: 0;
+	color: var(--itsoft-text-muted, #72798c);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.itsoft-license-keys__list {
+	display: grid;
+	gap: 12px;
+}
+
+.itsoft-license-keys__item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
+	gap: 20px;
+	align-items: center;
+	padding: 18px;
+	border: 1px solid #e6e1ff;
+	border-radius: 16px;
+	background: #fbfaff;
+}
+
+.itsoft-license-keys__product {
+	min-width: 0;
+}
+
+.itsoft-license-keys__product > span {
+	margin-bottom: 7px;
+	color: var(--itsoft-text-muted, #858ca0);
+}
+
+.itsoft-license-keys__product strong {
+	display: block;
+	color: var(--itsoft-text, #151827);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.45;
+}
+
+.itsoft-license-control {
+	position: relative;
+	min-width: 0;
+	padding: 14px;
+	border: 1px solid #ded7ff;
+	border-radius: 13px;
+	background: #f2efff;
+}
+
+.itsoft-license-control__label {
+	margin-bottom: 7px;
+}
+
+.itsoft-license-keys .itsoft-license-control__value,
+.account-shell__content .itsoft-license-keys .itsoft-license-control__value {
+	display: flex;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 42px;
+	margin: 0 0 10px;
+	padding: 10px 12px;
+	align-items: center;
+	border: 1px solid #e2ddf7;
+	border-radius: 9px;
+	background: #fff;
+	color: #29213f;
+	font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.45;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.itsoft-license-control__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.itsoft-license-control__actions button {
+	display: inline-flex;
+	min-height: 36px;
+	padding: 8px 13px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #d7ceff;
+	border-radius: 9px;
+	background: #fff;
+	color: var(--itsoft-primary, #6d43ff);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	cursor: pointer;
+	transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.itsoft-license-control__actions button:hover,
+.itsoft-license-control__actions button:focus-visible {
+	border-color: var(--itsoft-primary, #6d43ff);
+	background: var(--itsoft-primary, #6d43ff);
+	color: #fff;
+}
+
+.itsoft-license-control__feedback {
+	display: block;
+	min-height: 16px;
+	margin-top: 7px;
+	color: #18794e;
+	font-size: 11px;
+	font-weight: 650;
+}
+
+@media (max-width: 767px) {
+	.itsoft-license-keys__header {
+		display: block;
+	}
+
+	.itsoft-license-keys__header p {
+		margin-top: 10px;
+	}
+
+	.itsoft-license-keys__item {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 14px;
+		padding: 14px;
+	}
+}

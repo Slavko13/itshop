@@ -19,6 +19,7 @@ final class ITSoft_LF_Order_Service {
 		add_action( 'woocommerce_payment_complete', array( $this, 'handle_payment_complete' ), 20 );
 		add_action( 'woocommerce_order_status_processing', array( $this, 'mark_order_paid' ), 20 );
 		add_action( 'woocommerce_order_status_completed', array( $this, 'mark_order_paid' ), 20 );
+		add_action( 'wp_loaded', array( $this, 'reconcile_legacy_order_statuses' ), 30 );
 		add_filter( 'woocommerce_product_is_in_stock', array( $this, 'mapped_product_is_in_stock' ), 20, 2 );
 		add_filter( 'woocommerce_product_backorders_allowed', array( $this, 'mapped_product_allows_backorders' ), 20, 3 );
 		add_filter( 'woocommerce_product_backorders_require_notification', array( $this, 'mapped_product_backorder_notification' ), 20, 2 );
@@ -129,12 +130,14 @@ final class ITSoft_LF_Order_Service {
 
 	public function sync_issue_status( WC_Order $order ): string {
 		$tracked_statuses = array();
+		$has_unmapped_items = false;
 		foreach ( $order->get_items( 'line_item' ) as $item ) {
 			if ( ! $item instanceof WC_Order_Item_Product ) {
 				continue;
 			}
 			$mapping = $this->mapping_for_item( $item );
 			if ( ! $mapping ) {
+				$has_unmapped_items = true;
 				continue;
 			}
 
@@ -162,7 +165,64 @@ final class ITSoft_LF_Order_Service {
 			$order->update_meta_data( self::ORDER_STATUS_META, $aggregate );
 			$order->save_meta_data();
 		}
+
+		$this->maybe_complete_order( $order, $aggregate, $has_unmapped_items );
 		return $aggregate;
+	}
+
+	/**
+	 * Complete a paid, license-only order as soon as every purchased unit has a key.
+	 */
+	private function maybe_complete_order( WC_Order $order, string $aggregate, bool $has_unmapped_items ): void {
+		if (
+			'issued' !== $aggregate
+			|| $has_unmapped_items
+			|| ! $order->is_paid()
+			|| ! $order->has_status( 'processing' )
+		) {
+			return;
+		}
+
+		$order->update_status(
+			'completed',
+			'ITSOFT: все лицензионные ключи выданы, заказ завершён автоматически.'
+		);
+	}
+
+	/**
+	 * Repair orders fulfilled before automatic WooCommerce completion was added.
+	 */
+	public function reconcile_legacy_order_statuses(): void {
+		$option_name = 'itsoft_lf_order_completion_reconciled_0_14_0';
+		if ( 'yes' === get_option( $option_name ) || ! function_exists( 'wc_get_orders' ) ) {
+			return;
+		}
+
+		try {
+			$orders = wc_get_orders(
+				array(
+					'status'     => array( 'processing' ),
+					'limit'      => -1,
+					'meta_query' => array(
+						array(
+							'key'     => self::ORDER_STATUS_META,
+							'value'   => 'issued',
+							'compare' => '=',
+						),
+					),
+				)
+			);
+
+			foreach ( $orders as $order ) {
+				if ( $order instanceof WC_Order ) {
+					$this->sync_issue_status( $order );
+				}
+			}
+
+			update_option( $option_name, 'yes', false );
+		} catch ( Throwable $exception ) {
+			// Leave the marker unset so a later request can retry after WooCommerce is ready.
+		}
 	}
 
 	public static function status_label( string $status ): string {

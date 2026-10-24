@@ -448,11 +448,12 @@ function itsoft_assets() {
 		file_exists( $design_system_path ) ? (string) filemtime( $design_system_path ) : $ver
 	);
 
+	$main_script_path = get_template_directory() . '/assets/js/main.js';
     wp_enqueue_script(
         'itsoft-script',
         get_template_directory_uri() . '/assets/js/main.js',
         [],
-        $ver,
+		file_exists( $main_script_path ) ? (string) filemtime( $main_script_path ) : $ver,
         true
     );
 

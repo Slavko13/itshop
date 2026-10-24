@@ -70,6 +70,9 @@ try {
 	if ( 'issued' !== $order->get_meta( ITSoft_LF_Order_Service::ORDER_STATUS_META, true ) ) {
 		throw new RuntimeException( 'Paid mock order did not reach the issued state.' );
 	}
+	if ( ! $order->has_status( 'completed' ) ) {
+		throw new RuntimeException( 'Paid mock order with an issued key was not completed.' );
+	}
 
 	$items       = $order->get_items( 'line_item' );
 	$item_id     = (int) array_key_first( $items );

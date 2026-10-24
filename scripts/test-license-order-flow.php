@@ -90,6 +90,9 @@ try {
 	if ( 'sent' !== $order->get_meta( '_itsoft_lf_key_email_status', true ) ) {
 		throw new RuntimeException( 'Assignment email was not accepted by the local mail transport.' );
 	}
+	if ( ! $order->has_status( 'completed' ) ) {
+		throw new RuntimeException( 'Fully issued manual order was not completed.' );
+	}
 
 	$assignment_count_before_resend = count( $repository->get_assignments_for_order( $order->get_id() ) );
 	$order->set_billing_email( 'order-smoke-resend@example.test' );
@@ -107,6 +110,9 @@ try {
 	$owner_html = (string) ob_get_clean();
 	if ( ! str_contains( $owner_html, $key_one ) || ! str_contains( $owner_html, $key_two ) ) {
 		throw new RuntimeException( 'Order owner cannot see assigned keys in My Account output.' );
+	}
+	if ( ! str_contains( $owner_html, 'data-license-reveal' ) || ! str_contains( $owner_html, 'data-license-copy' ) || ! str_contains( $owner_html, 'data-masked=' ) ) {
+		throw new RuntimeException( 'Order key output is missing secure reveal/copy controls.' );
 	}
 	ob_start();
 	do_action( 'woocommerce_account_licenses_endpoint' );
@@ -184,6 +190,9 @@ try {
 	$auto_item_id = (int) array_key_first( $auto_items );
 	if ( 'issued' !== $auto_order->get_meta( ITSoft_LF_Order_Service::ORDER_STATUS_META, true ) || 1 !== count( $repository->get_assignments_for_item( $auto_item_id ) ) ) {
 		throw new RuntimeException( 'AUTO order was not fulfilled after payment_complete.' );
+	}
+	if ( ! $auto_order->has_status( 'completed' ) ) {
+		throw new RuntimeException( 'Fully issued AUTO order was not completed.' );
 	}
 	$order_service->handle_payment_complete( $auto_order->get_id() );
 	if ( 1 !== count( $repository->get_assignments_for_item( $auto_item_id ) ) ) {
