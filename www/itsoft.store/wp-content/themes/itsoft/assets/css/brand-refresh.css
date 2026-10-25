@@ -1,5 +1,42 @@
 /* Brand refresh: desktop catalog menu, native home hero and site footer. */
 
+/* Header catalog trigger follows the same strong, rounded visual language as the primary CTA. */
+.catalog-btn {
+	width: 168px;
+	height: 46px;
+	min-height: 46px;
+	gap: 14px;
+	border-radius: 15px;
+	background: linear-gradient(135deg, #7756ff 0%, #623bfa 62%, #5833e9 100%);
+	box-shadow: 0 10px 22px rgba(98, 59, 250, 0.2);
+}
+
+.catalog-btn:hover,
+.catalog-btn.active {
+	background: linear-gradient(135deg, #8568ff 0%, #6c4cff 60%, #4f2bdc 100%);
+}
+
+.catalog-btn__icon {
+	display: grid;
+	width: 28px;
+	height: 28px;
+	flex: 0 0 28px;
+	place-items: center;
+	margin-right: 0;
+	color: #fff;
+}
+
+.catalog-btn__icon svg {
+	width: 28px;
+	height: 28px;
+}
+
+.catalog-btn__text {
+	top: 0;
+	font-size: 17px;
+	line-height: 1;
+}
+
 /* Keep desktop catalog labels readable on one line. */
 @media (min-width: 1025px) {
 	.catalog__nav.active {

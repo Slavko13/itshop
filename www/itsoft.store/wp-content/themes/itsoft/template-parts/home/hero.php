@@ -15,7 +15,10 @@ $title = $acf ? trim( (string) get_field( 'home_hero_title', $front_page_id ) ) 
 $text  = $acf ? trim( (string) get_field( 'home_hero_text', $front_page_id ) ) : '';
 
 $title = $title ?: __( 'Лицензионное ПО без переплат', 'itsoft' );
-$text  = $text ?: __( 'Подберите программу, оплатите заказ и получите электронный ключ на e-mail.', 'itsoft' );
+$default_text = __( 'Лицензии для Windows, Office и других программ. Ключ активации придёт на email после оплаты.', 'itsoft' );
+if ( '' === $text || __( 'Подберите программу, оплатите заказ и получите электронный ключ на e-mail.', 'itsoft' ) === $text ) {
+	$text = $default_text;
+}
 $text  = preg_replace( '/\s*Для физических товаров[^.]*\.?/iu', '', $text );
 
 $primary_label = $acf ? trim( (string) get_field( 'home_hero_primary_label', $front_page_id ) ) : '';

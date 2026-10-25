@@ -16,7 +16,7 @@
             "ui": 0
         },
         {"key": "field_itsoft_home_hero_title", "label": "Заголовок", "name": "home_hero_title", "type": "text", "default_value": "", "placeholder": "Лицензионное ПО без сложного оформления"},
-        {"key": "field_itsoft_home_hero_text", "label": "Пояснение", "name": "home_hero_text", "type": "textarea", "rows": 3, "new_lines": "", "default_value": ""},
+        {"key": "field_itsoft_home_hero_text", "label": "Пояснение", "name": "home_hero_text", "type": "textarea", "rows": 3, "new_lines": "", "default_value": "", "placeholder": "Лицензии для Windows, Office и других программ. Ключ активации придёт на email после оплаты."},
         {"key": "field_itsoft_home_hero_primary_label", "label": "Основная кнопка — текст", "name": "home_hero_primary_label", "type": "text", "default_value": "", "placeholder": "Выбрать программу"},
         {"key": "field_itsoft_home_hero_primary_url", "label": "Основная кнопка — ссылка", "name": "home_hero_primary_url", "type": "url", "default_value": ""},
         {"key": "field_itsoft_home_hero_secondary_label", "label": "Вторая кнопка — текст", "name": "home_hero_secondary_label", "type": "text", "default_value": "", "placeholder": "Популярные категории"},
