@@ -100,6 +100,19 @@ async function checkViewport(width, height) {
 		const catalogRect = catalog?.getBoundingClientRect();
 		const search = document.querySelector('.header-main__search')?.getBoundingClientRect();
 		const user = document.querySelector('.header-main__user')?.getBoundingClientRect();
+		const stateRect = state?.getBoundingClientRect();
+		const buttonRect = state?.querySelector('.cart-empty-state__button')?.getBoundingClientRect();
+		const benefits = [...(state?.querySelectorAll('.cart-empty-state__benefits li') || [])].map((item) => {
+			const itemRect = item.getBoundingClientRect();
+			const iconRect = item.querySelector('.cart-empty-state__benefit-icon')?.getBoundingClientRect();
+			const textRect = item.querySelector('.cart-empty-state__benefit-text')?.getBoundingClientRect();
+			return {
+				itemLeft: Math.round(itemRect.left),
+				iconLeft: Math.round(iconRect?.left || 0),
+				textLeft: Math.round(textRect?.left || 0),
+				textAlign: getComputedStyle(item).textAlign,
+			};
+		});
 		const cartStylesheet = document.querySelector('#itsoft-cart-css')?.href || '';
 		return {
 			title: state?.querySelector('h2')?.textContent.trim() || '',
@@ -108,6 +121,8 @@ async function checkViewport(width, height) {
 			stepsVisible: Boolean(document.querySelector('.cart-steps')),
 			overflow: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
 			stateWidth: Math.round(state?.getBoundingClientRect().width || 0),
+			buttonInside: Boolean(stateRect && buttonRect) && buttonRect.left >= stateRect.left && buttonRect.right <= stateRect.right,
+			benefits,
 			catalogVisible: catalog ? getComputedStyle(catalog).display !== 'none' : false,
 			cacheBustedStylesheet: cartStylesheet.includes('itsoft_v='),
 			headerOrder: logo && catalogRect && search && user
@@ -124,6 +139,15 @@ async function checkViewport(width, height) {
 	}
 	if (width < 600 && result.catalogVisible) {
 		throw new Error(`${width}px mobile catalog button should be hidden: ${JSON.stringify(result)}`);
+	}
+	if (width < 600) {
+		const alignedBenefits = result.benefits.length === 3
+			&& new Set(result.benefits.map((item) => item.iconLeft)).size === 1
+			&& new Set(result.benefits.map((item) => item.textLeft)).size === 1
+			&& result.benefits.every((item) => item.textAlign === 'left');
+		if (!result.buttonInside || !alignedBenefits) {
+			throw new Error(`${width}px empty-cart mobile alignment failed: ${JSON.stringify(result)}`);
+		}
 	}
 
 	if (capture) {

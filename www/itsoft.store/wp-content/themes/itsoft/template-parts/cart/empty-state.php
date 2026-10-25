@@ -32,8 +32,8 @@ $shop_url = function_exists( 'wc_get_page_id' ) && wc_get_page_id( 'shop' ) > 0
 	</a>
 
 	<ul class="cart-empty-state__benefits" aria-label="<?php esc_attr_e( 'Преимущества магазина', 'itsoft' ); ?>">
-		<li><span aria-hidden="true">✓</span><?php esc_html_e( 'Быстрое оформление', 'itsoft' ); ?></li>
-		<li><span aria-hidden="true">✓</span><?php esc_html_e( 'Безопасная оплата', 'itsoft' ); ?></li>
-		<li><span aria-hidden="true">✓</span><?php esc_html_e( 'Заказ и ключи на e-mail', 'itsoft' ); ?></li>
+		<li><span class="cart-empty-state__benefit-icon" aria-hidden="true">✓</span><span class="cart-empty-state__benefit-text"><?php esc_html_e( 'Быстрое оформление', 'itsoft' ); ?></span></li>
+		<li><span class="cart-empty-state__benefit-icon" aria-hidden="true">✓</span><span class="cart-empty-state__benefit-text"><?php esc_html_e( 'Безопасная оплата', 'itsoft' ); ?></span></li>
+		<li><span class="cart-empty-state__benefit-icon" aria-hidden="true">✓</span><span class="cart-empty-state__benefit-text"><?php esc_html_e( 'Заказ и ключи на e-mail', 'itsoft' ); ?></span></li>
 	</ul>
 </section>

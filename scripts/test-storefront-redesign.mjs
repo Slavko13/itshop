@@ -721,6 +721,16 @@ try {
 				recommended: recommended.length,
 				duplicates: recommendedIds.filter((id) => popularIds.includes(id)),
 				productActions: [...popular, ...recommended].filter((card) => card.querySelector('.catalog-card__buy')).length,
+				catalogButtonInside: (() => {
+					const button = document.querySelector('.popular-products:not(.recommend-products) .btn-show-all');
+					const header = button?.closest('.products-block__header');
+					const buttonRect = button?.getBoundingClientRect();
+					const headerRect = header?.getBoundingClientRect();
+					return Boolean(buttonRect && headerRect)
+						&& buttonRect.left >= headerRect.left - 1
+						&& buttonRect.right <= headerRect.right + 1
+						&& buttonRect.right <= window.innerWidth;
+				})(),
 				articleSection: Boolean(document.querySelector('.useful-articles')),
 			};
 		})()`);
@@ -742,6 +752,7 @@ try {
 		assert(`${width}px commerce sections render`, home.popular > 0 && home.recommended > 0, `${home.popular}/${home.recommended}`);
 		assert(`${width}px home products do not repeat`, home.duplicates.length === 0, home.duplicates.join(','));
 		assert(`${width}px every home product has an action`, home.productActions === home.popular + home.recommended, `${home.productActions}/${home.popular + home.recommended}`);
+		assert(`${width}px full-catalog button stays inside its header`, home.catalogButtonInside, JSON.stringify(home));
 		assert(`${width}px article section renders`, home.articleSection);
 
 		if (width === 393) await capture('home-393.png');

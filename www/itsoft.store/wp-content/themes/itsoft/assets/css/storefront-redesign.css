@@ -1647,6 +1647,10 @@
 	}
 
 	.btn-show-all {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 100%;
+		align-self: stretch;
 		min-height: 42px;
 		font-size: 12px;
 	}

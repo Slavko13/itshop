@@ -166,6 +166,43 @@ try {
 	result.addDurationMs = addDurationMs;
 	result.preNavigationCart = preNavigationCart;
 
+	await command( 'Emulation.setDeviceMetricsOverride', {
+		width: 393,
+		height: 900,
+		deviceScaleFactor: 1,
+		mobile: true,
+	} );
+	await sleep( 300 );
+
+	result.mobileCart = await evaluate( `(() => {
+		const coupon = document.querySelector('.cart-page .coupon');
+		const input = coupon?.querySelector('#coupon_code');
+		const button = coupon?.querySelector('.button');
+		const couponRect = coupon?.getBoundingClientRect();
+		const inputRect = input?.getBoundingClientRect();
+		const buttonRect = button?.getBoundingClientRect();
+		const range = button?.firstChild ? document.createRange() : null;
+		if (range && button.firstChild) range.selectNodeContents(button);
+		return {
+			overflow: Math.max(0, document.documentElement.scrollWidth - innerWidth),
+			couponVisible: Boolean(coupon && input && button),
+			inside: Boolean(couponRect && inputRect && buttonRect)
+				&& inputRect.left >= couponRect.left
+				&& buttonRect.right <= couponRect.right + 1,
+			buttonLines: range ? range.getClientRects().length : 0,
+			buttonWidth: Math.round(buttonRect?.width || 0),
+		};
+	})()` );
+
+	if (
+		! result.mobileCart.couponVisible
+		|| ! result.mobileCart.inside
+		|| result.mobileCart.buttonLines !== 1
+		|| result.mobileCart.overflow > 0
+	) {
+		throw new Error( `Mobile cart coupon layout failed: ${ JSON.stringify( result.mobileCart ) }` );
+	}
+
 	const removeControl = await evaluate( `(() => {
 		const control = document.querySelector('.product-remove .remove');
 		return { exists: Boolean(control), href: control?.href || '', className: control?.className || '' };
