@@ -28,7 +28,7 @@ $primary_url   = $primary_url ?: $shop_url;
 
 $desktop_image_url = $desktop_image
 	? wp_get_attachment_image_url( $desktop_image, 'large' )
-	: get_template_directory_uri() . '/assets/images/home-hero-license-v2.png';
+	: get_template_directory_uri() . '/assets/images/home-hero-office-suite-v3.png';
 $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image, 'large' ) : '';
 ?>
 
@@ -50,7 +50,7 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 		<div class="home-hero__visual" aria-hidden="true">
 			<picture class="home-hero__picture">
 				<?php if ( $mobile_image_url ) : ?><source media="(max-width: 575px)" srcset="<?php echo esc_url( $mobile_image_url ); ?>"><?php endif; ?>
-				<img src="<?php echo esc_url( $desktop_image_url ); ?>" alt="" width="1536" height="1024" loading="eager" decoding="async" fetchpriority="high">
+				<img src="<?php echo esc_url( $desktop_image_url ); ?>" alt="" width="1983" height="793" loading="eager" decoding="async" fetchpriority="high">
 			</picture>
 		</div>
 	</div>
