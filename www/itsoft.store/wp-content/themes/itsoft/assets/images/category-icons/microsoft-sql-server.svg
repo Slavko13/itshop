@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="sql-red" x1="28" y1="50" x2="176" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#cf111b"/>
+      <stop offset=".52" stop-color="#ee2a28"/>
+      <stop offset="1" stop-color="#bc0715"/>
+    </linearGradient>
+    <linearGradient id="sql-gray" x1="48" y1="24" x2="134" y2="178" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#eef2f5"/>
+      <stop offset="1" stop-color="#9ca8b2"/>
+    </linearGradient>
+  </defs>
+  <path d="M45 38c31 17 57 47 74 79 12 23 17 45 16 65-34-14-63-39-83-72-18-30-27-57-25-80l18 8Z" fill="url(#sql-gray)" stroke="#171717" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M24 58c37 4 78 15 116 31 25 11 43 22 55 34-44 12-92 9-132-9C36 102 17 86 5 68l19-10Z" fill="url(#sql-red)" stroke="#171717" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M42 41 98 112M63 28l55 89M25 71l106 103M29 111l109 54M45 141l88 20M78 62l-54 47M111 87l-66 53M142 93l-74 68" stroke="#171717" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M25 59 64 114l41-35 33 46 32-19M52 110l34-44 33 51-18 38M42 39l39 34 28-35" stroke="#171717" stroke-width="3.5" stroke-linejoin="round"/>
+</svg>

@@ -197,10 +197,6 @@
 	white-space: nowrap;
 }
 
-.home-benefits {
-	margin-top: 18px;
-}
-
 /* Native editorial covers keep the same crop everywhere they are reused. */
 .useful-articles__list .item-posts__link,
 .category-posts .item-posts__link,

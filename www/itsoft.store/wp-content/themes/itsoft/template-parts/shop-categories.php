@@ -9,6 +9,16 @@ $cats = get_field( 'home_cats' );
 if( !$cats ) {
     return;
 }
+
+$category_icons = array(
+    'microsoft-office'     => 'microsoft-office.svg',
+    'microsoft-windows'    => 'microsoft-windows.svg',
+    'microsoft-365'        => 'microsoft-365.svg',
+    'microsoft-visio'      => 'microsoft-visio.svg',
+    'microsoft-project'    => 'microsoft-project.svg',
+    'windows-server-rds'   => 'windows-server.svg',
+    'microsoft-sql-server' => 'microsoft-sql-server.svg',
+);
 ?>
 
 <section class="shop-cats" id="home-categories" aria-labelledby="home-categories-title">
@@ -27,17 +37,16 @@ if( !$cats ) {
             
             $cat_obj = $cat['shop_category'];
             
-            // Get category thumbnail
-            $thumbnail_id = get_term_meta( $cat_obj->term_id, 'thumbnail_id', true );
-            if ( $thumbnail_id ) {
-                $image_url = wp_get_attachment_url( $thumbnail_id );
-                $image_alt = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
-                if ( !$image_alt ) {
-                    $image_alt = $cat_obj->name;
-                }
+            // Use transparent vector artwork for the featured category set.
+            if ( isset( $category_icons[ $cat_obj->slug ] ) ) {
+                $image_url = get_template_directory_uri() . '/assets/images/category-icons/' . $category_icons[ $cat_obj->slug ];
+                $image_alt = $cat['shop_category_name'] ?: $cat_obj->name;
             } else {
-                // Explicitly set to null when no image is found
-                $image_url = null;
+                $thumbnail_id = get_term_meta( $cat_obj->term_id, 'thumbnail_id', true );
+                if ( $thumbnail_id ) {
+                    $image_url = wp_get_attachment_url( $thumbnail_id );
+                    $image_alt = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true ) ?: $cat_obj->name;
+                }
             }
             ?>
             <?php $category_link = get_term_link( $cat_obj, 'product_cat' ); ?>

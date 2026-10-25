@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="office-a" x1="43" y1="32" x2="126" y2="175" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#890014"/>
+      <stop offset=".52" stop-color="#e51d3d"/>
+      <stop offset="1" stop-color="#ff5a16"/>
+    </linearGradient>
+    <linearGradient id="office-b" x1="105" y1="18" x2="174" y2="166" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff9a00"/>
+      <stop offset=".42" stop-color="#f13b0d"/>
+      <stop offset="1" stop-color="#bd001e"/>
+    </linearGradient>
+    <linearGradient id="office-c" x1="56" y1="155" x2="119" y2="187" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff1361"/>
+      <stop offset="1" stop-color="#b40018"/>
+    </linearGradient>
+  </defs>
+  <path d="M105 17 172 42v116l-67 27v-34l36-14V62l-36-13V17Z" fill="url(#office-b)"/>
+  <path d="M105 17 39 47c-7 3-11 10-11 18v77c0 6 3 11 8 14l31 17v-35l-8-4V72l46-23V17Z" fill="url(#office-a)"/>
+  <path d="m67 138 38 13v34l-38-12v-35Z" fill="url(#office-c)"/>
+  <path d="M67 72 105 49v102l-38-13V72Z" fill="#11131a" fill-opacity=".12"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="visio-a" x1="84" y1="22" x2="154" y2="175" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#41b8f2"/>
+      <stop offset="1" stop-color="#2b72ce"/>
+    </linearGradient>
+    <linearGradient id="visio-b" x1="50" y1="76" x2="137" y2="165" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2376d2"/>
+      <stop offset="1" stop-color="#082c73"/>
+    </linearGradient>
+  </defs>
+  <path d="m104 20 43 42-43 43-43-43 43-42Z" fill="url(#visio-a)"/>
+  <rect x="93" y="52" width="79" height="78" rx="8" fill="#347fd4"/>
+  <circle cx="105" cy="133" r="49" fill="url(#visio-b)"/>
+  <rect x="24" y="61" width="94" height="96" rx="9" fill="#0f4aab" stroke="#08357f" stroke-width="3"/>
+  <path d="m49 88 19 45h13l20-45H86l-11 29-11-29H49Z" fill="#fff"/>
+</svg>

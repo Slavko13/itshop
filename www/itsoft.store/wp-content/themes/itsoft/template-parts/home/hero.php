@@ -59,10 +59,5 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 		</div>
 	</div>
 
-	<div class="grid-container home-benefits">
-		<div class="home-benefits__item"><span>01</span><div><strong><?php esc_html_e( 'Быстрое оформление', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Только необходимые данные', 'itsoft' ); ?></small></div></div>
-		<div class="home-benefits__item"><span>02</span><div><strong><?php esc_html_e( 'Получение ключа', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Ключ и заказ приходят на e-mail', 'itsoft' ); ?></small></div></div>
-		<div class="home-benefits__item"><span>03</span><div><strong><?php esc_html_e( 'История покупок', 'itsoft' ); ?></strong><small><?php esc_html_e( 'Заказы и лицензии в кабинете', 'itsoft' ); ?></small></div></div>
-	</div>
 </section>
 

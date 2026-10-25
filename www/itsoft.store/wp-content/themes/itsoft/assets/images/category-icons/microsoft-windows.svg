@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="windows-a" x1="34" y1="30" x2="166" y2="170" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#25d8ea"/>
+      <stop offset=".52" stop-color="#1698e0"/>
+      <stop offset="1" stop-color="#3269c9"/>
+    </linearGradient>
+  </defs>
+  <rect x="22" y="22" width="72" height="72" rx="9" fill="url(#windows-a)"/>
+  <rect x="106" y="22" width="72" height="72" rx="9" fill="url(#windows-a)"/>
+  <rect x="22" y="106" width="72" height="72" rx="9" fill="url(#windows-a)"/>
+  <rect x="106" y="106" width="72" height="72" rx="9" fill="url(#windows-a)"/>
+</svg>
