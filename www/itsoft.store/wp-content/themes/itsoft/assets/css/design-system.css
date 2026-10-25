@@ -1331,6 +1331,17 @@ body {
 	overflow-x: clip;
 }
 
+/* The site uses its own RU/EN controls; the plugin's fixed widget must not
+ * cover the mobile catalog button. */
+.gt_switcher_wrapper,
+#gt_float_wrapper {
+	display: none !important;
+}
+
+.catalog-nav__mobile-language {
+	display: none;
+}
+
 @media (max-width: 767px) {
 	/* The promotional banner is intentionally desktop/tablet-only. */
 	body.home .hero,
@@ -1410,7 +1421,7 @@ body {
 	.header-main__user {
 		grid-column: 4;
 		min-width: 0;
-		gap: 4px;
+		gap: 8px;
 		align-items: center;
 		justify-content: flex-end;
 	}
@@ -1547,6 +1558,58 @@ body {
 		max-width: 100%;
 		margin: 0;
 		white-space: normal;
+	}
+}
+
+@media (max-width: 1024px) {
+	.catalog-nav__mobile-language {
+		display: flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 12px 20px;
+		border-bottom: 1px solid #e8e5f2;
+		background: #fff;
+	}
+
+	.catalog-nav__mobile-language-label {
+		color: var(--h2-h3-h4);
+		font-size: 14px;
+		font-weight: 650;
+	}
+
+	.catalog-nav__mobile-language .lang-switcher {
+		display: inline-flex;
+		grid-column: auto;
+		padding: 3px;
+		border: 1px solid #e4defe;
+		border-radius: 12px;
+		background: #f4f1ff;
+	}
+
+	.catalog-nav__mobile-language .lang-switcher .glink {
+		display: grid;
+		min-width: 42px;
+		height: 34px;
+		padding: 0 8px;
+		border-radius: 9px;
+		color: #5f5871;
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1;
+		place-items: center;
+		text-decoration: none;
+	}
+
+	.catalog-nav__mobile-language .lang-switcher .glink:first-child::after {
+		display: none;
+	}
+
+	.catalog-nav__mobile-language .lang-switcher .gt-current-lang {
+		background: var(--main-perple);
+		color: #fff;
+		text-decoration: none;
 	}
 }
 

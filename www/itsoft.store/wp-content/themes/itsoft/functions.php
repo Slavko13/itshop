@@ -14,6 +14,34 @@ require_once get_template_directory() . '/inc/distribution-download-manager.php'
 require_once get_template_directory() . '/customize.php';
 
 /**
+ * Keep the storefront source language predictable and use only the theme
+ * switchers. GTranslate's browser detection and floating control otherwise
+ * cover the mobile catalog button and may open the site in English on first
+ * visit.
+ */
+add_action( 'after_setup_theme', 'itsoft_configure_gtranslate', 1 );
+function itsoft_configure_gtranslate() {
+	$configuration_version = '1';
+
+	if ( get_option( 'itsoft_gtranslate_configuration_version' ) === $configuration_version ) {
+		return;
+	}
+
+	$settings = get_option( 'GTranslate' );
+	if ( ! is_array( $settings ) ) {
+		return;
+	}
+
+	$settings['default_language']           = 'ru';
+	$settings['detect_browser_language']    = 0;
+	$settings['floating_language_selector'] = 'no';
+	$settings['incl_langs']                 = array_values( array_unique( array_merge( (array) ( $settings['incl_langs'] ?? array() ), array( 'ru', 'en' ) ) ) );
+
+	update_option( 'GTranslate', $settings );
+	update_option( 'itsoft_gtranslate_configuration_version', $configuration_version, false );
+}
+
+/**
  * Keep unavailable products out of catalog archives and their result counts.
  * The direct product URL remains accessible.
  */

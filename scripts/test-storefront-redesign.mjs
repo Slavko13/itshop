@@ -697,6 +697,9 @@ try {
 					searchButtonSize: [openRect?.width || 0, openRect?.height || 0],
 					searchIconSize: [searchIconRect?.width || 0, searchIconRect?.height || 0],
 					cartBeforeProfile: Boolean(cartRect && profileRect) && cartRect.left < profileRect.left,
+					actionGapDifference: openRect && cartRect && profileRect
+						? Math.abs((cartRect.left - openRect.right) - (profileRect.left - cartRect.right))
+						: 999,
 				};
 				open?.click();
 				await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -729,6 +732,7 @@ try {
 					&& mobileSearch.before.searchButtonSize.every((size) => Math.abs(size - 40) <= 1)
 					&& mobileSearch.before.searchIconSize.every((size) => Math.abs(size - 22) <= 1)
 					&& mobileSearch.before.cartBeforeProfile
+					&& mobileSearch.before.actionGapDifference <= 1
 					&& mobileSearch.after.active
 					&& !mobileSearch.after.open
 					&& mobileSearch.after.input
@@ -741,6 +745,34 @@ try {
 					&& Math.abs(mobileSearch.after.rowHeight - mobileSearch.rowHeightBefore) <= 1
 					&& mobileSearch.closed,
 				JSON.stringify(mobileSearch),
+			);
+
+			const mobileLanguage = await evaluate(`(async () => {
+				const burger = document.querySelector('.mobile-nav__burger');
+				burger?.click();
+				await new Promise((resolve) => requestAnimationFrame(resolve));
+				const panel = document.querySelector('.catalog__nav');
+				const language = panel?.querySelector('.catalog-nav__mobile-language');
+				const links = [...(language?.querySelectorAll('.glink') || [])];
+				const floating = [...document.querySelectorAll('.gt_switcher_wrapper, #gt_float_wrapper')]
+					.some((element) => getComputedStyle(element).display !== 'none');
+				const result = {
+					open: panel?.classList.contains('active') || false,
+					visible: Boolean(language) && getComputedStyle(language).display !== 'none',
+					labels: links.map((link) => link.textContent.trim().toUpperCase()),
+					floating,
+				};
+				panel?.querySelector('[data-catalog-close]')?.click();
+				return result;
+			})()`);
+			assert(
+				'393px mobile menu exposes RU/EN and hides the floating translator',
+				mobileLanguage.open
+					&& mobileLanguage.visible
+					&& mobileLanguage.labels.includes('RU')
+					&& mobileLanguage.labels.includes('EN')
+					&& !mobileLanguage.floating,
+				JSON.stringify(mobileLanguage),
 			);
 		}
 		await evaluate(`(() => {

@@ -79,6 +79,11 @@
         </form>
     </div>
 
+    <div class="catalog-nav__mobile-language">
+        <span class="catalog-nav__mobile-language-label"><?php esc_html_e( 'Язык сайта', 'itsoft' ); ?></span>
+        <?php get_template_part( 'template-parts/header/lang-switcher' ); ?>
+    </div>
+
     <div class="catalog-nav__layout">
         <?php if ( ! empty( $category_nodes ) ) : ?>
             <ul class="catalog-nav__parents">
