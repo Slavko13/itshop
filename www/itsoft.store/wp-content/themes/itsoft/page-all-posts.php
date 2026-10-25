@@ -49,7 +49,7 @@ $posts_query = new WP_Query( [
                         ?>
                         <div class="item-posts__item">
                             <a class="item-posts__link" href="<?php the_permalink(); ?>">
-                                <?php the_post_thumbnail( 'category-post', [ 'class' => 'item-posts__thumb' ] ); ?>
+                                <?php itsoft_article_thumbnail(); ?>
                             </a>
                             <div class="item-posts__info">
                                 <div class="item-posts__status">

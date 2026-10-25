@@ -867,6 +867,43 @@ function itsoft_image_sizes() {
     add_image_size( 'distribution-thumb', 80, 90, true );
 }
 
+/**
+ * Return a native branded cover for editorial cards.
+ *
+ * A small topic-based set keeps every article card visually consistent while
+ * avoiding embedded copy that could be cropped at responsive breakpoints.
+ */
+function itsoft_get_article_cover_url( $post_id = 0 ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	$title   = wp_strip_all_tags( get_the_title( $post_id ) );
+	$cover   = 'license-security-v1.jpg';
+
+	if ( preg_match( '/office|microsoft\s*365|офис/iu', $title ) ) {
+		$cover = 'office-activation-v1.jpg';
+	} elseif ( preg_match( '/установ|активир|без\s+интернет|перенест|windows\s*10\s*\/\s*11/iu', $title ) ) {
+		$cover = 'windows-setup-v1.jpg';
+	}
+
+	return get_template_directory_uri() . '/assets/images/article-covers/' . $cover;
+}
+
+/**
+ * Render a consistently sized article cover.
+ */
+function itsoft_article_thumbnail( $post_id = 0, $class_name = 'item-posts__thumb', $loading = 'lazy' ) {
+	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
+	$title   = wp_strip_all_tags( get_the_title( $post_id ) );
+	$loading = 'eager' === $loading ? 'eager' : 'lazy';
+
+	printf(
+		'<img class="%1$s" src="%2$s" width="1672" height="941" alt="%3$s" loading="%4$s" decoding="async">',
+		esc_attr( $class_name ),
+		esc_url( itsoft_get_article_cover_url( $post_id ) ),
+		esc_attr( sprintf( __( 'Обложка статьи «%s»', 'itsoft' ), $title ) ),
+		esc_attr( $loading )
+	);
+}
+
 add_filter('acf/settings/save_json', function ($path) {
     return get_stylesheet_directory() . '/acf-json';
 });

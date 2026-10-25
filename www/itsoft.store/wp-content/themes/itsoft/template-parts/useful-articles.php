@@ -42,7 +42,7 @@ $cat_link = esc_url( get_category_link( $current_cat->term_id ) );
         <?php while ( $query->have_posts() ) : $query->the_post(); ?>
             <div class="item-posts__item">
                 <a class="item-posts__link" href="<?php the_permalink(); ?>">
-                    <?php the_post_thumbnail( 'aside-news', [ 'class' => 'item-posts__thumb' ] ); ?>
+                    <?php itsoft_article_thumbnail( 0, 'item-posts__thumb', 'eager' ); ?>
                 </a>
                 <div class="item-posts__info">
                     <div class="item-posts__status">

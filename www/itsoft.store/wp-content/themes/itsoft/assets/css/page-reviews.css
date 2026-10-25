@@ -11,12 +11,29 @@
 }
 
 .page-reviews__form-card {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
 	margin-bottom: clamp(40px, 6vw, 64px);
-	padding: clamp(24px, 4vw, 40px);
-	border: 1px solid #e5deff;
-	border-radius: 24px;
-	background: linear-gradient(145deg, #fff 0%, #f8f5ff 100%);
-	box-shadow: 0 16px 44px rgba(45, 34, 104, 0.08);
+	padding: clamp(26px, 4vw, 44px);
+	border: 1px solid rgba(108, 76, 255, 0.16);
+	border-radius: 28px;
+	background:
+		radial-gradient(circle at 100% 0, rgba(108, 76, 255, 0.14), transparent 32%),
+		linear-gradient(145deg, #fff 0%, #faf8ff 100%);
+	box-shadow: 0 20px 52px rgba(45, 34, 104, 0.09);
+}
+
+.page-reviews__form-card::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	top: -110px;
+	right: -90px;
+	width: 250px;
+	height: 250px;
+	border: 1px solid rgba(108, 76, 255, 0.12);
+	border-radius: 50%;
 }
 
 .page-reviews__form-heading {
@@ -25,9 +42,15 @@
 }
 
 .page-reviews__form-kicker {
-	display: block;
-	margin-bottom: 8px;
+	display: inline-flex;
+	min-height: 28px;
+	margin-bottom: 12px;
+	padding: 0 11px;
+	align-items: center;
+	border: 1px solid rgba(108, 76, 255, 0.13);
+	border-radius: 999px;
 	color: var(--main-perple, #6c4cff);
+	background: rgba(108, 76, 255, 0.07);
 	font-size: 12px;
 	font-weight: 800;
 	letter-spacing: 0.08em;
@@ -35,15 +58,17 @@
 }
 
 .page-reviews__form-heading h2 {
-	margin: 0 0 8px;
-	color: #0f1116;
-	font-size: clamp(26px, 4vw, 34px);
-	line-height: 1.2;
+	margin: 0 0 10px;
+	color: #141126;
+	font-size: clamp(28px, 4vw, 38px);
+	font-weight: 800;
+	line-height: 1.12;
+	letter-spacing: -0.035em;
 }
 
 .page-reviews__form-heading p {
 	margin: 0;
-	color: #626979;
+	color: #73788b;
 	font-size: 15px;
 	line-height: 1.6;
 }
@@ -58,10 +83,10 @@
 	display: flex;
 	min-width: 0;
 	flex-direction: column;
-	gap: 8px;
-	color: #242735;
-	font-size: 14px;
-	font-weight: 700;
+	gap: 9px;
+	color: #231d3d;
+	font-size: 13px;
+	font-weight: 750;
 }
 
 .page-reviews__field--wide {
@@ -77,12 +102,12 @@
 .page-reviews__field textarea {
 	box-sizing: border-box;
 	width: 100%;
-	min-height: 50px;
-	padding: 12px 16px;
-	border: 1px solid #dcdff0;
-	border-radius: 12px;
+	min-height: 56px;
+	padding: 13px 17px;
+	border: 1px solid #ded9ef;
+	border-radius: 16px;
 	outline: 0;
-	background: #fff;
+	background: rgba(255, 255, 255, 0.94);
 	color: #11131a;
 	font: inherit;
 	font-weight: 500;
@@ -90,7 +115,7 @@
 }
 
 .page-reviews__field textarea {
-	min-height: 144px;
+	min-height: 164px;
 	resize: vertical;
 }
 
@@ -103,25 +128,26 @@
 
 .page-reviews__submit {
 	display: inline-flex;
-	min-height: 50px;
+	min-height: 56px;
 	margin-top: 22px;
-	padding: 0 26px;
+	padding: 0 30px;
 	align-items: center;
 	justify-content: center;
 	border: 0;
-	border-radius: 12px;
-	background: var(--main-perple, #6c4cff);
+	border-radius: 16px;
+	background: linear-gradient(135deg, #815cff 0%, #623bfa 58%, #4c2de0 100%);
 	color: #fff;
 	font-size: 15px;
-	font-weight: 750;
+	font-weight: 800;
 	cursor: pointer;
-	box-shadow: 0 12px 26px rgba(108, 76, 255, 0.22);
-	transition: background-color 0.2s ease, transform 0.2s ease;
+	box-shadow: 0 14px 30px rgba(98, 59, 250, 0.28);
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .page-reviews__submit:hover,
 .page-reviews__submit:focus-visible {
-	background: var(--main-perple-hover, #4b2fd7);
+	background: linear-gradient(135deg, #8c6bff 0%, #6c4cff 58%, #5532e9 100%);
+	box-shadow: 0 18px 34px rgba(98, 59, 250, 0.36);
 	transform: translateY(-1px);
 }
 
@@ -238,6 +264,11 @@
 }
 
 @media (max-width: 640px) {
+	.page-reviews__form-card {
+		padding: 22px;
+		border-radius: 22px;
+	}
+
 	.page-reviews__form-grid {
 		grid-template-columns: 1fr;
 	}

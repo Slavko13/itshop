@@ -79,7 +79,7 @@ $post_author_name    = get_the_author();
                 <?php while ( $query->have_posts() ) : $query->the_post(); ?>
                     <div class="item-posts__item">
                         <a class="item-posts__link" href="<?php the_permalink(); ?>">
-                            <?php the_post_thumbnail( 'aside-news', [ 'class' => 'item-posts__thumb' ] ); ?>
+                            <?php itsoft_article_thumbnail(); ?>
                         </a>
                         <div class="item-posts__info">
                             <div class="item-posts__status">
@@ -127,7 +127,7 @@ $post_author_name    = get_the_author();
                         <?php while ( $query->have_posts() ) : $query->the_post(); ?>
                             <div class="item-posts__item">
                                 <a class="item-posts__link" href="<?php the_permalink(); ?>">
-                                    <?php the_post_thumbnail( 'aside-news', [ 'class' => 'item-posts__thumb' ] ); ?>
+                                    <?php itsoft_article_thumbnail(); ?>
                                 </a>
                                 <div class="item-posts__info">
                                     <div class="item-posts__status">

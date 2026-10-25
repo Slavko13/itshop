@@ -44,7 +44,7 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 					<i aria-hidden="true">→</i>
 				</a>
 			</div>
-			<p class="home-hero__note"><span aria-hidden="true">✓</span> <?php esc_html_e( 'Данные заказа и статус покупки всегда доступны в личном кабинете', 'itsoft' ); ?></p>
+			<p class="home-hero__note"><span aria-hidden="true">✓</span> <?php esc_html_e( 'Данные доступны в личном кабинете', 'itsoft' ); ?></p>
 		</div>
 
 		<div class="home-hero__visual" aria-hidden="true">
