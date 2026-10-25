@@ -1391,13 +1391,18 @@ body {
 	}
 
 	.search__mobile-button {
-		width: 44px;
-		height: 44px;
+		width: 40px;
+		height: 40px;
 		padding: 0;
 		border: 1px solid #e4defe;
-		border-radius: 14px;
+		border-radius: 13px;
 		background: #f4f1ff;
 		color: var(--main-perple);
+	}
+
+	.search__mobile-button svg {
+		width: 22px;
+		height: 22px;
 	}
 
 	.header-main__user {
@@ -1427,11 +1432,11 @@ body {
 
 	.header-main__user .user-nav__login {
 		display: inline-flex;
-		order: 1;
+		order: 2;
 	}
 
 	.header-main__user .user-nav__cart {
-		order: 2;
+		order: 1;
 	}
 
 	.header-main__user .user-nav__text {

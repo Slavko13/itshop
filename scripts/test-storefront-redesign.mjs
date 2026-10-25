@@ -661,8 +661,13 @@ try {
 				const cart = document.querySelector('.header-main__user .user-nav__cart');
 				const orders = document.querySelector('.header-main__user .user-nav__orders');
 				const cartText = cart?.querySelector('.user-nav__text');
+				const searchIcon = open?.querySelector('svg');
 				const visible = (element) => Boolean(element) && getComputedStyle(element).display !== 'none';
 				const rowHeightBefore = row?.getBoundingClientRect().height || 0;
+				const openRect = open?.getBoundingClientRect();
+				const searchIconRect = searchIcon?.getBoundingClientRect();
+				const profileRect = profile?.getBoundingClientRect();
+				const cartRect = cart?.getBoundingClientRect();
 				const before = {
 					open: visible(open),
 					input: visible(input),
@@ -671,6 +676,9 @@ try {
 					cart: visible(cart),
 					orders: visible(orders),
 					cartText: visible(cartText),
+					searchButtonSize: [openRect?.width || 0, openRect?.height || 0],
+					searchIconSize: [searchIconRect?.width || 0, searchIconRect?.height || 0],
+					cartBeforeProfile: Boolean(cartRect && profileRect) && cartRect.left < profileRect.left,
 				};
 				open?.click();
 				await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -700,6 +708,9 @@ try {
 					&& mobileSearch.before.cart
 					&& !mobileSearch.before.orders
 					&& !mobileSearch.before.cartText
+					&& mobileSearch.before.searchButtonSize.every((size) => Math.abs(size - 40) <= 1)
+					&& mobileSearch.before.searchIconSize.every((size) => Math.abs(size - 22) <= 1)
+					&& mobileSearch.before.cartBeforeProfile
 					&& mobileSearch.after.active
 					&& !mobileSearch.after.open
 					&& mobileSearch.after.input
