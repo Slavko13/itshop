@@ -31,6 +31,7 @@ set +a
 
 cp -p .env ".env.pre-yookassa.$(date -u +%Y%m%dT%H%M%SZ)"
 set_env_value ITSOFT_PAYMENT_INTEGRATIONS_ENABLED 1
+export ITSOFT_PAYMENT_INTEGRATIONS_ENABLED=1
 docker compose --profile https up -d --force-recreate wordpress caddy
 
 if docker compose exec -T wordpress wp plugin is-installed yookassa --allow-root >/dev/null 2>&1; then

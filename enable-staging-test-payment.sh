@@ -33,6 +33,7 @@ set +a
 
 cp -p .env ".env.pre-mock-payment.$(date -u +%Y%m%dT%H%M%SZ)"
 set_env_value ITSOFT_MOCK_PAYMENT_ENABLED 1
+export ITSOFT_MOCK_PAYMENT_ENABLED=1
 
 if [[ "${ITSOFT_LOCAL_URL}" == https://* ]]; then
   docker compose --profile https up -d --build --force-recreate wordpress caddy

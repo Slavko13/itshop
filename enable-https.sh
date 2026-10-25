@@ -59,6 +59,12 @@ set_env_value ITSOFT_DOMAIN "$domain"
 set_env_value ITSOFT_LOCAL_URL "$new_url"
 set_env_value ITSOFT_HTTP_BIND 127.0.0.1
 
+# Values sourced above remain exported in the current shell and take precedence
+# over the updated .env file during Compose interpolation. Keep them in sync.
+export ITSOFT_DOMAIN="$domain"
+export ITSOFT_LOCAL_URL="$new_url"
+export ITSOFT_HTTP_BIND=127.0.0.1
+
 docker compose --profile https up -d --build --force-recreate wordpress caddy
 
 wordpress_ready=0
@@ -91,7 +97,16 @@ docker compose exec -T wordpress wp eval \
   --allow-root >/dev/null 2>&1 || true
 docker compose exec -T wordpress wp cache flush --allow-root >/dev/null 2>&1 || true
 
-if ! curl --fail --silent --show-error --head --retry 12 --retry-all-errors --retry-delay 5 "$new_url" >/dev/null; then
+https_ready=0
+for _ in $(seq 1 12); do
+  if curl --fail --silent --show-error --head "$new_url" >/dev/null 2>&1; then
+    https_ready=1
+    break
+  fi
+  sleep 5
+done
+
+if [[ "$https_ready" -ne 1 ]]; then
   docker compose --profile https logs --no-color --tail=80 caddy >&2 || true
   fail "HTTPS check failed. Verify the A record for $domain and inbound TCP ports 80/443."
 fi
