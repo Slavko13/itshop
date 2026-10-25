@@ -650,20 +650,32 @@ try {
 			})()`);
 			assert('393px cookie notice stays inside the viewport', cookieNotice.overflow <= 1 && cookieNotice.noticeWidth <= 393 && cookieNotice.buttonsRight <= 393, JSON.stringify(cookieNotice));
 
-			const mobileSearch = await evaluate(`(() => {
+			const mobileSearch = await evaluate(`(async () => {
 				const form = document.querySelector('.header-main__search');
 				const open = form?.querySelector('.search__mobile-button');
 				const input = form?.querySelector('.search__input');
 				const submit = form?.querySelector('.search__submit');
 				const close = form?.querySelector('.search__mobile-close');
+				const row = document.querySelector('.header-main__row');
+				const profile = document.querySelector('.header-main__user .user-nav__login');
+				const cart = document.querySelector('.header-main__user .user-nav__cart');
+				const orders = document.querySelector('.header-main__user .user-nav__orders');
+				const cartText = cart?.querySelector('.user-nav__text');
 				const visible = (element) => Boolean(element) && getComputedStyle(element).display !== 'none';
+				const rowHeightBefore = row?.getBoundingClientRect().height || 0;
 				const before = {
 					open: visible(open),
 					input: visible(input),
 					submit: visible(submit),
+					profile: visible(profile),
+					cart: visible(cart),
+					orders: visible(orders),
+					cartText: visible(cartText),
 				};
 				open?.click();
+				await new Promise((resolve) => requestAnimationFrame(resolve));
 				const rect = form?.getBoundingClientRect();
+				const closeRect = close?.getBoundingClientRect();
 				const after = {
 					active: form?.classList.contains('active') || false,
 					open: visible(open),
@@ -673,22 +685,31 @@ try {
 					left: rect?.left || 0,
 					right: rect?.right || 0,
 					focused: document.activeElement === input,
+					closeInside: Boolean(rect && closeRect) && closeRect.left >= rect.left && closeRect.right <= rect.right,
+					rowHeight: row?.getBoundingClientRect().height || 0,
 				};
 				close?.click();
-				return { before, after, closed: !form?.classList.contains('active') };
+				return { before, after, rowHeightBefore, closed: !form?.classList.contains('active') };
 			})()`);
 			assert(
 				'393px mobile search has one icon before opening and a fitted form after opening',
 				mobileSearch.before.open
 					&& !mobileSearch.before.input
 					&& !mobileSearch.before.submit
+					&& mobileSearch.before.profile
+					&& mobileSearch.before.cart
+					&& !mobileSearch.before.orders
+					&& !mobileSearch.before.cartText
 					&& mobileSearch.after.active
 					&& !mobileSearch.after.open
 					&& mobileSearch.after.input
 					&& mobileSearch.after.submit
 					&& mobileSearch.after.close
-					&& mobileSearch.after.left >= 59
+					&& mobileSearch.after.left >= 15
 					&& mobileSearch.after.right <= 378
+					&& mobileSearch.after.focused
+					&& mobileSearch.after.closeInside
+					&& Math.abs(mobileSearch.after.rowHeight - mobileSearch.rowHeightBefore) <= 1
 					&& mobileSearch.closed,
 				JSON.stringify(mobileSearch),
 			);
