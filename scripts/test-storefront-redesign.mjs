@@ -649,6 +649,49 @@ try {
 				};
 			})()`);
 			assert('393px cookie notice stays inside the viewport', cookieNotice.overflow <= 1 && cookieNotice.noticeWidth <= 393 && cookieNotice.buttonsRight <= 393, JSON.stringify(cookieNotice));
+
+			const mobileSearch = await evaluate(`(() => {
+				const form = document.querySelector('.header-main__search');
+				const open = form?.querySelector('.search__mobile-button');
+				const input = form?.querySelector('.search__input');
+				const submit = form?.querySelector('.search__submit');
+				const close = form?.querySelector('.search__mobile-close');
+				const visible = (element) => Boolean(element) && getComputedStyle(element).display !== 'none';
+				const before = {
+					open: visible(open),
+					input: visible(input),
+					submit: visible(submit),
+				};
+				open?.click();
+				const rect = form?.getBoundingClientRect();
+				const after = {
+					active: form?.classList.contains('active') || false,
+					open: visible(open),
+					input: visible(input),
+					submit: visible(submit),
+					close: visible(close),
+					left: rect?.left || 0,
+					right: rect?.right || 0,
+					focused: document.activeElement === input,
+				};
+				close?.click();
+				return { before, after, closed: !form?.classList.contains('active') };
+			})()`);
+			assert(
+				'393px mobile search has one icon before opening and a fitted form after opening',
+				mobileSearch.before.open
+					&& !mobileSearch.before.input
+					&& !mobileSearch.before.submit
+					&& mobileSearch.after.active
+					&& !mobileSearch.after.open
+					&& mobileSearch.after.input
+					&& mobileSearch.after.submit
+					&& mobileSearch.after.close
+					&& mobileSearch.after.left >= 59
+					&& mobileSearch.after.right <= 378
+					&& mobileSearch.closed,
+				JSON.stringify(mobileSearch),
+			);
 		}
 		await evaluate(`(() => {
 			const accept = document.querySelector('#cn-accept-cookie');

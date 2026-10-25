@@ -1371,6 +1371,17 @@ body {
 		background: transparent;
 	}
 
+	.header-main__search:not(.active):focus-within {
+		border-color: transparent;
+		outline: 0;
+	}
+
+	.header-main__search:not(.active) .search__input,
+	.header-main__search:not(.active) .search__submit,
+	.header-main__search:not(.active) .search__mobile-close {
+		display: none;
+	}
+
 	.search__mobile-button {
 		width: 44px;
 		height: 44px;
@@ -1388,11 +1399,31 @@ body {
 		inset-inline: 60px 16px;
 		width: auto;
 		margin: 0;
+		display: flex;
+		background: #fff;
+		z-index: 20;
+	}
+
+	.header-main__search.active .search__input {
+		display: block;
+		width: 100%;
+	}
+
+	.header-main__search.active .search__submit {
+		display: inline-flex;
+	}
+
+	.header-main__search.active .search__mobile-button {
+		display: none;
 	}
 
 	.header-main__search.active .search__mobile-close {
 		left: -44px;
 		width: 44px;
+		height: 100%;
+		padding: 0;
+		justify-content: center;
+		cursor: pointer;
 	}
 
 	/* Cookie Notice buttons must wrap instead of widening the page. */

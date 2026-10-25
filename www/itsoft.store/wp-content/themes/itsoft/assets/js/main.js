@@ -160,16 +160,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.addEventListener('click', e => {
                         e.stopPropagation();
                         headerSearch.classList.add('active');
+						btn.setAttribute('aria-expanded', 'true');
+						window.requestAnimationFrame(() => headerSearch.querySelector('.search__input')?.focus());
                     });
                 });
             }
-        
+
+			const closeSearch = () => {
+				headerSearch.classList.remove('active');
+				openBtns.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+				headerSearch.querySelector('.search__input')?.blur();
+			};
+
             if (closeBtn) {
                 closeBtn.addEventListener('click', e => {
                     e.stopPropagation();
-                    headerSearch.classList.remove('active');
+					closeSearch();
                 });
             }
+
+			headerSearch.addEventListener('keydown', event => {
+				if (event.key !== 'Escape' || !headerSearch.classList.contains('active')) return;
+
+				event.preventDefault();
+				closeSearch();
+				openBtns[0]?.focus();
+			});
         }
 
         // Catalog Nav Mobile Search
