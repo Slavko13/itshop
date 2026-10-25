@@ -13,6 +13,29 @@ require_once get_template_directory() . '/inc/distribution-post-type.php';
 require_once get_template_directory() . '/inc/distribution-download-manager.php';
 require_once get_template_directory() . '/customize.php';
 
+/**
+ * Keep unavailable products out of catalog archives and their result counts.
+ * The direct product URL remains accessible.
+ */
+add_action( 'woocommerce_product_query', 'itsoft_catalog_available_products_only', 30 );
+function itsoft_catalog_available_products_only( $query ) {
+	if ( is_admin() || ! is_a( $query, 'WP_Query' ) ) {
+		return;
+	}
+
+	$available_ids = itsoft_get_available_product_ids();
+	$current_raw   = (array) $query->get( 'post__in' );
+	$current_ids   = array_values( array_filter( array_map( 'absint', $current_raw ) ) );
+
+	if ( $current_raw ) {
+		$available_ids = $current_ids
+			? array_values( array_intersect( $current_ids, $available_ids ) )
+			: array();
+	}
+
+	$query->set( 'post__in', $available_ids ?: array( 0 ) );
+}
+
 /*--------------------------------------------------------------
 # 1. Базовые настройки темы
 --------------------------------------------------------------*/
@@ -492,7 +515,7 @@ function itsoft_assets() {
 
 		foreach ( $product_ids as $product_id ) {
 			$product = wc_get_product( $product_id );
-			if ( ! $product || ! in_array( $product->get_catalog_visibility(), array( 'visible', 'search' ), true ) ) {
+			if ( ! itsoft_is_product_available_for_sale( $product ) || ! in_array( $product->get_catalog_visibility(), array( 'visible', 'search' ), true ) ) {
 				continue;
 			}
 

@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$related_products = array_values( array_filter( (array) $related_products, 'itsoft_is_product_available_for_sale' ) );
+
 if ( $related_products ) :
 	/**
 	 * Ensure all images of related products are lazy loaded by increasing the

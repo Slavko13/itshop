@@ -16,7 +16,7 @@ if ( ! $product ) {
 $limit = 4;
 $upsell_ids = $product->get_upsell_ids();
 // Ensure IDs are integers
-$upsell_ids = array_map( 'absint', $upsell_ids );
+$upsell_ids = itsoft_filter_available_product_ids( array_map( 'absint', $upsell_ids ) );
 $upsell_count = count( $upsell_ids );
 
 $final_ids = $upsell_ids;
@@ -42,6 +42,7 @@ if ( $upsell_count < $limit ) {
 			$related_products = wc_get_products( array(
 				'category' => $category_slugs,
 				'limit'    => $needed,
+				'include'  => itsoft_get_available_product_ids() ?: array( 0 ),
 				'exclude'  => $exclude_ids,
 				'orderby'  => 'rand',
 				'return'   => 'ids',
@@ -61,7 +62,12 @@ if ( empty( $final_ids ) ) {
 
 // Ensure unique and limit
 $final_ids = array_unique( $final_ids );
+$final_ids = itsoft_filter_available_product_ids( $final_ids );
 $final_ids = array_slice( $final_ids, 0, $limit );
+
+if ( empty( $final_ids ) ) {
+	return;
+}
 
 $args = array(
 	'post_type'           => 'product',

@@ -204,6 +204,7 @@ try {
 				minCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
 				buttons: document.querySelectorAll('.catalog-card__buy').length,
 				availableCards: cards.filter((card) => !card.querySelector('.catalog-card__stock-note')).length,
+				unavailableCards: cards.filter((card) => card.querySelector('.catalog-card__stock-note')).length,
 				maxCardBottomGap: Math.max(0, ...cards.map((card) => {
 					const cardRect = card.getBoundingClientRect();
 					const actionsRect = card.querySelector('.catalog-card__actions')?.getBoundingClientRect();
@@ -264,6 +265,7 @@ try {
 		assert(`${width}px redesign stylesheet`, state.style);
 		assert(`${width}px no horizontal overflow`, state.overflow <= 1, `${state.overflow}px`);
 		assert(`${width}px product cards render`, state.cards > 0, String(state.cards));
+		assert(`${width}px unavailable products are absent from catalog`, state.unavailableCards === 0, JSON.stringify(state));
 		assert(`${width}px every card has an action`, state.buttons === state.cards, `${state.buttons}/${state.cards}`);
 		assert(`${width}px every available card has quick buy`, state.quickBuyButtons === state.availableCards, `${state.quickBuyButtons}/${state.availableCards}`);
 		assert(`${width}px quick-buy links go straight to checkout`, state.validQuickBuyLinks === state.quickBuyButtons, `${state.validQuickBuyLinks}/${state.quickBuyButtons}`);
@@ -540,10 +542,19 @@ try {
 			open: input.getAttribute('aria-expanded'),
 			labels: options.map((option) => option.querySelector('.search-suggestions__title')?.textContent.trim() || ''),
 			selected: options.filter((option) => option.getAttribute('aria-selected') === 'true').length,
+			unavailableIndexed: (window.ITSOFT_SEARCH_SUGGESTIONS?.products || []).some((product) => String(product.url || '').includes('/windows-11-pro-professionalnaya/')),
 		};
 	})()`);
 	assert('Windows search suggests matching product cards', suggestions.open === 'true' && suggestions.labels.length > 0 && suggestions.labels.every((label) => label.includes('Windows')), JSON.stringify(suggestions));
 	assert('search suggestions support keyboard selection', suggestions.selected === 1, JSON.stringify(suggestions));
+	assert('unavailable products are absent from search suggestions', !suggestions.unavailableIndexed, JSON.stringify(suggestions));
+
+	await navigate(new URL('/?s=Windows%2011%20Pro', baseUrl).toString(), 1280);
+	const unavailableSearch = await evaluate(`(() => ({
+		unavailableCards: [...document.querySelectorAll('.catalog-card__link')].filter((link) => link.href.includes('/windows-11-pro-professionalnaya/')).length,
+		overflow: document.documentElement.scrollWidth - innerWidth,
+	}))()`);
+	assert('unavailable products are absent from search results', unavailableSearch.unavailableCards === 0 && unavailableSearch.overflow <= 1, JSON.stringify(unavailableSearch));
 
 	const outsideClose = await evaluate(`(() => {
 		document.querySelector('.catalog-btn')?.click();

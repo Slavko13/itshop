@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$upsells = array_values( array_filter( (array) $upsells, 'itsoft_is_product_available_for_sale' ) );
+
 if ( $upsells ) : ?>
 
 	<section class="up-sells upsells products">

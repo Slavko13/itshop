@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 $manual_products = function_exists( 'get_field' ) ? get_field( 'home_recommended_products', (int) get_option( 'page_on_front' ) ) : array();
 $manual_products = array_values( array_filter( array_map( 'absint', (array) $manual_products ) ) );
+$available_products = itsoft_get_available_product_ids();
+$manual_products = array_values( array_intersect( $manual_products, $available_products ) );
 $excluded_products = array_values( array_filter( array_map( 'absint', (array) ( $GLOBALS['itsoft_home_popular_product_ids'] ?? array() ) ) ) );
 $manual_products = array_values( array_diff( $manual_products, $excluded_products ) );
 
@@ -21,6 +23,7 @@ $args = array(
     'post_status'         => 'publish',
     'ignore_sticky_posts' => 1,
 	'post__not_in'         => $excluded_products,
+	'post__in'             => $available_products ?: array( 0 ),
 );
 
 if ( $manual_products ) {

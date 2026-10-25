@@ -33,7 +33,7 @@ $review_products = array_values(
 	array_filter(
 		$review_products,
 		static function ( $product ) use ( $verified_only, $current_user ) {
-			if ( ! $product instanceof WC_Product || ! comments_open( $product->get_id() ) ) {
+			if ( ! itsoft_is_product_available_for_sale( $product ) || ! comments_open( $product->get_id() ) ) {
 				return false;
 			}
 

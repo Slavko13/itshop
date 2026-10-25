@@ -144,7 +144,12 @@ final class ITSoft_LF_Search {
 			}
 			if ( 'product' === $type ) {
 				$product = wc_get_product( $id );
-				if ( ! $product || in_array( $product->get_catalog_visibility(), array( 'catalog', 'hidden' ), true ) ) {
+				if (
+					! $product
+					|| ! $product->is_purchasable()
+					|| ! $product->is_in_stock()
+					|| in_array( $product->get_catalog_visibility(), array( 'catalog', 'hidden' ), true )
+				) {
 					continue;
 				}
 			}

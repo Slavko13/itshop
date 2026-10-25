@@ -9,6 +9,76 @@
 
 defined( 'ABSPATH' ) || exit;
 
+if ( ! function_exists( 'itsoft_is_product_available_for_sale' ) ) {
+	/**
+	 * Whether a product may be shown in customer-facing product collections.
+	 * Direct product pages remain available for support and SEO purposes.
+	 *
+	 * @param WC_Product|int|null $product Product object or ID.
+	 */
+	function itsoft_is_product_available_for_sale( $product ) : bool {
+		if ( is_numeric( $product ) ) {
+			$product = wc_get_product( (int) $product );
+		}
+
+		return $product instanceof WC_Product
+			&& 'publish' === $product->get_status()
+			&& $product->is_purchasable()
+			&& $product->is_in_stock();
+	}
+}
+
+if ( ! function_exists( 'itsoft_get_available_product_ids' ) ) {
+	/** @return int[] */
+	function itsoft_get_available_product_ids() : array {
+		static $available_ids = null;
+
+		if ( null !== $available_ids ) {
+			return $available_ids;
+		}
+
+		$product_ids = get_posts(
+			array(
+				'post_type'              => 'product',
+				'post_status'            => 'publish',
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'orderby'                => 'ID',
+				'order'                  => 'ASC',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		$available_ids = array_values(
+			array_filter(
+				array_map( 'absint', $product_ids ),
+				'itsoft_is_product_available_for_sale'
+			)
+		);
+
+		return $available_ids;
+	}
+}
+
+if ( ! function_exists( 'itsoft_filter_available_product_ids' ) ) {
+	/**
+	 * @param array<int, int|string> $product_ids Product IDs.
+	 * @return int[]
+	 */
+	function itsoft_filter_available_product_ids( array $product_ids ) : array {
+		$available_lookup = array_fill_keys( itsoft_get_available_product_ids(), true );
+
+		return array_values(
+			array_filter(
+				array_map( 'absint', $product_ids ),
+				static fn( int $product_id ) : bool => isset( $available_lookup[ $product_id ] )
+			)
+		);
+	}
+}
+
 if ( ! class_exists( 'Itsoft_Product_Card_Controller' ) ) {
 
 	final class Itsoft_Product_Card_Controller {

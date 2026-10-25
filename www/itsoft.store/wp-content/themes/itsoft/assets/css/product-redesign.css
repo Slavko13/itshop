@@ -9,11 +9,21 @@ body.single-product {
 	background: #f7f8fc;
 }
 
+.single-product .header-main {
+	margin-bottom: 0;
+	padding-bottom: 18px;
+}
+
+.single-product .woocommerce-notices-wrapper:empty {
+	display: none;
+	padding: 0;
+}
+
 .single-product .product-page {
 	display: block;
 	max-width: 1280px;
 	margin: 0 auto;
-	padding: 24px var(--container-pad, 24px) 96px;
+	padding: 16px var(--container-pad, 24px) 96px;
 }
 
 .single-product .product-page .breadcrumbs {
@@ -21,6 +31,10 @@ body.single-product {
 	font-size: 13px;
 	line-height: 1.5;
 	color: #8b92a5;
+}
+
+.single-product .product-page .breadcrumbs__list {
+	padding-top: 0;
 }
 
 .single-product .product-page .breadcrumbs a {

@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 global $product;
 
-if ( ! $product instanceof WC_Product || ! $product->is_visible() ) {
+if ( ! $product instanceof WC_Product || ! $product->is_visible() || ! itsoft_is_product_available_for_sale( $product ) ) {
 	return;
 }
 

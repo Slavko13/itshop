@@ -103,6 +103,9 @@ async function openProduct(path, width, height, name) {
 			.filter((rect) => rect.left < -1 || rect.right > document.documentElement.clientWidth + 1);
 		const upsellCards = [...document.querySelectorAll('.product-upsells .catalog-card')];
 		const upsellButtons = [...document.querySelectorAll('.product-upsells .catalog-card__buy')];
+		const headerMain = document.querySelector('.header-main')?.getBoundingClientRect();
+		const breadcrumbs = page?.querySelector('.breadcrumbs')?.getBoundingClientRect();
+		const breadcrumbList = page?.querySelector('.breadcrumbs__list');
 		return {
 			title: page?.querySelector('.product-title')?.textContent.trim() || '',
 			h1Count: page?.querySelectorAll('h1').length || 0,
@@ -117,8 +120,16 @@ async function openProduct(path, width, height, name) {
 			viewport: document.documentElement.clientWidth,
 			widest: widest ? { tag: widest.element.tagName, className: widest.element.className || '', right: Math.round(widest.right) } : null,
 			layoutOverflow,
+			headerToBreadcrumbGap: headerMain && breadcrumbs ? Math.round(breadcrumbs.top - headerMain.bottom) : -1,
+			headerGapStyles: {
+				headerMarginBottom: document.querySelector('.header-main') ? getComputedStyle(document.querySelector('.header-main')).marginBottom : '',
+				pagePaddingTop: page ? getComputedStyle(page).paddingTop : '',
+				breadcrumbPaddingTop: breadcrumbList ? getComputedStyle(breadcrumbList).paddingTop : '',
+			},
 			upsells: {
 				count: upsellCards.length,
+				unavailableNotes: document.querySelectorAll('.product-upsells .catalog-card__stock-note').length,
+				unavailableProductLinks: [...document.querySelectorAll('.product-upsells .catalog-card__link')].filter((link) => link.href.includes('/windows-11-pro-professionalnaya/')).length,
 				cardHeights: upsellCards.map((card) => Math.round(card.getBoundingClientRect().height)),
 				bottomGaps: upsellCards.map((card) => {
 					const cardRect = card.getBoundingClientRect();
@@ -142,6 +153,12 @@ async function openProduct(path, width, height, name) {
 	}
 	if (result.overflow > 0 || result.layoutOverflow.length > 0) {
 		throw new Error(`${name} horizontal overflow: ${JSON.stringify(result)}`);
+	}
+	if (result.headerToBreadcrumbGap < 0 || result.headerToBreadcrumbGap > 18) {
+		throw new Error(`${name} header gap is too large: ${JSON.stringify({ gap: result.headerToBreadcrumbGap, styles: result.headerGapStyles })}`);
+	}
+	if (result.upsells.unavailableNotes > 0 || result.upsells.unavailableProductLinks > 0) {
+		throw new Error(`${name} unavailable upsell rendered: ${JSON.stringify(result.upsells)}`);
 	}
 	if (result.upsells.count) {
 		const buttonsAreStable = result.upsells.buttonHeights.every((height) => height === 46)
