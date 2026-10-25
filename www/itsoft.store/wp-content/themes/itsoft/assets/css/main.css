@@ -840,6 +840,7 @@ blockquote p {
 
 .breadcrumbs__list {
     display: flex;
+    align-items: center;
     list-style: none;
     padding: 28px 0 15px 0;
     margin: 0;
@@ -848,8 +849,11 @@ blockquote p {
     color: var(--body-text);
 }
 .breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
     font-weight: 400;
     font-size: 14px;
+    line-height: 20px;
     color: var(--body-text);
 }
 
@@ -869,10 +873,21 @@ blockquote p {
 }
 
 .breadcrumbs__link {
+    display: inline-flex;
+    align-items: center;
+    line-height: inherit;
     color: var(--placeholders);
     text-decoration: none;
 }
-.breadcrumbs__current {}
+.breadcrumbs__current {
+    display: inline-flex;
+    align-items: center;
+    line-height: inherit;
+}
+
+.breadcrumbs__current b {
+    line-height: inherit;
+}
 
 .breadcrumbs__item_current {}
 

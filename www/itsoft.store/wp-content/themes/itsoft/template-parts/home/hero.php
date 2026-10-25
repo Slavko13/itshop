@@ -23,7 +23,9 @@ $primary_url   = $acf ? trim( (string) get_field( 'home_hero_primary_url', $fron
 $desktop_image = $acf ? (int) get_field( 'home_hero_desktop_image', $front_page_id ) : 0;
 $mobile_image  = $acf ? (int) get_field( 'home_hero_mobile_image', $front_page_id ) : 0;
 
-$primary_label = $primary_label ?: __( 'Выбрать лицензию', 'itsoft' );
+if ( '' === $primary_label || __( 'Выбрать лицензию', 'itsoft' ) === $primary_label ) {
+	$primary_label = __( 'Выбрать программу', 'itsoft' );
+}
 $primary_url   = $primary_url ?: $shop_url;
 
 $desktop_image_url = $desktop_image
@@ -35,7 +37,6 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 <section class="home-hero" aria-labelledby="home-hero-title">
 	<div class="grid-container home-hero__grid">
 		<div class="home-hero__content">
-			<span class="home-hero__eyebrow"><?php esc_html_e( 'Электронные лицензии', 'itsoft' ); ?></span>
 			<h1 class="home-hero__title" id="home-hero-title"><?php echo esc_html( $title ); ?></h1>
 			<p class="home-hero__text"><?php echo esc_html( $text ); ?></p>
 			<div class="home-hero__actions">
@@ -44,7 +45,7 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 					<i aria-hidden="true">→</i>
 				</a>
 			</div>
-			<p class="home-hero__note"><span aria-hidden="true">✓</span> <?php esc_html_e( 'Данные доступны в личном кабинете', 'itsoft' ); ?></p>
+			<p class="home-hero__note"><span aria-hidden="true">✓</span> <?php esc_html_e( 'Покупка без обязательной регистрации', 'itsoft' ); ?></p>
 		</div>
 
 		<div class="home-hero__visual" aria-hidden="true">
