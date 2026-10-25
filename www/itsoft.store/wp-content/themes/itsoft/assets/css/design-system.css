@@ -1375,6 +1375,8 @@ body {
 
 	.header-main__search:not(.active) {
 		height: 44px;
+		align-items: center;
+		justify-content: center;
 		border: 0;
 		background: transparent;
 	}
@@ -1409,6 +1411,7 @@ body {
 		grid-column: 4;
 		min-width: 0;
 		gap: 4px;
+		align-items: center;
 		justify-content: flex-end;
 	}
 

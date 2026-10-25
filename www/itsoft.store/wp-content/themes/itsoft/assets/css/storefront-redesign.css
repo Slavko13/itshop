@@ -895,6 +895,7 @@
     right: 0;
     display: grid;
     width: max(100%, 270px);
+    box-sizing: border-box;
     padding: 7px;
     border: 1px solid #e1dff0;
     border-radius: 16px;

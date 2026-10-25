@@ -196,6 +196,12 @@ try {
 			const userIconTops = [...document.querySelectorAll('.header-main__user .user-nav__icon')]
 				.filter((icon) => icon.getBoundingClientRect().width > 0 && getComputedStyle(icon).visibility !== 'hidden')
 				.map((icon) => Math.round(icon.getBoundingClientRect().top));
+			const headerActionCenters = [...document.querySelectorAll('.search__mobile-button, .header-main__user .user-nav__item')]
+				.filter((item) => item.getBoundingClientRect().width > 0 && getComputedStyle(item).display !== 'none')
+				.map((item) => {
+					const rect = item.getBoundingClientRect();
+					return rect.top + rect.height / 2;
+				});
 			return {
 				title: document.querySelector('.catalog__title')?.textContent.trim() || '',
 				style: Boolean(document.querySelector('link[href*="storefront-redesign.css"]')),
@@ -249,6 +255,7 @@ try {
 				nativeSortClipped: nativeSort ? getComputedStyle(nativeSort).clipPath === 'inset(50%)' : false,
 				containerWidth: pageContainer?.getBoundingClientRect().width || 0,
 				userIconTopSpread: userIconTops.length ? Math.max(...userIconTops) - Math.min(...userIconTops) : 0,
+				headerActionCenterSpread: headerActionCenters.length ? Math.max(...headerActionCenters) - Math.min(...headerActionCenters) : 0,
 				desktopColumnTopOffset: filters && sidebarBody ? Math.abs(filters.top - sidebarBody.top) : 0,
 				headerToBreadcrumbGap: header && breadcrumbList ? breadcrumbList.top - header.bottom : 0,
 				headerMainPaddingTop: headerMain ? parseFloat(getComputedStyle(headerMain).paddingTop) : 0,
@@ -289,6 +296,9 @@ try {
 		assert(`${width}px ordering uses branded custom control`, state.sortEnhanced && state.nativeSortClipped && Math.abs(state.sortButtonHeight - 52) <= 1 && state.sortButtonRadius >= 13, JSON.stringify(state));
 		assert(`${width}px shared container width`, state.containerWidth <= Math.min(width, 1222) + 1, `${state.containerWidth}px`);
 		assert(`${width}px header icons share one baseline`, state.userIconTopSpread <= 1, `${state.userIconTopSpread}px`);
+		if (width < 768) {
+			assert(`${width}px mobile header actions share one grid line`, state.headerActionCenterSpread <= 1, `${state.headerActionCenterSpread}px`);
+		}
 		assert(`${width}px category toggle visibility`, state.toggleVisible === (width < 1024));
 		assert(`${width}px no nested interactive elements`, !state.nestedInteractive);
 		assert(`${width}px catalog does not render legacy inner hero`, !state.hasLegacyInnerHero);
@@ -307,6 +317,8 @@ try {
 			const menu = document.querySelector('.catalog-sort__menu');
 			const selected = menu?.querySelector('[aria-selected="true"]');
 			const menuStyle = menu ? getComputedStyle(menu) : null;
+			const buttonRect = button?.getBoundingClientRect();
+			const menuRect = menu?.getBoundingClientRect();
 			return {
 				open: button?.getAttribute('aria-expanded') === 'true' && menu?.hidden === false,
 				options: menu?.querySelectorAll('.catalog-sort__option').length || 0,
@@ -314,9 +326,15 @@ try {
 				background: menuStyle?.backgroundColor || '',
 				radius: parseFloat(menuStyle?.borderRadius || '0'),
 				overflow: document.documentElement.scrollWidth - innerWidth,
+				horizontalOffset: buttonRect && menuRect
+					? Math.max(Math.abs(buttonRect.left - menuRect.left), Math.abs(buttonRect.right - menuRect.right))
+					: 999,
 			};
 		})()`);
 		assert(`${width}px ordering menu opens in brand style`, sortMenu.open && sortMenu.options >= 5 && sortMenu.selected && sortMenu.background === 'rgb(255, 255, 255)' && sortMenu.radius >= 15 && sortMenu.overflow <= 1, JSON.stringify(sortMenu));
+		if (width < 768) {
+			assert(`${width}px ordering menu aligns with its button`, sortMenu.horizontalOffset <= 1, JSON.stringify(sortMenu));
+		}
 		await evaluate(`document.querySelector('.catalog-sort__button')?.click()`);
 
 		if (width >= 1024) {
