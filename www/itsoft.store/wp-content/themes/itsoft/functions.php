@@ -511,6 +511,14 @@ function itsoft_assets() {
 		file_exists( $design_system_path ) ? (string) filemtime( $design_system_path ) : $ver
 	);
 
+	$brand_refresh_path = get_template_directory() . '/assets/css/brand-refresh.css';
+	wp_enqueue_style(
+		'itsoft-brand-refresh',
+		get_template_directory_uri() . '/assets/css/brand-refresh.css',
+		array( 'itsoft-design-system' ),
+		file_exists( $brand_refresh_path ) ? (string) filemtime( $brand_refresh_path ) : $ver
+	);
+
 	$main_script_path = get_template_directory() . '/assets/js/main.js';
     wp_enqueue_script(
         'itsoft-script',
