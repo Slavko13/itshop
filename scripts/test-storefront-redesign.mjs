@@ -637,6 +637,19 @@ try {
 
 	for (const width of [393, 768, 1280, 1440]) {
 		await navigate(new URL('/', baseUrl).toString(), width, 1100);
+		if (width === 393) {
+			const cookieNotice = await evaluate(`(() => {
+				const notice = document.querySelector('#cookie-notice');
+				const buttons = document.querySelector('.cn-buttons-container');
+				return {
+					visible: Boolean(notice) && getComputedStyle(notice).display !== 'none',
+					overflow: document.documentElement.scrollWidth - window.innerWidth,
+					noticeWidth: notice?.getBoundingClientRect().width || 0,
+					buttonsRight: buttons?.getBoundingClientRect().right || 0,
+				};
+			})()`);
+			assert('393px cookie notice stays inside the viewport', cookieNotice.overflow <= 1 && cookieNotice.noticeWidth <= 393 && cookieNotice.buttonsRight <= 393, JSON.stringify(cookieNotice));
+		}
 		await evaluate(`(() => {
 			const accept = document.querySelector('#cn-accept-cookie');
 			if (accept && getComputedStyle(accept).display !== 'none') accept.click();
@@ -654,6 +667,8 @@ try {
 				h1: document.querySelectorAll('h1').length,
 				nativeHero: Boolean(document.querySelector('.home-hero__title')),
 				sliderHero: Boolean(document.querySelector('.hero__container--smartslider .n2-ss-slider')),
+				nativeHeroVisible: Boolean(document.querySelector('.home-hero')) && getComputedStyle(document.querySelector('.home-hero')).display !== 'none',
+				sliderHeroVisible: Boolean(document.querySelector('.hero')) && getComputedStyle(document.querySelector('.hero')).display !== 'none',
 				heroTitle: document.querySelector('.home-hero__title')?.textContent.trim() || '',
 				actions: document.querySelectorAll('.home-hero__actions a').length,
 				benefits: document.querySelectorAll('.home-benefits__item').length,
@@ -670,6 +685,11 @@ try {
 		assert(`${width}px home has no horizontal overflow`, home.overflow <= 1, `${home.overflow}px`);
 		assert(`${width}px home has one H1`, home.h1 === 1, String(home.h1));
 		assert(`${width}px configured hero renders`, home.sliderHero || (home.nativeHero && home.heroTitle.length > 10), home.heroTitle);
+		assert(
+			`${width}px home hero follows the responsive visibility rule`,
+			width <= 767 ? !home.nativeHeroVisible && !home.sliderHeroVisible : home.nativeHeroVisible || home.sliderHeroVisible,
+			JSON.stringify(home),
+		);
 		if (home.nativeHero) {
 			assert(`${width}px hero actions render`, home.actions === 2, String(home.actions));
 			assert(`${width}px trust benefits render`, home.benefits === 3, String(home.benefits));
