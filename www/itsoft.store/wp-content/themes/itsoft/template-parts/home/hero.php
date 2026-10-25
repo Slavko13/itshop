@@ -26,8 +26,8 @@ $primary_url   = $acf ? trim( (string) get_field( 'home_hero_primary_url', $fron
 $desktop_image = $acf ? (int) get_field( 'home_hero_desktop_image', $front_page_id ) : 0;
 $mobile_image  = $acf ? (int) get_field( 'home_hero_mobile_image', $front_page_id ) : 0;
 
-if ( '' === $primary_label || __( 'Выбрать лицензию', 'itsoft' ) === $primary_label ) {
-	$primary_label = __( 'Выбрать программу', 'itsoft' );
+if ( '' === $primary_label || __( 'Выбрать программу', 'itsoft' ) === $primary_label ) {
+	$primary_label = __( 'Выбрать лицензию', 'itsoft' );
 }
 $primary_url   = $primary_url ?: $shop_url;
 
