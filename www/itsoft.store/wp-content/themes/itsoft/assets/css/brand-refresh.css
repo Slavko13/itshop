@@ -75,7 +75,7 @@
 
 /* Native hero: the PNG is decorative, while every meaningful element is HTML. */
 .home-hero {
-	padding-top: clamp(30px, 4vw, 58px);
+	padding-top: 8px;
 }
 
 .home-hero__grid {
