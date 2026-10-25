@@ -43,12 +43,17 @@ Thumbs.db
 /www/itsoft.store/wp-content/*
 !/www/itsoft.store/wp-content/themes/
 !/www/itsoft.store/wp-content/plugins/
+!/www/itsoft.store/wp-content/mu-plugins/
 /www/itsoft.store/wp-content/themes/*
 !/www/itsoft.store/wp-content/themes/itsoft/
 !/www/itsoft.store/wp-content/themes/itsoft/**
 /www/itsoft.store/wp-content/plugins/*
 !/www/itsoft.store/wp-content/plugins/itsoft-license-fulfillment/
 !/www/itsoft.store/wp-content/plugins/itsoft-license-fulfillment/**
+/www/itsoft.store/wp-content/mu-plugins/*
+!/www/itsoft.store/wp-content/mu-plugins/itsoft-metrika.php
+!/www/itsoft.store/wp-content/mu-plugins/itsoft-metrika-assets/
+!/www/itsoft.store/wp-content/mu-plugins/itsoft-metrika-assets/**
 
 # Logs or generated data that may appear inside owned components.
 /www/itsoft.store/wp-content/debug.log

@@ -132,9 +132,19 @@ $card_classes = 'catalog-grid__item catalog-card';
 if ( ! empty( $extra_class ) ) {
 	$card_classes .= ' ' . $extra_class;
 }
+
+$metrika_categories = wp_get_post_terms( $product->get_id(), 'product_cat', array( 'fields' => 'names' ) );
+$metrika_product    = array(
+	'id'       => (string) ( $product->get_sku() ?: $product->get_id() ),
+	'name'     => wp_strip_all_tags( $product->get_name() ),
+	'brand'    => 'Microsoft',
+	'category' => is_wp_error( $metrika_categories ) ? '' : implode( '/', $metrika_categories ),
+	'price'    => $price_raw,
+	'quantity' => 1,
+);
 ?>
 
-<article class="<?php echo esc_attr( $card_classes ); ?>" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>" itemscope itemtype="http://schema.org/Product">
+<article class="<?php echo esc_attr( $card_classes ); ?>" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>" data-metrika-product="<?php echo esc_attr( wp_json_encode( $metrika_product, JSON_UNESCAPED_UNICODE ) ); ?>" itemscope itemtype="http://schema.org/Product">
 	<div class="catalog-card__media">
 		<?php if ( $badges || ( $has_discount && $discount ) ) : ?>
 			<div class="catalog-card__labels">

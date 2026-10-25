@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			copy.addEventListener('click', () => {
 				const labels = licenseLabels();
 				copyText(output.dataset.value).then(() => {
+					document.dispatchEvent(new CustomEvent('itsoft:license-copied'));
 					if (feedback) feedback.textContent = labels.success;
 					copy.textContent = labels.copied;
 					window.setTimeout(() => {

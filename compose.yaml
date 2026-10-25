@@ -123,6 +123,14 @@ services:
         target: /var/www/html/wp-content/plugins/itsoft-license-fulfillment
         read_only: true
       - type: bind
+        source: ./www/itsoft.store/wp-content/mu-plugins/itsoft-metrika.php
+        target: /var/www/html/wp-content/mu-plugins/itsoft-metrika.php
+        read_only: true
+      - type: bind
+        source: ./www/itsoft.store/wp-content/mu-plugins/itsoft-metrika-assets
+        target: /var/www/html/wp-content/mu-plugins/itsoft-metrika-assets
+        read_only: true
+      - type: bind
         source: ./scripts
         target: /workspace/scripts
         read_only: true

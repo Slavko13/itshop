@@ -184,6 +184,18 @@ class ItsoftProductSuggestions {
 
 		if (this.matches.length) {
 			this.matches.forEach((product, index) => this.listbox.appendChild(this.createProductOption(product, index)));
+			document.dispatchEvent(new CustomEvent('itsoft:search-suggestions-shown', {
+				detail: {
+					products: this.matches.map((product, index) => ({
+						id: String(product.id),
+						name: product.name,
+						category: product.category || '',
+						brand: 'Microsoft',
+						list: 'Живой поиск',
+						position: index + 1,
+					})),
+				},
+			}));
 		} else {
 			const empty = document.createElement('div');
 			empty.className = 'search-suggestions__empty';
@@ -210,6 +222,14 @@ class ItsoftProductSuggestions {
 		option.setAttribute('role', 'option');
 		option.setAttribute('aria-selected', 'false');
 		option.setAttribute('aria-label', `${this.settings().openProduct || 'Открыть товар'}: ${product.name}`);
+		option.dataset.metrikaProduct = JSON.stringify({
+			id: String(product.id),
+			name: product.name,
+			category: product.category || '',
+			brand: 'Microsoft',
+			list: 'Живой поиск',
+			position: index + 1,
+		});
 
 		const media = document.createElement('span');
 		media.className = 'search-suggestions__media';
