@@ -41,9 +41,9 @@ if ( empty( $attachment_ids ) && ( $placeholder = wc_placeholder_img_src( 'produ
                     <?php 
                     if ( $id == 0 ) {
                         // Placeholder image
-                        echo wc_placeholder_img( 'product-slide' );
+                        echo wc_placeholder_img( 'product-slide', array( 'loading' => 'lazy', 'decoding' => 'async' ) );
                     } else {
-                        echo wp_get_attachment_image($id, 'product-slide');
+                        echo wp_get_attachment_image($id, 'product-slide', false, array( 'loading' => 'lazy', 'decoding' => 'async' ));
                     }
                     ?>
                 </button>
@@ -56,13 +56,21 @@ if ( empty( $attachment_ids ) && ( $placeholder = wc_placeholder_img_src( 'produ
 
     <div class="swiper product-gallery__main" aria-label="Галерея товара">
         <div class="swiper-wrapper">
-            <?php foreach($attachment_ids as $id): ?>
+            <?php foreach($attachment_ids as $main_image_index => $id): ?>
                 <?php 
+				$image_attributes = array(
+					'loading'  => 0 === $main_image_index ? 'eager' : 'lazy',
+					'decoding' => 'async',
+				);
+				if ( 0 === $main_image_index ) {
+					$image_attributes['fetchpriority'] = 'high';
+				}
+
                 if ( $id == 0 ) {
                     // Placeholder image
                     $full_image_url = wc_placeholder_img_src( 'full' );
                     $alt_text = __( 'Placeholder', 'woocommerce' );
-                    $image = wc_placeholder_img( 'product-image' );
+					$image = wc_placeholder_img( 'product-image', $image_attributes );
                 } else {
                     // Get the full image URL
                     $full_image = wp_get_attachment_image_src($id, 'full');
@@ -74,7 +82,7 @@ if ( empty( $attachment_ids ) && ( $placeholder = wc_placeholder_img_src( 'produ
                         $alt_text = get_the_title($id);
                     }
                     
-                    $image = wp_get_attachment_image($id, 'product-image');
+					$image = wp_get_attachment_image($id, 'product-image', false, $image_attributes);
                 }
                 ?>
                 <a href="<?php echo esc_url($full_image_url); ?>" data-fancybox="product" data-caption="<?php echo esc_attr($alt_text); ?>" class="swiper-slide" aria-label="Увеличить изображение товара">

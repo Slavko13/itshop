@@ -20,6 +20,7 @@ class ItsoftProductSuggestions {
 		this.listbox.setAttribute('role', 'listbox');
 		this.listbox.setAttribute('aria-label', this.settings().productsLabel || 'Товары');
 		this.input.setAttribute('autocomplete', 'off');
+		this.input.setAttribute('role', 'combobox');
 		this.input.setAttribute('aria-autocomplete', 'list');
 		this.input.setAttribute('aria-controls', this.listbox.id);
 		this.input.setAttribute('aria-expanded', 'false');

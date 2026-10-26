@@ -19,6 +19,11 @@ $category_icons = array(
     'windows-server-rds'   => 'windows-server.svg',
     'microsoft-sql-server' => 'microsoft-sql-server.svg',
 );
+
+// ACF repeaters can preserve non-zero array keys after rows are reordered.
+// Track the first category that is actually rendered instead of trusting the
+// source key so the mobile LCP image is always discovered eagerly.
+$rendered_category_index = 0;
 ?>
 
 <section class="shop-cats" id="home-categories" aria-labelledby="home-categories-title">
@@ -30,7 +35,7 @@ $category_icons = array(
     </div>
     
     <div class="shop-cats__list">
-        <?php foreach( $cats as $cat ): 
+        <?php foreach( $cats as $cat ):
             // Reset variables for each iteration to prevent data leakage
             $image_url = null;
             $image_alt = '';
@@ -59,7 +64,15 @@ $category_icons = array(
                 
                 <div class="shop-cats__img">
                     <?php if ( $image_url ) : ?>
-                        <img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $image_alt ); ?>" loading="lazy" decoding="async">
+                        <img
+                            src="<?php echo esc_url( $image_url ); ?>"
+                            alt="<?php echo esc_attr( $image_alt ); ?>"
+                            width="160"
+                            height="160"
+                            loading="<?php echo 0 === $rendered_category_index ? 'eager' : 'lazy'; ?>"
+                            decoding="async"
+                            <?php if ( 0 === $rendered_category_index ) : ?>fetchpriority="high"<?php endif; ?>
+                        >
                     <?php endif; ?>
                 </div>
                 
@@ -67,6 +80,7 @@ $category_icons = array(
                     <span class="shop-cats__btn"><?php esc_html_e( 'Смотреть товары', 'itsoft' ); ?> <span aria-hidden="true">→</span></span>
                 </div>
             </a>
+            <?php $rendered_category_index++; ?>
         <?php endforeach; ?>
     </div>
 </section>

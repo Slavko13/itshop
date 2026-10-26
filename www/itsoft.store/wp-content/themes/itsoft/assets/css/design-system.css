@@ -6,26 +6,53 @@
 :root {
 	--itsoft-page-bg: #f8f9fc;
 	--itsoft-surface: #fff;
+	--itsoft-surface-muted: #f3f4f8;
 	--itsoft-primary: #6c4cff;
-	--itsoft-primary-hover: #4b2fd7;
+	--itsoft-primary-hover: #5b39e6;
+	--itsoft-primary-active: #4b2fd7;
+	--itsoft-primary-soft: #f0ecff;
 	--itsoft-border: #e5e7f0;
+	--itsoft-control-border: #d8dbe7;
 	--itsoft-heading: #0f1116;
 	--itsoft-text: #515764;
-	--itsoft-muted: #6f7687;
-	--itsoft-old-price: #8a92a5;
+	--itsoft-muted: #5f6675;
+	--itsoft-old-price: #626b7c;
 	--itsoft-error: #b42318;
+	--itsoft-error-bg: #fff2f3;
+	--itsoft-success: #168a5b;
+	--itsoft-success-bg: #ebf8f2;
+	--itsoft-warning: #8a5800;
+	--itsoft-warning-bg: #fff6df;
 	--itsoft-badge-bg: #f0ecff;
 	--itsoft-sale-bg: #fff0e5;
 	--itsoft-sale-text: #b54708;
 	--itsoft-container: 1222px;
 	--itsoft-container-pad: 16px;
 	--itsoft-section-gap: 64px;
-	--itsoft-h1-size: 44px;
-	--itsoft-h1-line: 56px;
-	--itsoft-h2-size: 32px;
-	--itsoft-h2-line: 40px;
-	--itsoft-h3-size: 24px;
-	--itsoft-h3-line: 32px;
+	--itsoft-space-1: 4px;
+	--itsoft-space-2: 8px;
+	--itsoft-space-3: 12px;
+	--itsoft-space-4: 16px;
+	--itsoft-space-5: 20px;
+	--itsoft-space-6: 24px;
+	--itsoft-space-8: 32px;
+	--itsoft-space-10: 40px;
+	--itsoft-space-12: 48px;
+	--itsoft-space-16: 64px;
+	--itsoft-radius-sm: 10px;
+	--itsoft-radius-control: 13px;
+	--itsoft-radius-card: 20px;
+	--itsoft-radius-hero: 32px;
+	--itsoft-control-height: 48px;
+	--itsoft-icon-button: 44px;
+	--itsoft-shadow-card: 0 14px 36px rgba(35, 27, 78, 0.07);
+	--itsoft-shadow-popover: 0 16px 42px rgba(34, 28, 73, 0.14);
+	--itsoft-h1-size: 36px;
+	--itsoft-h1-line: 44px;
+	--itsoft-h2-size: 30px;
+	--itsoft-h2-line: 38px;
+	--itsoft-h3-size: 22px;
+	--itsoft-h3-line: 28px;
 	--itsoft-body-size: 16px;
 	--itsoft-body-line: 26px;
 	--h1--primary: var(--itsoft-heading);
@@ -48,12 +75,17 @@ textarea,
 option,
 .select2-container,
 .select2-container * {
-	font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-synthesis: none;
 }
 
 body {
 	color: var(--itsoft-text);
 	background: var(--itsoft-page-bg);
+	font-size: 16px;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
 }
 
 main h1,
@@ -573,7 +605,7 @@ label,
 }
 
 .catalog-card__badge {
-	color: var(--itsoft-primary);
+	color: var(--itsoft-primary-active);
 	background: var(--itsoft-badge-bg) !important;
 }
 
@@ -1000,8 +1032,8 @@ label,
 
 @media (min-width: 768px) and (max-width: 1023px) {
 	:root {
-		--itsoft-h1-size: 36px;
-		--itsoft-h1-line: 44px;
+		--itsoft-h1-size: 32px;
+		--itsoft-h1-line: 40px;
 		--itsoft-h2-size: 28px;
 		--itsoft-h2-line: 36px;
 		--itsoft-h3-size: 22px;
@@ -1360,7 +1392,7 @@ body {
 	.header-main__row.grid-container {
 		display: grid;
 		grid-template-columns: 44px minmax(0, 1fr) 44px auto;
-		column-gap: 6px;
+		column-gap: 8px;
 		min-height: 48px;
 		padding-inline: 16px;
 	}
@@ -1408,8 +1440,8 @@ body {
 	}
 
 	.search__mobile-button {
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		padding: 0;
 		border: 1px solid #e4defe;
 		border-radius: 13px;
@@ -1432,10 +1464,10 @@ body {
 
 	.header-main__user .user-nav__item {
 		display: inline-flex;
-		width: 40px;
-		min-width: 40px;
-		height: 40px;
-		min-height: 40px;
+		width: 44px;
+		min-width: 44px;
+		height: 44px;
+		min-height: 44px;
 		align-items: center;
 		justify-content: center;
 		border: 1px solid #e4defe;

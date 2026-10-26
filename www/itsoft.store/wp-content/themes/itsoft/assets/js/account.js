@@ -174,6 +174,13 @@
 		var select = document.querySelector('[data-account-nav-select]');
 		var lastFocused = null;
 
+		// The account navigation lives inside a sidebar that creates its own
+		// stacking context. Move the dialog to the document root so its fixed
+		// backdrop reliably covers the header, notices and account cards.
+		if (modal.parentElement !== document.body) {
+			document.body.appendChild(modal);
+		}
+
 		function openModal(url, trigger) {
 			if (!url || !confirm) {
 				return;

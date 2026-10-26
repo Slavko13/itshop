@@ -47,7 +47,7 @@ do_action( 'woocommerce_before_customer_login_form' );
 
 					<?php do_action( 'woocommerce_login_form' ); ?>
 
-					<div class="account-form__options">
+					<div class="account-form__options woocommerce-LostPassword">
 						<label class="woocommerce-form__label woocommerce-form__label-for-checkbox woocommerce-form-login__rememberme account-check">
 							<input class="woocommerce-form__input woocommerce-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever">
 							<span>Запомнить меня</span>

@@ -1,0 +1,524 @@
+/*
+ * IT Soft interface system.
+ *
+ * This file is intentionally selector-based: it connects the theme's existing
+ * components to one set of tokens without changing their content or behaviour.
+ * Page styles remain responsible for layout; this layer owns shared visual
+ * roles, states and responsive safety.
+ */
+
+.itsoft-ui {
+	--ui-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--ui-bg: var(--itsoft-page-bg);
+	--ui-surface: var(--itsoft-surface);
+	--ui-surface-muted: var(--itsoft-surface-muted);
+	--ui-text: var(--itsoft-heading);
+	--ui-body: var(--itsoft-text);
+	--ui-muted: var(--itsoft-muted);
+	--ui-primary: var(--itsoft-primary);
+	--ui-primary-hover: var(--itsoft-primary-hover);
+	--ui-primary-active: var(--itsoft-primary-active);
+	--ui-primary-soft: var(--itsoft-primary-soft);
+	--ui-border: var(--itsoft-border);
+	--ui-control-border: var(--itsoft-control-border);
+	--ui-success: var(--itsoft-success);
+	--ui-success-bg: var(--itsoft-success-bg);
+	--ui-danger: var(--itsoft-error);
+	--ui-danger-bg: var(--itsoft-error-bg);
+	--ui-warning: var(--itsoft-warning);
+	--ui-warning-bg: var(--itsoft-warning-bg);
+	--ui-radius-control: var(--itsoft-radius-control);
+	--ui-radius-card: var(--itsoft-radius-card);
+	--ui-control-height: var(--itsoft-control-height);
+	--ui-shadow-card: var(--itsoft-shadow-card);
+	--ui-shadow-popover: var(--itsoft-shadow-popover);
+	color: var(--ui-body);
+	font-family: var(--ui-font);
+	font-variant-numeric: proportional-nums;
+}
+
+.itsoft-ui *,
+.itsoft-ui *::before,
+.itsoft-ui *::after {
+	box-sizing: border-box;
+}
+
+.itsoft-ui :where(main, section, article, aside, form, fieldset, .grid-container) {
+	min-width: 0;
+}
+
+.itsoft-ui :where(img, svg, video, canvas) {
+	max-width: 100%;
+}
+
+.itsoft-ui :where(button, input, select, textarea) {
+	font-family: var(--ui-font);
+}
+
+.itsoft-ui :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+	outline: 3px solid rgb(108 76 255 / 24%);
+	outline-offset: 3px;
+}
+
+/* Typography roles. Product logos and the IT Soft logo are deliberately not touched. */
+.itsoft-ui :where(
+	.catalog__title,
+	.product-title,
+	.product_title,
+	.account-page__title,
+	.article-head__title,
+	.category__title,
+	.cart-page__title,
+	.downloads-hero__title,
+	.distribution-page-head__title,
+	.itsoft-search__title
+) {
+	color: var(--ui-text);
+	font-size: var(--itsoft-h1-size);
+	font-weight: 600;
+	line-height: var(--itsoft-h1-line);
+	letter-spacing: -0.025em;
+	overflow-wrap: anywhere;
+}
+
+.itsoft-ui :where(
+	.products-block__title,
+	.home-section-heading h2,
+	.useful-articles__title,
+	.shop-cats__title,
+	.product-upsells h2,
+	.product-extra__article-title,
+	.product-extra__faq-title,
+	.product-extra__info-title,
+	.page-reviews__form-heading h2
+) {
+	color: var(--ui-text);
+	font-size: var(--itsoft-h2-size);
+	font-weight: 600;
+	line-height: var(--itsoft-h2-line);
+	letter-spacing: -0.02em;
+}
+
+.itsoft-ui :where(
+	.catalog__lead,
+	.category__desc,
+	.cart-page__lead,
+	.account-page__lead,
+	.downloads-hero__lead,
+	.distribution-page-head__description,
+	.itsoft-search__count,
+	.product-purchase__lead
+) {
+	color: var(--ui-muted);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 26px;
+}
+
+.itsoft-ui :where(.price, .amount, .prices__current, .catalog-card__pricing) {
+	font-variant-numeric: tabular-nums;
+}
+
+/* The shared button display must never override native hidden states. */
+.itsoft-ui [hidden] {
+	display: none !important;
+}
+
+/* Shared button geometry. Colour variants follow below. */
+.itsoft-ui :where(
+	.home-hero__button,
+	.catalog-card__buy,
+	.catalog-card__quick-buy,
+	.catalog-filters__submit,
+	.catalog-grid__more,
+	.itsoft-search__submit,
+	.itsoft-search__catalog-link,
+	.cart__btn,
+	.single_add_to_cart_button,
+	.product-sticky-buy__button,
+	.cart-page .checkout-button,
+	.checkout-next__button,
+	.checkout-page--form .wc-block-components-checkout-place-order-button,
+	.account-form__submit,
+	.account-page .woocommerce-Button.button,
+	.page-reviews__submit,
+	.product-reviews__submit,
+	.distribution-card__button,
+	.product-extra__download-btn,
+	.cart-empty-state__button
+) {
+	display: inline-flex;
+	min-height: var(--ui-control-height);
+	max-width: 100%;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 11px 20px;
+	border-radius: var(--ui-radius-control);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	text-align: center;
+	text-decoration: none;
+	white-space: normal;
+	cursor: pointer;
+	transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.itsoft-ui :where(
+	.home-hero__button--primary,
+	.catalog-card__buy,
+	.catalog-filters__submit,
+	.catalog-grid__more,
+	.itsoft-search__submit,
+	.cart__btn,
+	.single_add_to_cart_button,
+	.product-sticky-buy__button,
+	.cart-page .checkout-button,
+	.checkout-next__button--primary,
+	.checkout-page--form .wc-block-components-checkout-place-order-button,
+	.account-form__submit,
+	.account-page .woocommerce-Button.button,
+	.page-reviews__submit,
+	.product-reviews__submit,
+	.distribution-card__button,
+	.cart-empty-state__button
+) {
+	border: 1px solid var(--ui-primary);
+	background: var(--ui-primary);
+	color: #fff;
+	box-shadow: 0 10px 24px rgb(108 76 255 / 18%);
+}
+
+.itsoft-ui :where(
+	.catalog-card__quick-buy,
+	.itsoft-search__catalog-link,
+	.checkout-next__button--secondary,
+	.product-extra__download-btn
+) {
+	border: 1px solid var(--ui-primary);
+	background: var(--ui-surface);
+	color: var(--ui-primary);
+	box-shadow: none;
+}
+
+@media (hover: hover) {
+	.itsoft-ui :where(
+		.home-hero__button--primary,
+		.catalog-card__buy,
+		.catalog-filters__submit,
+		.catalog-grid__more,
+		.itsoft-search__submit,
+		.cart__btn,
+		.single_add_to_cart_button,
+		.product-sticky-buy__button,
+		.cart-page .checkout-button,
+		.checkout-next__button--primary,
+		.checkout-page--form .wc-block-components-checkout-place-order-button,
+		.account-form__submit,
+		.account-page .woocommerce-Button.button,
+		.page-reviews__submit,
+		.product-reviews__submit,
+		.distribution-card__button,
+		.cart-empty-state__button
+	):hover {
+		border-color: var(--ui-primary-hover);
+		background: var(--ui-primary-hover);
+		color: #fff;
+	}
+
+	.itsoft-ui :where(
+		.catalog-card__quick-buy,
+		.itsoft-search__catalog-link,
+		.checkout-next__button--secondary,
+		.product-extra__download-btn
+	):hover {
+		border-color: var(--ui-primary);
+		background: var(--ui-primary-soft);
+		color: var(--ui-primary-active);
+	}
+}
+
+.itsoft-ui :where(button, .button, [role='button']):disabled,
+.itsoft-ui :where(button, .button, [role='button'])[aria-disabled='true'] {
+	cursor: not-allowed;
+	box-shadow: none;
+	opacity: 0.58;
+}
+
+/* Forms: one control size, label style and validation language. */
+.itsoft-ui :where(
+	input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']):not([type='hidden']):not(.cart__quantity),
+	select,
+	textarea,
+	.woocommerce form .form-row .input-text,
+	.wc-block-components-text-input input,
+	.wc-block-components-combobox-control input
+) {
+	width: 100%;
+	max-width: 100%;
+	min-height: var(--ui-control-height);
+	border: 1px solid var(--ui-control-border);
+	border-radius: var(--ui-radius-control);
+	background: var(--ui-surface);
+	color: var(--ui-body);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 24px;
+}
+
+.itsoft-ui :where(textarea, .woocommerce form .form-row textarea.input-text) {
+	min-height: 128px;
+	resize: vertical;
+}
+
+.itsoft-ui :where(label, .woocommerce form .form-row label, .wc-block-components-text-input label) {
+	color: var(--ui-text);
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 20px;
+}
+
+.itsoft-ui :where(input, select, textarea)::placeholder {
+	color: var(--ui-muted);
+	opacity: 1;
+}
+
+.itsoft-ui :where(input, select, textarea):focus {
+	border-color: var(--ui-primary);
+	box-shadow: 0 0 0 3px rgb(108 76 255 / 14%);
+}
+
+.itsoft-ui :where(input, select, textarea)[aria-invalid='true'],
+.itsoft-ui .woocommerce-invalid :where(input, select, textarea) {
+	border-color: var(--ui-danger);
+	box-shadow: 0 0 0 3px rgb(180 35 24 / 10%);
+}
+
+/* Search controls sit inside a bordered shell; keep the total shell at 48px. */
+.itsoft-ui .catalog-filters__search {
+  box-sizing: border-box;
+  height: 48px !important;
+  min-height: 48px !important;
+}
+
+.itsoft-ui .catalog-filters__input {
+  box-sizing: border-box;
+  height: 46px !important;
+  min-height: 46px !important;
+  padding-block: 11px !important;
+}
+
+.itsoft-ui :where(input[type='checkbox'], input[type='radio']) {
+	width: 20px;
+	height: 20px;
+	flex: 0 0 20px;
+	accent-color: var(--ui-primary);
+}
+
+/* Cards share surface, border and radius; page CSS keeps their grids intact. */
+.itsoft-ui :where(
+	.catalog-card,
+	.product-purchase,
+	.product-gallery,
+	.cart-page__panel,
+	.checkout-page__panel,
+	.account-auth__card,
+	.account-recovery__card,
+	.account-user-card,
+	.account-navigation,
+	.account-dashboard-card,
+	.account-form-card,
+	.account-order-card,
+	.page-reviews__form-card,
+	.review-card,
+	.distribution-card,
+	.distribution-side-card,
+	.download-category-card,
+	.product-tags__card
+) {
+	border-color: var(--ui-border);
+	border-radius: var(--ui-radius-card);
+	background: var(--ui-surface);
+}
+
+/* Navigation, tabs and selected states use a single semantic palette. */
+.itsoft-ui :where(
+	.account-auth__tab.is-active,
+	.account-navigation li.is-active a,
+	.catalog-sidebar__item.is-current > a,
+	.catalog-nav__parent-item.open .catalog-nav__parent-row,
+	.catalog-sort__option[aria-selected='true'],
+	.search-suggestions__option[aria-selected='true']
+) {
+	background: var(--ui-primary-soft);
+	color: var(--ui-primary);
+}
+
+.itsoft-ui :where(
+	.account-navigation li a,
+	.account-auth__tab,
+	.catalog-sidebar__link,
+	.catalog-sort__option
+) {
+	min-height: 44px;
+	border-radius: 12px;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 20px;
+}
+
+/* Feedback and status components. */
+.itsoft-ui :where(
+	.woocommerce-error,
+	.woocommerce-message,
+	.woocommerce-info,
+	.account-form__notice,
+	.page-reviews__form-notice,
+	.product-reviews__verify-notice,
+	.cart__notice,
+	.catalog-grid__status,
+	.blog-grid__status
+) {
+	border-radius: 14px;
+	font-size: 14px;
+	line-height: 21px;
+}
+
+.itsoft-ui :where(.account-order-status, .distribution-card__availability) {
+	display: inline-flex;
+	min-height: 28px;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+}
+
+/* Popovers and dialogs use common geometry and never exceed the viewport. */
+.itsoft-ui :where(
+	.search-suggestions,
+	.catalog-sort__menu,
+	.select2-dropdown,
+	.account-logout-modal__dialog
+) {
+	max-width: calc(100vw - 32px);
+	border: 1px solid var(--ui-border);
+	border-radius: 16px;
+	background: var(--ui-surface);
+	box-shadow: var(--ui-shadow-popover);
+}
+
+.itsoft-ui .account-logout-modal__dialog {
+	width: min(460px, calc(100vw - 32px));
+	max-height: calc(100dvh - 32px);
+	overflow-y: auto;
+}
+
+/* Content pages. */
+.itsoft-ui :where(.article, .entry-content, .product-description__content) {
+	overflow-wrap: anywhere;
+}
+
+.itsoft-ui :where(.article, .entry-content) :where(p, li) {
+	font-size: 16px;
+	line-height: 26px;
+}
+
+.itsoft-ui :where(.article, .entry-content) a {
+	text-underline-offset: 3px;
+}
+
+/* Header icon actions are one component on every viewport. */
+.itsoft-ui :where(
+	.search__mobile-button,
+	.header-main__user .user-nav__item,
+	.catalog-nav__close,
+	.account-logout-modal__close
+) {
+	min-width: 44px;
+	min-height: 44px;
+	align-items: center;
+	justify-content: center;
+}
+
+.itsoft-ui :where(
+	.search__mobile-button svg,
+	.header-main__user .user-nav__icon svg,
+	.catalog-nav__close svg,
+	.account-logout-modal__close svg
+) {
+	width: 22px;
+	height: 22px;
+	stroke-width: 1.8;
+}
+
+/* Cookie actions remain readable and tappable without widening the page. */
+.itsoft-ui #cookie-notice :where(.cn-button, .cn-button:not(.cn-button-custom)) {
+	min-height: 44px;
+	padding: 10px 16px;
+	border: 0 !important;
+	border-radius: 12px;
+	background: var(--itsoft-primary-hover) !important;
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+@media (max-width: 767px) {
+	.itsoft-ui {
+		--itsoft-section-gap: 40px;
+		--itsoft-container-pad: 16px;
+	}
+
+	/* Prevent iOS form zoom and keep every user-editable control readable. */
+	body.itsoft-ui input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']):not([type='hidden']):not(.cart__quantity),
+	body.itsoft-ui select,
+	body.itsoft-ui textarea {
+		font-size: 16px !important;
+	}
+
+	.itsoft-ui :where(
+		.home-hero__button,
+		.catalog-grid__more,
+		.itsoft-search__catalog-link,
+		.cart__btn,
+		.single_add_to_cart_button,
+		.product-sticky-buy__button,
+		.cart-page .checkout-button,
+		.checkout-next__button,
+		.checkout-page--form .wc-block-components-checkout-place-order-button,
+		.account-form__submit,
+		.page-reviews__submit,
+		.product-reviews__submit,
+		.cart-empty-state__button
+	) {
+		width: 100%;
+	}
+
+	.itsoft-ui :where(.catalog-card, .account-order-card, .download-category-card) {
+		min-width: 0;
+	}
+
+	.itsoft-ui :where(.account-page__main, .account-page__content, .cart-page__content, .checkout-page__content) {
+		min-width: 0;
+	}
+
+	.itsoft-ui :where(.search-suggestions, .catalog-sort__menu) {
+		max-height: min(70dvh, 520px);
+		overflow-y: auto;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.itsoft-ui *,
+	.itsoft-ui *::before,
+	.itsoft-ui *::after {
+		scroll-behavior: auto;
+		transition-duration: 0.01ms;
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+	}
+}

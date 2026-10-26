@@ -391,14 +391,23 @@ function itsoft_assets() {
 		);
 	}
 
-	wp_enqueue_script(
-		'matchHeigh-script',
-		get_template_directory_uri() . '/assets/js/jquery.matchHeight-min.js', ['jquery'], $ver, true
-	);
-
 	if ( is_product() ) {
 		$product_redesign_style_path = get_template_directory() . '/assets/css/product-redesign.css';
 		$product_redesign_script_path = get_template_directory() . '/assets/js/product-redesign.js';
+		$product_id                   = get_queried_object_id();
+		$current_product              = function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
+		$product_image_ids            = array();
+
+		if ( $current_product instanceof WC_Product ) {
+			$product_image_ids = array_filter(
+				array_merge(
+					array( $current_product->get_image_id() ),
+					$current_product->get_gallery_image_ids()
+				)
+			);
+		}
+
+		$has_product_gallery = count( array_unique( array_map( 'absint', $product_image_ids ) ) ) > 1;
 
 		wp_enqueue_style(
 			'itsoft-product-redesign',
@@ -406,19 +415,22 @@ function itsoft_assets() {
 			array( 'itsoft-style' ),
 			file_exists( $product_redesign_style_path ) ? (string) filemtime( $product_redesign_style_path ) : $ver
 		);
-		/* Swiper */
-		wp_enqueue_style ( 'swiper-css' , get_template_directory_uri() . '/assets/css/swiper-bundle.min.css', [], '12.0.3');
 		wp_enqueue_style( 'itsoft-product-upsells', get_template_directory_uri() . '/assets/css/product-upsells.css', [], $ver );
-		wp_enqueue_script( 'swiper-js' ,  get_template_directory_uri() . '/assets/js/swiper-bundle.min.js',  [], '12.0.3', true);
-	
-		
-		/* Product Slider */
-		wp_enqueue_style ( 'product-slider' , get_template_directory_uri() . '/assets/css/product-slider.css', ['swiper-css'], '1.0');
-		wp_enqueue_script( 'product-slider' , get_template_directory_uri() . '/assets/js/product-slider.js',   ['swiper-js'], '1.0', true);
 
 		/* Fancybox */
 		wp_enqueue_style ( 'fanccybox-css' , get_template_directory_uri() . '/assets/css/fancybox.css', [], '6.1');
 		wp_enqueue_script( 'fanccybox-js' ,  get_template_directory_uri() . '/assets/js/fancybox.umd.js',  [], '6.1', true);
+
+		/* Load Swiper only when the product actually has something to slide. */
+		$product_slider_dependencies = array( 'fanccybox-js' );
+		if ( $has_product_gallery ) {
+			wp_enqueue_style( 'swiper-css', get_template_directory_uri() . '/assets/css/swiper-bundle.min.css', array(), '12.0.3' );
+			wp_enqueue_script( 'swiper-js', get_template_directory_uri() . '/assets/js/swiper-bundle.min.js', array(), '12.0.3', true );
+			$product_slider_dependencies[] = 'swiper-js';
+		}
+
+		wp_enqueue_style( 'product-slider', get_template_directory_uri() . '/assets/css/product-slider.css', $has_product_gallery ? array( 'swiper-css' ) : array(), '1.1' );
+		wp_enqueue_script( 'product-slider', get_template_directory_uri() . '/assets/js/product-slider.js', $product_slider_dependencies, '1.1', true );
 
 		wp_enqueue_script(
 			'itsoft-product-page',
@@ -435,13 +447,12 @@ function itsoft_assets() {
 			true
 		);
 
-		$product_id = get_queried_object_id();
-
 		wp_localize_script(
 			'itsoft-product-page',
 			'ITSOFT_PRODUCT_PAGE',
 			[
 				'productId' => $product_id,
+				'cartUrl'     => function_exists( 'wc_get_cart_url' ) ? esc_url_raw( wc_get_cart_url() ) : '',
 				'wcAjaxUrl'   => esc_url_raw( admin_url( 'admin-ajax.php' ) ),
 				'wcAjaxNonce' => wp_create_nonce( 'itsoft_cart' ),
 				'storeApi'  => [
@@ -452,6 +463,7 @@ function itsoft_assets() {
 				'i18n'     => [
 					'added'           => esc_html__( 'Товар добавлен в корзину', 'itsoft' ),
 					'updateError'     => esc_html__( 'Не удалось обновить корзину. Попробуйте еще раз.', 'itsoft' ),
+					'cartNavigationError' => esc_html__( 'Не удалось открыть корзину. Обновите страницу и попробуйте ещё раз.', 'itsoft' ),
 					'selectVariation' => esc_html__( 'Выберите вариацию товара', 'itsoft' ),
 				],
 			]
@@ -508,6 +520,17 @@ function itsoft_assets() {
 		}
 	}
 
+	if ( is_page_template( 'page-reviews.php' ) ) {
+		$reviews_style_path = get_template_directory() . '/assets/css/page-reviews.css';
+
+		wp_enqueue_style(
+			'itsoft-page-reviews',
+			get_template_directory_uri() . '/assets/css/page-reviews.css',
+			array( 'itsoft-style' ),
+			file_exists( $reviews_style_path ) ? (string) filemtime( $reviews_style_path ) : $ver
+		);
+	}
+
 	if ( is_category() || is_page_template( 'page-all-posts.php' ) ) {
 		global $wp_query;
 
@@ -558,6 +581,14 @@ function itsoft_assets() {
 		file_exists( $brand_refresh_path ) ? (string) filemtime( $brand_refresh_path ) : $ver
 	);
 
+	$interface_system_path = get_template_directory() . '/assets/css/interface-system.css';
+	wp_enqueue_style(
+		'itsoft-interface-system',
+		get_template_directory_uri() . '/assets/css/interface-system.css',
+		array( 'itsoft-brand-refresh' ),
+		file_exists( $interface_system_path ) ? (string) filemtime( $interface_system_path ) : $ver
+	);
+
 	$main_script_path = get_template_directory() . '/assets/js/main.js';
     wp_enqueue_script(
         'itsoft-script',
@@ -576,8 +607,9 @@ function itsoft_assets() {
 		true
 	);
 
-	$search_products = array();
-	if ( function_exists( 'wc_get_products' ) ) {
+	$search_products = get_transient( 'itsoft_search_products_v2' );
+	if ( false === $search_products && function_exists( 'wc_get_products' ) ) {
+		$search_products = array();
 		$product_ids = wc_get_products(
 			array(
 				'status'  => 'publish',
@@ -635,7 +667,11 @@ function itsoft_assets() {
 				),
 			);
 		}
+
+		set_transient( 'itsoft_search_products_v2', $search_products, 12 * HOUR_IN_SECONDS );
 	}
+
+	$search_products = is_array( $search_products ) ? $search_products : array();
 
 	$search_aliases = class_exists( 'ITSoft_LF_Search' )
 		? ITSoft_LF_Search::client_aliases()
@@ -672,7 +708,7 @@ function itsoft_assets() {
 	wp_enqueue_script(
 		'itsoft-cart-badge',
 		get_template_directory_uri() . '/assets/js/cart-badge.js',
-		array( 'jquery' ),
+		array(),
 		$ver,
 		true
 	);
@@ -704,6 +740,33 @@ function itsoft_assets() {
 }
 
 /**
+ * Mark every front-end surface as part of the shared interface system.
+ */
+add_filter(
+	'body_class',
+	static function ( $classes ) {
+		$classes[] = 'itsoft-ui';
+		return array_values( array_unique( $classes ) );
+	}
+);
+
+/**
+ * Preload the single variable font used by all public and account templates.
+ */
+add_action(
+	'wp_head',
+	static function () {
+		$font_url = get_template_directory_uri() . '/assets/fonts/inter/Inter-VariableFont_slnt,wght.woff2';
+		printf(
+			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>%s',
+			esc_url( $font_url ),
+			"\n"
+		);
+	},
+	1
+);
+
+/**
  * Keep theme assets cache-safe even when an optimisation plugin strips ?ver=.
  * Curio SEO removes the standard WordPress version argument at priority 15.
  */
@@ -726,6 +789,100 @@ function itsoft_theme_asset_cache_buster( $src, $handle ) {
 }
 add_filter( 'style_loader_src', 'itsoft_theme_asset_cache_buster', 999, 2 );
 add_filter( 'script_loader_src', 'itsoft_theme_asset_cache_buster', 999, 2 );
+
+/**
+ * Drop the cached search index whenever a product or its catalogue taxonomy
+ * changes. This avoids querying and serialising every product on each request.
+ */
+function itsoft_flush_search_products_cache() {
+	delete_transient( 'itsoft_search_products_v2' );
+}
+add_action( 'save_post_product', 'itsoft_flush_search_products_cache' );
+add_action( 'created_product_cat', 'itsoft_flush_search_products_cache' );
+add_action( 'edited_product_cat', 'itsoft_flush_search_products_cache' );
+add_action( 'delete_product_cat', 'itsoft_flush_search_products_cache' );
+
+/**
+ * Build a useful fallback description on sites where no SEO plugin outputs it.
+ */
+function itsoft_get_meta_description() {
+	$description = '';
+	$saved       = '';
+
+	if ( defined( 'CSAI_META_DESC' ) ) {
+		if ( is_tax() || is_category() || is_tag() ) {
+			$term = get_queried_object();
+			$saved = $term instanceof WP_Term ? get_term_meta( $term->term_id, CSAI_META_DESC, true ) : '';
+		} elseif ( is_singular() || is_front_page() || ( function_exists( 'is_shop' ) && is_shop() ) ) {
+			$entity_id = get_queried_object_id();
+			$saved     = $entity_id ? get_post_meta( $entity_id, CSAI_META_DESC, true ) : '';
+		}
+	}
+
+	if ( '' !== trim( (string) $saved ) ) {
+		$description = $saved;
+	} elseif ( is_front_page() ) {
+		$description = get_bloginfo( 'description' );
+		if ( '' === trim( (string) $description ) ) {
+			$description = __( 'Лицензии для Windows, Office и других программ с доставкой ключа на e-mail после оплаты.', 'itsoft' );
+		}
+	} elseif ( function_exists( 'is_shop' ) && is_shop() ) {
+		$shop_id     = function_exists( 'wc_get_page_id' ) ? wc_get_page_id( 'shop' ) : 0;
+		$description = $shop_id > 0 ? get_post_field( 'post_excerpt', $shop_id ) : '';
+		$description = $description ?: __( 'Каталог лицензионного программного обеспечения Microsoft для дома и бизнеса.', 'itsoft' );
+	} elseif ( is_tax() || is_category() || is_tag() ) {
+		$description = term_description();
+	} elseif ( is_search() ) {
+		$description = sprintf( __( 'Результаты поиска по запросу «%s» в каталоге лицензионного программного обеспечения IT Софт.', 'itsoft' ), get_search_query() );
+	} elseif ( is_singular() ) {
+		$description = get_the_excerpt();
+		$description = $description ?: get_post_field( 'post_content', get_queried_object_id() );
+	}
+
+	if ( '' === trim( (string) $description ) && ! is_404() ) {
+		$description = sprintf( __( '%1$s — лицензии и программное обеспечение в интернет-магазине %2$s.', 'itsoft' ), wp_get_document_title(), get_bloginfo( 'name' ) );
+	}
+
+	$description = strip_shortcodes( (string) $description );
+	$description = preg_replace( '/\s+/u', ' ', wp_strip_all_tags( $description ) );
+	return trim( wp_html_excerpt( $description, 158, '…' ) );
+}
+
+if ( class_exists( 'CSAI_Frontend' ) ) {
+	remove_action( 'wp_head', array( 'CSAI_Frontend', 'meta_description' ), 1 );
+}
+
+add_action(
+	'wp_head',
+	static function () {
+		if ( is_admin() || is_feed() ) {
+			return;
+		}
+
+		$description = itsoft_get_meta_description();
+		if ( '' !== $description ) {
+			printf( '<meta name="description" content="%s">%s', esc_attr( $description ), "\n" );
+		}
+	},
+	2
+);
+
+/** Keep utility and duplicate-result pages out of the search index. */
+add_filter(
+	'wp_robots',
+	static function ( $robots ) {
+		if (
+			is_search()
+			|| ( function_exists( 'is_cart' ) && is_cart() )
+			|| ( function_exists( 'is_checkout' ) && is_checkout() )
+			|| ( function_exists( 'is_account_page' ) && is_account_page() )
+		) {
+			$robots['noindex'] = true;
+		}
+
+		return $robots;
+	}
+);
 
 /**
  * Adds a product and returns the small cart shape used by the product page.
@@ -900,11 +1057,34 @@ add_action( 'after_setup_theme', 'itsoft_image_sizes' );
 function itsoft_image_sizes() {
     add_image_size( 'aside-news', 596, 384, true );
     add_image_size( 'category-post', 784, 460, ['center', 'top'] );
+	add_image_size( 'catalog-card', 640, 850, false );
     add_image_size( 'product-image', 862, 788 );
     add_image_size( 'product-slide', 120, 135, ['center', 'top'] );
     add_image_size( 'recommend-thumb', 288, 168, ['left', 'top'] );
     add_image_size( 'distribution-thumb', 80, 90, true );
 }
+
+/**
+ * Generate lightweight WebP derivatives for uploaded JPEG and PNG media.
+ * Originals stay untouched, so administrators can always regenerate sizes.
+ */
+add_filter(
+	'image_editor_output_format',
+	static function ( $formats ) {
+		$formats['image/jpeg'] = 'image/webp';
+		$formats['image/png']  = 'image/webp';
+		return $formats;
+	}
+);
+
+add_filter(
+	'wp_editor_set_quality',
+	static function ( $quality, $mime_type ) {
+		return 'image/webp' === $mime_type ? 82 : $quality;
+	},
+	10,
+	2
+);
 
 /**
  * Return a native branded cover for editorial cards.
@@ -915,12 +1095,12 @@ function itsoft_image_sizes() {
 function itsoft_get_article_cover_url( $post_id = 0 ) {
 	$post_id = $post_id ? absint( $post_id ) : get_the_ID();
 	$title   = wp_strip_all_tags( get_the_title( $post_id ) );
-	$cover   = 'license-security-v1.jpg';
+	$cover   = 'license-security-v1.webp';
 
 	if ( preg_match( '/office|microsoft\s*365|офис/iu', $title ) ) {
-		$cover = 'office-activation-v1.jpg';
+		$cover = 'office-activation-v1.webp';
 	} elseif ( preg_match( '/установ|активир|без\s+интернет|перенест|windows\s*10\s*\/\s*11/iu', $title ) ) {
-		$cover = 'windows-setup-v1.jpg';
+		$cover = 'windows-setup-v1.webp';
 	}
 
 	return get_template_directory_uri() . '/assets/images/article-covers/' . $cover;

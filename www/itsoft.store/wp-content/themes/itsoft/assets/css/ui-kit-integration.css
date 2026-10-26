@@ -29,7 +29,7 @@
 	--it-warning-bg: #fff6e9;
 	--it-info: #2464bc;
 	--it-info-bg: #eff5ff;
-	--it-font: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--it-font: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	--it-shadow: 0 8px 24px rgba(33, 27, 61, .055);
 
 	/* Backward-compatible aliases used by the current theme. */

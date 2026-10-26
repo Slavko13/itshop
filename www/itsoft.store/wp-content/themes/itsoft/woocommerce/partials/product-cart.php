@@ -34,6 +34,12 @@ $default_quantity = isset( $cart_context['default_quantity'] ) ? (float) $cart_c
 $button_text         = $cart_context['button_text'] ?? esc_html__( 'Добавить в корзину', 'itsoft' );
 $button_in_cart_text = $cart_context['button_in_cart_text'] ?? esc_html__( 'В корзине', 'itsoft' );
 $button_url          = $cart_context['button_url'] ?? '';
+$cart_url            = $cart_context['cart_url'] ?? '';
+
+if ( '' === $cart_url && function_exists( 'wc_get_cart_url' ) ) {
+	$cart_url = wc_get_cart_url();
+}
+
 $button_default_ui_text = esc_html__( 'Добавить в корзину', 'itsoft' );
 
 $is_purchasable = ! empty( $cart_context['is_purchasable'] );
@@ -73,7 +79,7 @@ $wrapper_data_attributes = array(
 	'data-product-type'    => $cart_context['product_type'] ?? '',
 	'data-product-sku'     => $cart_context['sku'] ?? '',
 	'data-add-to-cart-url' => $button_url,
-	'data-cart-url'        => $cart_context['cart_url'] ?? '',
+	'data-cart-url'        => $cart_url,
 	'data-ajax-url'        => $cart_context['ajax_url'] ?? '',
 );
 

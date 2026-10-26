@@ -33,7 +33,7 @@ $primary_url   = $primary_url ?: $shop_url;
 
 $desktop_image_url = $desktop_image
 	? wp_get_attachment_image_url( $desktop_image, 'large' )
-	: get_template_directory_uri() . '/assets/images/home-hero-office-suite-v3.png';
+	: get_template_directory_uri() . '/assets/images/home-hero-office-suite-v3.webp';
 $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image, 'large' ) : '';
 ?>
 
@@ -53,7 +53,12 @@ $mobile_image_url  = $mobile_image ? wp_get_attachment_image_url( $mobile_image,
 
 		<div class="home-hero__visual" aria-hidden="true">
 			<picture class="home-hero__picture">
-				<?php if ( $mobile_image_url ) : ?><source media="(max-width: 575px)" srcset="<?php echo esc_url( $mobile_image_url ); ?>"><?php endif; ?>
+				<?php if ( $mobile_image_url ) : ?>
+					<source media="(max-width: 767px)" srcset="<?php echo esc_url( $mobile_image_url ); ?>">
+				<?php else : ?>
+					<!-- The hero is hidden on phones; select a local transparent pixel so the 1.5 MB desktop art is not downloaded. -->
+					<source media="(max-width: 767px)" srcset="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+				<?php endif; ?>
 				<img src="<?php echo esc_url( $desktop_image_url ); ?>" alt="" width="1983" height="793" loading="eager" decoding="async" fetchpriority="high">
 			</picture>
 		</div>

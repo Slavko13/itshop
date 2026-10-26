@@ -61,6 +61,7 @@ $has_query_text = '' !== $query_text;
 			</section>
 		<?php elseif ( have_posts() ) : ?>
 			<div class="itsoft-search__grid">
+				<?php $GLOBALS['itsoft_prioritize_next_catalog_image'] = 1 === max( 1, (int) get_query_var( 'paged' ) ); ?>
 				<?php while ( have_posts() ) : the_post(); ?>
 					<?php if ( 'product' === get_post_type() ) : ?>
 						<?php

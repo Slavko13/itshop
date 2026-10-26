@@ -149,6 +149,7 @@ add_action( 'woocommerce_shop_loop_header', 'woocommerce_product_taxonomy_archiv
 				<?php if ( $has_products ) : ?>
 					<div class="catalog-grid" data-catalog-grid="true" data-max-pages="<?php echo esc_attr( $max_pages ); ?>" data-current-page="<?php echo esc_attr( $paged ); ?>">
 						<div class="catalog-grid__list">
+							<?php $GLOBALS['itsoft_prioritize_next_catalog_image'] = 1 === (int) $paged; ?>
 							<?php while ( have_posts() ) : ?>
 								<?php the_post(); ?>
 								<?php do_action( 'woocommerce_shop_loop' ); ?>

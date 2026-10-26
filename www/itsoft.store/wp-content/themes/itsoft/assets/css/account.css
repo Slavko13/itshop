@@ -1,15 +1,15 @@
 :root {
-	--account-purple: #6844ff;
-	--account-purple-dark: #5132df;
-	--account-purple-soft: #f0ecff;
-	--account-ink: #121321;
-	--account-text: #505568;
-	--account-muted: #858ba0;
-	--account-line: #e4e6ef;
-	--account-surface: #ffffff;
-	--account-bg: #f7f8fc;
-	--account-success: #168a5b;
-	--account-danger: #d93954;
+	--account-purple: var(--itsoft-primary, #6c4cff);
+	--account-purple-dark: var(--itsoft-primary-active, #4b2fd7);
+	--account-purple-soft: var(--itsoft-primary-soft, #f0ecff);
+	--account-ink: var(--itsoft-heading, #0f1116);
+	--account-text: var(--itsoft-text, #515764);
+	--account-muted: var(--itsoft-muted, #6f7687);
+	--account-line: var(--itsoft-border, #e5e7f0);
+	--account-surface: var(--itsoft-surface, #fff);
+	--account-bg: var(--itsoft-page-bg, #f8f9fc);
+	--account-success: var(--itsoft-success, #168a5b);
+	--account-danger: var(--itsoft-error, #b42318);
 }
 
 .account-page {
@@ -711,6 +711,23 @@
 	min-width: 0;
 }
 
+/* Keep long account names and e-mail addresses inside the sidebar column. */
+.account-shell__sidebar > *,
+.account-identity {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.account-identity__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.account-dashboard__welcome h2 {
+    overflow-wrap: anywhere;
+}
+
 .account-shell__sidebar {
 	position: sticky;
 	top: 20px;
@@ -832,9 +849,12 @@ body.account-logout-open {
 .account-logout-modal {
 	position: fixed;
 	isolation: isolate;
-	z-index: 10050;
+	z-index: 2147483000;
 	inset: 0;
 	display: grid;
+	width: 100vw;
+	height: 100dvh;
+	box-sizing: border-box;
 	padding: 20px;
 	place-items: center;
 	opacity: 0;

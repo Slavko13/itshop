@@ -66,15 +66,21 @@ if ( $badge_terms && ! is_wp_error( $badge_terms ) ) {
 	}
 }
 
-$img_size = isset( $image_size ) ? $image_size : 'product-image';
+$img_size       = isset( $image_size ) ? $image_size : 'catalog-card';
+$image_priority = ! empty( $prioritize_image );
+$image_attrs    = array(
+	'class'    => 'catalog-card__image',
+	'loading'  => $image_priority ? 'eager' : 'lazy',
+	'decoding' => 'async',
+);
+
+if ( $image_priority ) {
+	$image_attrs['fetchpriority'] = 'high';
+}
 
 $image = $product->get_image(
 	$img_size,
-	array(
-		'class'    => 'catalog-card__image',
-		'loading'  => 'lazy',
-		'decoding' => 'async',
-	)
+	$image_attrs
 );
 
 if ( empty( $image ) ) {
@@ -122,7 +128,6 @@ if ( $product->supports( 'ajax_add_to_cart' ) ) {
 $button_classes = implode( ' ', array_filter( array_unique( $button_classes ) ) );
 $button_url     = $product->add_to_cart_url();
 $button_text    = $product->add_to_cart_text();
-$button_aria    = $product->add_to_cart_description();
 $is_available   = $product->is_purchasable() && $product->is_in_stock();
 $quick_buy_url  = ! is_product() && function_exists( 'itsoft_get_quick_buy_url' )
 	? itsoft_get_quick_buy_url( $product )
@@ -175,7 +180,7 @@ $metrika_product    = array(
 		</div>
 
 		<div class="catalog-card__meta">
-			<div class="catalog-card__rating<?php echo $rating_average > 0 ? '' : ' catalog-card__rating--empty'; ?>" aria-label="<?php echo esc_attr( $rating_aria ); ?>">
+			<div class="catalog-card__rating<?php echo $rating_average > 0 ? '' : ' catalog-card__rating--empty'; ?>" role="img" aria-label="<?php echo esc_attr( $rating_aria ); ?>">
 				<span class="catalog-card__rating-icon">
 					<?php echo itsoft_catalog_get_icon( 'star' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</span>
@@ -214,7 +219,7 @@ $metrika_product    = array(
 					data-quantity="1"
 					data-product_id="<?php echo esc_attr( $product->get_id() ); ?>"
 					data-product_sku="<?php echo esc_attr( $product->get_sku() ); ?>"
-					aria-label="<?php echo esc_attr( $button_aria ); ?>"
+					aria-label="<?php echo esc_attr( $button_text . ' — ' . get_the_title( $product->get_id() ) ); ?>"
 					rel="nofollow"
 				>
 					<span class="catalog-card__buy-label"><?php echo esc_html( $button_text ); ?></span>
@@ -224,7 +229,7 @@ $metrika_product    = array(
 					<a
 						class="catalog-card__quick-buy button"
 						href="<?php echo esc_url( $quick_buy_url ); ?>"
-						aria-label="<?php echo esc_attr( sprintf( __( 'Купить «%s» в 1 клик', 'itsoft' ), get_the_title( $product->get_id() ) ) ); ?>"
+						aria-label="<?php echo esc_attr( sprintf( __( 'Купить в 1 клик — %s', 'itsoft' ), get_the_title( $product->get_id() ) ) ); ?>"
 						rel="nofollow"
 					>
 						<?php esc_html_e( 'Купить в 1 клик', 'itsoft' ); ?>

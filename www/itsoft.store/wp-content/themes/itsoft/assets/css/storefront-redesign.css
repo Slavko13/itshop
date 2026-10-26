@@ -6,7 +6,7 @@
 :root {
     --storefront-surface: #fff;
     --storefront-border: #e5e7f0;
-    --storefront-muted: #6f7687;
+    --storefront-muted: var(--itsoft-muted, #5f6675);
     --storefront-soft: #f0edff;
     --storefront-shadow: 0 14px 40px rgba(34, 28, 73, 0.08);
 }
@@ -1452,7 +1452,7 @@
         padding: 0 12px;
         border: 0;
         border-radius: 12px;
-        color: var(--main-perple);
+        color: var(--itsoft-primary-active, #4b2fd7);
         background: var(--storefront-soft);
     }
 

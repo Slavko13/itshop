@@ -1,5 +1,9 @@
 {$ITSOFT_DOMAIN} {
 	encode zstd gzip
+
+	@static path_regexp static \.(?:css|js|mjs|png|jpe?g|gif|webp|avif|svg|woff2?|ttf)$
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
 	reverse_proxy wordpress:80
 
 	header {

@@ -263,6 +263,10 @@ try {
 				headerRowPaddingLeft: headerRow ? parseFloat(getComputedStyle(headerRow).paddingLeft) : 0,
 				hasLegacyInnerHero: Boolean(document.querySelector('.header .hero-small')),
 				toggleVisible: Boolean(toggle && getComputedStyle(toggle).display !== 'none'),
+				loadMoreVisible: (() => {
+					const control = document.querySelector('.catalog-grid__more');
+					return Boolean(control && !control.hidden && getComputedStyle(control).display !== 'none');
+				})(),
 				nestedInteractive: Boolean(document.querySelector('a button, button a')),
 			};
 		})()`);
@@ -285,11 +289,12 @@ try {
 		assert(`${width}px action labels are horizontally centered`, state.maxButtonHorizontalOffset <= 1, `${state.maxButtonHorizontalOffset}px`);
 		assert(`${width}px product image area is square`, Math.abs(state.imageRatio - 1) <= 0.01, String(state.imageRatio));
 		assert(`${width}px product title is not line-clamped`, !state.titleClamp || state.titleClamp === 'none', state.titleClamp);
+		assert(`${width}px inactive load-more control stays hidden`, !state.loadMoreVisible, JSON.stringify({ loadMoreVisible: state.loadMoreVisible }));
 		if (state.badgeStyle) {
-			assert(`${width}px badges use shared geometry and palette`, Math.abs(state.badgeStyle.height - 24) <= 1 && state.badgeStyle.color === 'rgb(108, 76, 255)' && state.badgeStyle.background === 'rgb(240, 236, 255)', JSON.stringify(state.badgeStyle));
+			assert(`${width}px badges use shared geometry and palette`, Math.abs(state.badgeStyle.height - 24) <= 1 && state.badgeStyle.color === 'rgb(75, 47, 215)' && state.badgeStyle.background === 'rgb(240, 236, 255)', JSON.stringify(state.badgeStyle));
 		}
 		assert(`${width}px primary card button uses shared component`, Math.abs(state.buttonStyle.height - 46) <= 1 && state.buttonStyle.background === 'rgb(108, 76, 255)' && state.buttonStyle.paddingLeft === state.buttonStyle.paddingRight, JSON.stringify(state.buttonStyle));
-		const expectedH1 = width < 768 ? [28, 36] : width < 1024 ? [36, 44] : [44, 56];
+		const expectedH1 = width < 768 ? [28, 36] : width < 1024 ? [32, 40] : [36, 44];
 		assert(`${width}px shared page typography`, Math.abs(state.typography.h1Size - expectedH1[0]) <= 0.1 && Math.abs(state.typography.h1Line - expectedH1[1]) <= 0.1 && state.typography.bodySize === 16 && state.typography.bodyLine === 26, JSON.stringify(state.typography));
 		assert(`${width}px shared catalog field height`, Math.abs(state.searchHeight - 48) <= 1, `${state.searchHeight}px`);
 		assert(`${width}px search icon does not overlap text`, state.searchIconClearance >= 8, `${state.searchIconClearance}px`);
@@ -481,6 +486,7 @@ try {
 		const item = button?.closest('.catalog-nav__parent-item');
 		const panel = item?.querySelector('.catalog-nav__children-panel');
 		const beforeUrl = window.location.href;
+		if (item?.classList.contains('open')) button?.click();
 		button?.click();
 		return {
 			urlUnchanged: window.location.href === beforeUrl,
@@ -546,7 +552,7 @@ try {
 		};
 	})()`);
 	assert('checkout coupon action uses the branded control', checkoutPolish.couponVisible && checkoutPolish.couponAligned && checkoutPolish.couponRadius === '12px' && checkoutPolish.couponBackground !== 'rgb(54, 57, 63)', JSON.stringify(checkoutPolish));
-	assert('technical notices use shared brand styles', checkoutPolish.noticeRadius === '14px' && checkoutPolish.noticeFont.toLowerCase().includes('manrope') && checkoutPolish.noticeBackground === 'rgb(255, 245, 246)', JSON.stringify(checkoutPolish));
+	assert('technical notices use shared brand styles', checkoutPolish.noticeRadius === '14px' && checkoutPolish.noticeFont.toLowerCase().includes('inter') && checkoutPolish.noticeBackground === 'rgb(255, 245, 246)', JSON.stringify(checkoutPolish));
 	await capture('checkout-coupon-1280.png');
 
 	const suggestions = await evaluate(`(async () => {
@@ -729,7 +735,7 @@ try {
 					&& mobileSearch.before.cart
 					&& !mobileSearch.before.orders
 					&& !mobileSearch.before.cartText
-					&& mobileSearch.before.searchButtonSize.every((size) => Math.abs(size - 40) <= 1)
+					&& mobileSearch.before.searchButtonSize.every((size) => Math.abs(size - 44) <= 1)
 					&& mobileSearch.before.searchIconSize.every((size) => Math.abs(size - 22) <= 1)
 					&& mobileSearch.before.cartBeforeProfile
 					&& mobileSearch.before.actionGapDifference <= 1
@@ -826,8 +832,8 @@ try {
 			JSON.stringify(home),
 		);
 		if (home.nativeHero) {
-			assert(`${width}px hero actions render`, home.actions === 2, String(home.actions));
-			assert(`${width}px trust benefits render`, home.benefits === 3, String(home.benefits));
+			assert(`${width}px single hero action renders`, home.actions === 1, String(home.actions));
+			assert(`${width}px removed trust strip stays absent`, home.benefits === 0, String(home.benefits));
 		}
 		assert(`${width}px selected categories render`, home.categories > 0, String(home.categories));
 		assert(`${width}px category grid columns`, home.categoryColumns === (width < 860 ? 2 : 3), String(home.categoryColumns));
@@ -881,6 +887,7 @@ try {
 		const icon = form?.querySelector('.itsoft-search__icon');
 		const submit = form?.querySelector('.itsoft-search__submit');
 		const formStyles = form ? getComputedStyle(form) : null;
+		const inputStyles = input ? getComputedStyle(input) : null;
 		const submitStyles = submit ? getComputedStyle(submit) : null;
 		const inputRect = input?.getBoundingClientRect();
 		const iconRect = icon?.getBoundingClientRect();
@@ -892,17 +899,19 @@ try {
 			minCardWidth: Math.min(...cards.map((card) => card.getBoundingClientRect().width)),
 			formHeight: form?.getBoundingClientRect().height || 0,
 			formRadius: parseFloat(formStyles?.borderRadius || '0'),
+			inputRadius: parseFloat(inputStyles?.borderRadius || '0'),
+			inputPaddingLeft: parseFloat(inputStyles?.paddingLeft || '0'),
 			buttonHeight: submit?.getBoundingClientRect().height || 0,
 			buttonColor: submitStyles?.backgroundColor || '',
 			hasSearchIcon: Boolean(icon),
-			iconInputGap: inputRect && iconRect ? inputRect.left - iconRect.right : -1,
+			iconInsideInput: Boolean(inputRect && iconRect) && iconRect.left >= inputRect.left && iconRect.right <= inputRect.right,
 			overflow: document.documentElement.scrollWidth - window.innerWidth,
 		};
 	})()`);
 	assert('search loads storefront and search styles', populatedSearch.storefrontStyles && populatedSearch.searchStyles, JSON.stringify(populatedSearch));
-	assert('search form uses branded rounded control', populatedSearch.formHeight >= 54 && populatedSearch.formRadius >= 13, JSON.stringify(populatedSearch));
+	assert('search form uses branded rounded control', populatedSearch.formHeight >= 54 && populatedSearch.inputRadius >= 12, JSON.stringify(populatedSearch));
 	assert('search submit uses branded purple button', populatedSearch.buttonHeight >= 42 && populatedSearch.buttonColor === 'rgb(108, 76, 255)', JSON.stringify(populatedSearch));
-	assert('search icon has dedicated space before input', populatedSearch.hasSearchIcon && populatedSearch.iconInputGap >= 8, JSON.stringify(populatedSearch));
+	assert('search icon has dedicated space before input', populatedSearch.hasSearchIcon && populatedSearch.iconInsideInput && populatedSearch.inputPaddingLeft >= 44, JSON.stringify(populatedSearch));
 	assert('search renders the shared four-column product grid', populatedSearch.cards > 0 && populatedSearch.columns === 4 && populatedSearch.minCardWidth > 250, JSON.stringify(populatedSearch));
 	assert('populated search has no horizontal overflow', populatedSearch.overflow <= 1, `${populatedSearch.overflow}px`);
 
@@ -918,15 +927,16 @@ try {
 		await navigate(new URL(path, baseUrl).toString(), 1280);
 		const headerState = await evaluate(`(() => {
 			const row = document.querySelector('.header-main__row');
-			const mark = row?.querySelector('.brand-logo__mark');
-			const wordmark = row?.querySelector('.brand-logo__wordmark');
+			const brandImage = row?.querySelector('.brand-logo__image');
 			const main = document.querySelector('.header-main');
 			return {
 				structure: row ? [...row.children].map((node) => node.className).join('|') : '',
 				mainHeight: Math.round(main?.getBoundingClientRect().height || 0),
 				rowHeight: Math.round(row?.getBoundingClientRect().height || 0),
-				markSize: Math.round(mark?.getBoundingClientRect().width || 0),
-				wordmarkFont: wordmark ? getComputedStyle(wordmark).fontFamily : '',
+				brandImage: Boolean(brandImage),
+				brandWidth: Math.round(brandImage?.getBoundingClientRect().width || 0),
+				brandAlt: brandImage?.getAttribute('alt')?.trim() || '',
+				bodyFont: getComputedStyle(document.body).fontFamily,
 				legacyLogo: Boolean(row?.querySelector('.logo__img')),
 				catalogButton: Boolean(row?.querySelector('.catalog-btn')),
 				search: Boolean(row?.querySelector('.header-main__search')),
@@ -938,8 +948,10 @@ try {
 			headerState.structure === sharedHeaderStructure
 			&& headerState.mainHeight > 0
 			&& headerState.rowHeight >= 48
-			&& headerState.markSize === 40
-			&& headerState.wordmarkFont.includes('Manrope')
+			&& headerState.brandImage
+			&& headerState.brandWidth > 100
+			&& headerState.brandAlt.length > 0
+			&& headerState.bodyFont.includes('Inter')
 			&& !headerState.legacyLogo
 			&& headerState.catalogButton
 			&& headerState.search

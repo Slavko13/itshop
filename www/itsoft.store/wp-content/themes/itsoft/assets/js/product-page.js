@@ -898,11 +898,7 @@
 			}
 
 			if ( this.activeCartKey ) {
-				if ( this.navigateToCart() ) {
-					return;
-				}
-
-				this.updateQuantity( this.quantityControls ? this.quantityControls.getValue() : 1 );
+				this.navigateToCart();
 				return;
 			}
 
@@ -1085,19 +1081,32 @@
 
 			if ( isInCart ) {
 				this.updateInCartLabels();
+				if ( this.buttonDefaultView ) {
+					this.buttonDefaultView.hidden = true;
+				}
+				if ( this.buttonInCartView ) {
+					this.buttonInCartView.hidden = false;
+				}
 				this.button.classList.add( 'cart__btn_in-cart' );
 			} else {
 				this.button.classList.remove( 'cart__btn_in-cart' );
+				if ( this.buttonDefaultView ) {
+					this.buttonDefaultView.hidden = false;
+				}
+				if ( this.buttonInCartView ) {
+					this.buttonInCartView.hidden = true;
+				}
 				this.updateButtonLabel( this.defaultButtonLabel );
 			}
 		}
 
 		navigateToCart() {
 			if ( ! this.cartUrl ) {
+				this.pushNotice( this.messages.cartNavigationError || '' );
 				return false;
 			}
 
-			window.location.href = this.cartUrl;
+			window.location.assign( this.cartUrl );
 			return true;
 		}
 
@@ -1239,7 +1248,7 @@
 						api: this.api,
 						productId: config.productId,
 						productType: cartNode.dataset.productType || 'simple',
-						cartUrl: cartNode.dataset.cartUrl || '',
+						cartUrl: cartNode.dataset.cartUrl || config.cartUrl || '',
 						messages: config.i18n || {},
 				  } )
 				: null;

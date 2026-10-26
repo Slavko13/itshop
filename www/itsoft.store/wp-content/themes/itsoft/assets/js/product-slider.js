@@ -7,36 +7,40 @@ document.addEventListener('DOMContentLoaded', function(){
         const slideCount = Number(document.querySelector('.product-gallery')?.dataset.galleryCount || 1);
         let thumbs = null;
 
-        if (galleryThumbsElement && slideCount > 1) {
-		thumbs = new Swiper('.product-gallery__thumbs', {
-            direction           : 'vertical',
-            slidesPerView       : 4,
-            spaceBetween        : 14,
-            watchOverflow       : true,
-			loop                : false,
-            watchSlidesProgress : true,
-            freeMode            : true,
-            navigation          : {
-                nextEl: '.product-gallery__thumbs .swiper-button-next',
-                prevEl: '.product-gallery__thumbs .swiper-button-prev',
-            },
-            breakpoints: {
-                0:{slidesPerView:3},
-                480:{slidesPerView:4},
-                768:{slidesPerView:5}
-            }
-		});
+		if (galleryThumbsElement && slideCount > 1 && typeof window.Swiper === 'function') {
+			thumbs = new window.Swiper('.product-gallery__thumbs', {
+				direction           : 'vertical',
+				slidesPerView       : 4,
+				spaceBetween        : 14,
+				watchOverflow       : true,
+				loop                : false,
+				watchSlidesProgress : true,
+				freeMode            : true,
+				navigation          : {
+					nextEl: '.product-gallery__thumbs .swiper-button-next',
+					prevEl: '.product-gallery__thumbs .swiper-button-prev',
+				},
+				breakpoints: {
+					0:{slidesPerView:3},
+					480:{slidesPerView:4},
+					768:{slidesPerView:5}
+				}
+			});
 		}
 
-        new Swiper('.product-gallery__main', {
-            spaceBetween: 10,
-			loop: slideCount > 1,
-			keyboard: { enabled: true },
-			...(thumbs ? { thumbs: { swiper: thumbs } } : {})
-        });
+		if (slideCount > 1 && typeof window.Swiper === 'function') {
+			new window.Swiper('.product-gallery__main', {
+				spaceBetween: 10,
+				loop: true,
+				keyboard: { enabled: true },
+				...(thumbs ? { thumbs: { swiper: thumbs } } : {})
+			});
+		}
         
-        Fancybox.bind("[data-fancybox]", {
-            // Custom options can be added here
-        });
+		if (window.Fancybox && typeof window.Fancybox.bind === 'function') {
+			window.Fancybox.bind("[data-fancybox]", {
+				// Custom options can be added here
+			});
+		}
     }
 });

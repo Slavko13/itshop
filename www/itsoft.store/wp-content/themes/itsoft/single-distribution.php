@@ -131,7 +131,10 @@ if ( ! $primary_image && is_array( $gallery ) && ! empty( $gallery[0]['sizes']['
 
 		<?php if ( is_array( $gallery ) && count( $gallery ) > 1 ) : ?>
 			<section class="distribution-gallery" aria-labelledby="distribution-gallery-title"><h2 id="distribution-gallery-title"><?php esc_html_e( 'Скриншоты', 'itsoft' ); ?></h2><div>
-				<?php foreach ( array_slice( $gallery, 0, 6 ) as $image ) : ?><a href="<?php echo esc_url( $image['url'] ); ?>" data-fancybox="distribution"><img src="<?php echo esc_url( $image['sizes']['medium_large'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>" loading="lazy"></a><?php endforeach; ?>
+				<?php foreach ( array_slice( $gallery, 0, 6 ) as $index => $image ) : ?>
+					<?php $image_label = sprintf( __( 'Открыть скриншот %1$d: %2$s', 'itsoft' ), $index + 1, get_the_title() ); ?>
+					<a href="<?php echo esc_url( $image['url'] ); ?>" data-fancybox="distribution" aria-label="<?php echo esc_attr( $image_label ); ?>"><img src="<?php echo esc_url( $image['sizes']['medium_large'] ?? $image['url'] ); ?>" alt="<?php echo esc_attr( ! empty( $image['alt'] ) ? $image['alt'] : $image_label ); ?>" loading="lazy"></a>
+				<?php endforeach; ?>
 			</div></section>
 		<?php endif; ?>
 

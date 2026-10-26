@@ -285,16 +285,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
-
-(function($) {
-    'use strict';
-
-    /* DOM ready */
-    $(function() {
-        $('.item-posts__title').matchHeight({
-            byRow: true,
-            property: 'height'
-        });
-    });
-
-})(jQuery);

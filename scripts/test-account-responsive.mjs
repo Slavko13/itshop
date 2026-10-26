@@ -212,6 +212,8 @@ try {
 			loggedIn: document.body.classList.contains('logged-in'),
 			hidden: modal?.hidden ?? true,
 			open: modal?.classList.contains('is-open') || false,
+			parentIsBody: modal?.parentElement === document.body,
+			viewportCovered: modal ? modal.contains(document.elementFromPoint(8, 8)) : false,
 			confirmHasNonce: /customer-logout|_wpnonce/.test(confirm?.href || ''),
 			focusedStay: document.activeElement?.classList.contains('account-logout-modal__stay') || false,
 		};
@@ -220,10 +222,13 @@ try {
 		&& desktopLogoutModal.loggedIn
 		&& !desktopLogoutModal.hidden
 		&& desktopLogoutModal.open
+		&& desktopLogoutModal.parentIsBody
+		&& desktopLogoutModal.viewportCovered
 		&& desktopLogoutModal.confirmHasNonce
 		&& desktopLogoutModal.focusedStay;
 	checks.push({ page: 'logout-confirmation-desktop', width: 1280, pass: desktopLogoutPass });
 	console.log(`${desktopLogoutPass ? 'PASS' : 'FAIL'} desktop logout requires confirmation ${JSON.stringify(desktopLogoutModal)}`);
+	if (capture) await screenshot('account-logout-modal-desktop.png');
 	await evaluate(`document.querySelector('.account-logout-modal__stay')?.click()`);
 	await delay(80);
 	const desktopCancelPass = await evaluate(`document.body.classList.contains('logged-in') && document.querySelector('[data-account-logout-dialog]')?.hidden === true`);
@@ -247,6 +252,8 @@ try {
 			loggedIn: document.body.classList.contains('logged-in'),
 			hidden: modal?.hidden ?? true,
 			open: modal?.classList.contains('is-open') || false,
+			parentIsBody: modal?.parentElement === document.body,
+			viewportCovered: modal ? modal.contains(document.elementFromPoint(8, 8)) : false,
 			overflow: document.documentElement.scrollWidth - innerWidth,
 		};
 	})()`);
@@ -254,9 +261,12 @@ try {
 		&& mobileLogoutModal.loggedIn
 		&& !mobileLogoutModal.hidden
 		&& mobileLogoutModal.open
+		&& mobileLogoutModal.parentIsBody
+		&& mobileLogoutModal.viewportCovered
 		&& mobileLogoutModal.overflow <= 1;
 	checks.push({ page: 'logout-confirmation-mobile', width: 393, pass: mobileLogoutPass });
 	console.log(`${mobileLogoutPass ? 'PASS' : 'FAIL'} mobile logout requires confirmation ${JSON.stringify(mobileLogoutModal)}`);
+	if (capture) await screenshot('account-logout-modal-mobile.png');
 	await evaluate(`document.querySelector('.account-logout-modal__stay')?.click()`);
 
 	const cases = [
@@ -279,7 +289,10 @@ try {
 				const cart = document.querySelector('.user-nav__cart')?.getBoundingClientRect();
 				const orders = document.querySelector('.user-nav__orders')?.getBoundingClientRect();
 				const bothHeaderItemsVisible = cart?.width > 0 && orders?.width > 0;
-				const brandWordmark = document.querySelector('.header-main__logo .brand-logo__wordmark');
+				const brandImage = document.querySelector('.header-main__logo .brand-logo__image');
+				const sidebar = document.querySelector('.account-shell__sidebar')?.getBoundingClientRect();
+				const content = document.querySelector('.account-shell__content')?.getBoundingClientRect();
+				const identity = document.querySelector('.account-identity')?.getBoundingClientRect();
 				return {
 					url: location.pathname,
 					viewport: innerWidth,
@@ -290,9 +303,12 @@ try {
 					navHeightSpread: navHeights.length ? Math.max(...navHeights) - Math.min(...navHeights) : 0,
 					columnTopSpread: accountNav?.width > 0 && primaryPanel?.width > 0 ? Math.abs(accountNav.top - primaryPanel.top) : 0,
 					headerItemTopSpread: bothHeaderItemsVisible ? Math.abs(cart.top - orders.top) : 0,
+					sidebarContentOverlap: sidebar?.width > 0 && content?.width > 0 && innerWidth > 820 ? Math.max(0, sidebar.right - content.left) : 0,
+					identityContentOverlap: identity?.width > 0 && content?.width > 0 && innerWidth > 820 ? Math.max(0, identity.right - content.left) : 0,
 					profileHasIcon: Boolean(document.querySelector('.user-nav__login--active .user-nav__icon svg')),
-					brandText: brandWordmark?.textContent.replace(/\\s+/g, ' ').trim() || '',
-					brandFont: brandWordmark ? getComputedStyle(brandWordmark).fontFamily : '',
+					brandImage: Boolean(brandImage),
+					brandAlt: brandImage?.getAttribute('alt')?.trim() || '',
+					bodyFont: getComputedStyle(document.body).fontFamily,
 					addressNavigationLinks: navLinks.filter((link) => link.href.includes('/edit-address')).length,
 					physicalAddressCopy: /(адрес доставки|shipping address|billing address)/iu.test(document.body.innerText),
 					decorativeIcons: document.querySelectorAll('.account-shell__help > span, .account-empty-state__icon, .account-form-card__icon, .account-address-card__icon, .account-stat__arrow, .account-license-card__fallback').length,
@@ -306,12 +322,15 @@ try {
 				&& metrics.navHeightSpread <= 1
 				&& metrics.columnTopSpread <= 1
 				&& metrics.headerItemTopSpread <= 1
+				&& metrics.sidebarContentOverlap <= 1
+				&& metrics.identityContentOverlap <= 1
 				&& metrics.profileHasIcon
 				&& metrics.addressNavigationLinks === 0
 				&& !metrics.physicalAddressCopy
 				&& metrics.decorativeIcons === 0
-				&& ['ITСОФТ', 'ITSOFT'].includes(metrics.brandText.replace(/\s+/g, ''))
-				&& metrics.brandFont.includes('Manrope');
+				&& metrics.brandImage
+				&& metrics.brandAlt.length > 0
+				&& metrics.bodyFont.includes('Inter');
 			checks.push({ page: testCase.name, width, overflow, pass, url: metrics.url });
 			console.log(`${pass ? 'PASS' : 'FAIL'} ${testCase.name} ${width}px overflow=${overflow}px alignment=${metrics.columnTopSpread}px url=${metrics.url}${pass ? '' : ` metrics=${JSON.stringify(metrics)}`}`);
 			if (capture && (width === 393 || width === 1280)) await screenshot(`account-${testCase.name}-${width}.png`);

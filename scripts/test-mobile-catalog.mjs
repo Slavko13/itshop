@@ -175,6 +175,10 @@ try {
 
     const toggleExists = await evaluate(client, `Boolean(document.querySelector('.catalog-nav__toggle-btn'))`);
     if (toggleExists) {
+      const initiallyExpanded = await evaluate(client, `document.querySelector('.catalog-nav__toggle-btn').getAttribute('aria-expanded')`);
+      if (initiallyExpanded === 'true') {
+        await evaluate(client, `document.querySelector('.catalog-nav__toggle-btn').click()`);
+      }
       await evaluate(client, `document.querySelector('.catalog-nav__toggle-btn').click()`);
       const toggleExpanded = await evaluate(client, `document.querySelector('.catalog-nav__toggle-btn').getAttribute('aria-expanded')`);
       assert(failures, `${width}px category toggle expands`, toggleExpanded === 'true');

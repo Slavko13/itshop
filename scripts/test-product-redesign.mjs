@@ -227,6 +227,39 @@ try {
 	}
 	console.log(`variation PASS ${JSON.stringify(variationResult)}`);
 
+	await openProduct('/product/windows-10-enterprise/', 1280, 900, 'simple-cart-state');
+	await evaluate(`document.querySelector('[data-cart-action="add"]')?.click()`);
+	await delay(1200);
+	const inCartButton = await evaluate(`(() => {
+		const button = document.querySelector('[data-cart-action="add"]');
+		const defaultView = button?.querySelector('[data-cart-button-default-view]');
+		const inCartView = button?.querySelector('[data-cart-button-in-cart-view]');
+		return {
+			inCart: button?.classList.contains('cart__btn_in-cart') || false,
+			defaultHidden: defaultView?.hidden ?? false,
+			inCartHidden: inCartView?.hidden ?? true,
+			inCartDisplay: inCartView ? getComputedStyle(inCartView).display : 'none',
+			text: inCartView?.textContent.trim() || '',
+		};
+	})()`);
+	if (!inCartButton.inCart || !inCartButton.defaultHidden || inCartButton.inCartHidden || inCartButton.inCartDisplay === 'none' || !inCartButton.text) {
+		throw new Error(`In-cart button label is not visible: ${JSON.stringify(inCartButton)}`);
+	}
+	console.log(`in-cart-label PASS ${JSON.stringify(inCartButton)}`);
+
+	const cartLoaded = once('Page.loadEventFired');
+	await evaluate(`document.querySelector('[data-cart-action="add"]')?.click()`);
+	await Promise.race([cartLoaded, delay(3000)]);
+	await delay(350);
+	const inCartNavigation = await evaluate(`(() => ({
+		pathname: window.location.pathname,
+		title: document.title,
+	}))()`);
+	if (!/\/cart\/?$/i.test(inCartNavigation.pathname)) {
+		throw new Error(`In-cart button did not navigate to cart: ${JSON.stringify(inCartNavigation)}`);
+	}
+	console.log(`in-cart-navigation PASS ${JSON.stringify(inCartNavigation)}`);
+
 	const unavailable = await openProduct('/product/windows-11-pro-professionalnaya/', 1280, 900, 'unavailable');
 	if (!unavailable.buttonDisabled || !/(нет в наличии|out of stock)/i.test(unavailable.button)) {
 		throw new Error(`Unavailable state failed: ${JSON.stringify(unavailable)}`);
