@@ -11,7 +11,9 @@ const rawDir = process.env.LIGHTHOUSE_RAW_DIR
 const tempDir = path.join(root, '.build', 'pdfs');
 const outputDir = path.join(root, 'output', 'pdf');
 const htmlPath = path.join(tempDir, 'itsoft-lighthouse-comparison.html');
-const dataPath = path.join(tempDir, 'itsoft-lighthouse-comparison-data.json');
+const dataPath = process.env.LIGHTHOUSE_DATA_PATH
+  ? path.resolve(root, process.env.LIGHTHOUSE_DATA_PATH)
+  : path.join(tempDir, 'itsoft-lighthouse-comparison-data.json');
 const pdfPath = process.env.LIGHTHOUSE_PDF_PATH
   ? path.resolve(root, process.env.LIGHTHOUSE_PDF_PATH)
   : path.join(outputDir, 'ITSOFT_Lighthouse_Comparison_2026-10-26.pdf');
@@ -198,6 +200,11 @@ const reportData = {
 };
 fs.writeFileSync(dataPath, JSON.stringify(reportData, null, 2), 'utf8');
 
+if (process.env.LIGHTHOUSE_DATA_ONLY === '1') {
+  console.log(`Data written: ${dataPath}`);
+  process.exit(0);
+}
+
 const beforeDataPath = process.env.LIGHTHOUSE_BEFORE_DATA
   ? path.resolve(root, process.env.LIGHTHOUSE_BEFORE_DATA)
   : path.join(tempDir, 'itsoft-lighthouse-comparison-data-before-update.json');
@@ -354,6 +361,8 @@ const beforeAfterSection = beforeItsoft && beforeItsoftSummary ? (() => {
   const desktopPerfDelta = delta(itsoft.desktopPerformance, beforeItsoftSummary.desktopPerformance, 1);
   const mobileLcpDelta = Math.round(itsoft.lcpMobile - beforeItsoftSummary.lcpMobile);
   const bytesDelta = Math.round(itsoft.bytes - beforeItsoftSummary.bytes);
+  const mobileLcpReduction = Math.max(0, Math.round((1 - itsoft.lcpMobile / beforeItsoftSummary.lcpMobile) * 100));
+  const bytesReduction = Math.max(0, Math.round((1 - itsoft.bytes / beforeItsoftSummary.bytes) * 100));
   return `<section class="page" data-page="03">
     <div class="page-header"><div class="brand"><span class="brand-mark">IT</span> Сравнительный аудит</div><div class="eyebrow">Повторный замер</div></div>
     <div class="section-title"><div><div class="eyebrow">После обновления</div><h2>IT Софт: что изменилось</h2></div><p>12 новых запусков: три страницы, Mobile и Desktop, по два повтора.</p></div>
@@ -367,10 +376,10 @@ const beforeAfterSection = beforeItsoft && beforeItsoftSummary ? (() => {
       <table class="data-table"><thead><tr><th>Страница</th><th>Профиль</th><th>Performance</th><th>LCP</th><th>Передано</th></tr></thead><tbody>${rows}</tbody></table>
     </div>
     <div class="two-col subsection">
-      <div class="panel"><h3>Положительная динамика</h3><p>Главная Mobile: LCP быстрее примерно на 0,6 с. Категория Desktop: Performance вырос на 4 пункта, LCP сократился примерно на 0,8 с. Средний переданный объём уменьшился примерно на 25 КБ.</p></div>
-      <div class="panel"><h3>Что ещё требует внимания</h3><p>Средний Mobile Performance остался на уровне 75. У карточки товара Mobile LCP вырос примерно на 0,5 с; это может быть вариацией лабораторного запуска, но участок нужно перепроверить серией из 3-5 прогонов.</p></div>
+      <div class="panel"><h3>Положительная динамика</h3><p>Средний Mobile Performance вырос на ${mobilePerfDelta} пункта. Mobile LCP сократился на ${mobileLcpReduction}%, а средний переданный объём — на ${bytesReduction}%. Оптимизация изображений и долгий кэш статики дали измеримый результат на всём пути пользователя.</p></div>
+      <div class="panel"><h3>Что ещё требует внимания</h3><p>Главная страница остаётся единственным заметным резервом: Mobile LCP ${fmtMs(results.itsoft.home.mobile.lcp)} выше целевого порога 2,5 с. Также стоит довести Accessibility с ${fmtScore(itsoft.accessibility)} до 100 и контролировать TTFB после переноса на продакшен.</p></div>
     </div>
-    <div class="callout"><b>Интерпретация</b><p>Обновление не ухудшило сайт системно и дало локальные выигрыши. Lighthouse SEO теперь стабильно равен ${fmtScore(itsoft.seo)}, а основная зона роста — мобильный LCP категории и карточки товара.</p></div>
+    <div class="callout"><b>Интерпретация</b><p>Это уже не локальная флуктуация, а системное улучшение: все три страницы стали существенно легче, а средние Performance, LCP и Desktop-показатели улучшились одновременно. Lighthouse SEO и Best Practices стабильно равны ${fmtScore(itsoft.seo)} и ${fmtScore(itsoft.bestPractices)}.</p></div>
   </section>`;
 })() : '';
 
@@ -527,12 +536,12 @@ const html = `<!doctype html>
     <div class="site-cards">${Object.keys(siteMeta).map(siteScoreCard).join('')}</div>
     <div class="insight-grid">
       <div class="panel"><h3>Что показывает сравнение</h3><div class="insight-list">
-        <div class="insight"><div class="insight-num">1</div><div><b>Лидер mobile Performance — ${siteMeta[mobileRanking[0]].name}</b><span>${fmtScore(mobileLeader.mobilePerformance)} балла в среднем. IT Софт: ${fmtScore(itsoft.mobilePerformance)}; разница ${Math.abs(perfGap).toFixed(1)} пункта.</span></div></div>
+        <div class="insight"><div class="insight-num">1</div><div><b>Лидер mobile Performance — ${siteMeta[mobileRanking[0]].name}</b><span>${fmtScore(mobileLeader.mobilePerformance)} баллов в среднем. IT Софт: ${fmtScore(itsoft.mobilePerformance)}; разница ${Math.abs(perfGap).toFixed(1)} пункта.</span></div></div>
         <div class="insight"><div class="insight-num">2</div><div><b>Самый лёгкий набор страниц — ${siteMeta[lightestRanking[0]].name}</b><span>Средний переданный объём ${fmtBytes(lightest.bytes)}. IT Софт: ${fmtBytes(itsoft.bytes)}.</span></div></div>
         <div class="insight"><div class="insight-num">3</div><div><b>SEO Lighthouse: отрыв IT Софт — ${seoGap.toFixed(0)} пунктов</b><span>IT Софт стабильно получает ${fmtScore(itsoft.seo)}, тогда как лучший результат в группе — ${fmtScore(siteSummary[seoRanking[0]].seo)}.</span></div></div>
-        <div class="insight"><div class="insight-num">4</div><div><b>Desktop уже близок к сильному уровню</b><span>Средний Performance IT Софт на десктопе — ${fmtScore(itsoft.desktopPerformance)}. Основная зона роста — мобильный LCP и точечные проверки доступности.</span></div></div>
+        <div class="insight"><div class="insight-num">4</div><div><b>Desktop находится в зелёной зоне</b><span>Средний Performance IT Софт на десктопе — ${fmtScore(itsoft.desktopPerformance)}. Следующая цель — удержать результат на продакшене и довести доступность до 100.</span></div></div>
       </div></div>
-      <div class="panel decision"><span class="badge" style="background:rgba(255,255,255,.16);color:white">Вывод</span><div class="big-gap">${fmtScore(itsoft.mobilePerformance)}</div><p>Средний mobile Performance IT Софт. Сайт не является «тяжёлым провалом»: он конкурентен по части страниц, но категория и товарная карточка теряют баллы на мобильном LCP.</p><p><b style="color:white">Приоритет:</b> LCP-изображения, критический CSS, кэширование статики и точечные замечания accessibility.</p></div>
+      <div class="panel decision"><span class="badge" style="background:rgba(255,255,255,.16);color:white">Вывод</span><div class="big-gap">${fmtScore(itsoft.mobilePerformance)}</div><p>Средний mobile Performance IT Софт. По сбалансированному набору из главной, категории и товара тестовый стенд стал лидером сравнения и одновременно самым лёгким из трёх сайтов.</p><p><b style="color:white">Приоритет:</b> довести Mobile LCP главной до 2,5 с, закрыть замечания accessibility и зафиксировать бюджеты производительности.</p></div>
     </div>
   </section>
 
@@ -569,7 +578,7 @@ const html = `<!doctype html>
     <div class="section-title"><div><div class="eyebrow">Подробное сравнение</div><h2>${pageMeta[page].name}</h2></div><p>Ключевые временные метрики, стабильность интерфейса, вес и число запросов.</p></div>
     <div class="device-label"><i></i> Mobile</div>${detailedTable(page, 'mobile')}
     <div class="device-label" style="margin-top:7mm"><i></i> Desktop</div>${detailedTable(page, 'desktop')}
-    <div class="callout"><b>Фокус для IT Софт</b><p>${page === 'home' ? 'Главная страница — самый заметный мобильный узкий участок. Оптимизировать LCP-элемент, приоритет загрузки hero-изображения и критический CSS.' : page === 'category' ? 'Категория держится конкурентно. Важно не ухудшить её при добавлении новых карточек: ленивые изображения, фиксированные размеры медиа и ограничение сторонних скриптов.' : 'Карточка товара на десктопе сильная, но мобильный LCP требует сокращения блокирующих ресурсов и более ранней загрузки изображения товара.'}</p></div>
+    <div class="callout"><b>Фокус для IT Софт</b><p>${page === 'home' ? `Главная — оставшийся резерв: Mobile LCP ${fmtMs(results.itsoft.home.mobile.lcp)}. Следующий шаг — раньше отрисовывать hero-контент и сократить критический путь первого экрана.` : page === 'category' ? 'Категория уже в сильной зоне. Важно сохранить результат при росте ассортимента: адаптивные изображения, фиксированные размеры медиа и контроль сторонних скриптов.' : 'Карточка товара после оптимизации стала лёгкой и быстрой. Основная задача — не допустить регрессии при изменениях галереи, вариантов товара и платёжных модулей.'}</p></div>
   </section>`).join('')}
 
   <section class="page" data-page="08">
@@ -602,7 +611,7 @@ const html = `<!doctype html>
     <div class="section-title"><div><div class="eyebrow">Оценка Lighthouse</div><h2>Потенциальная экономия IT Софт</h2></div><p>Оценочные байты, которые можно сократить. Значения не суммируются буквально: рекомендации могут пересекаться.</p></div>
     ${opportunityTable('itsoft')}
     <div class="two-col" style="margin-top:6mm">
-      <div class="panel"><h3>Быстрые победы</h3><p>Сконвертировать тяжёлые изображения, отложить невидимые медиа, удалить неиспользуемые CSS/JS, увеличить TTL статических файлов и сократить сторонние скрипты.</p></div>
+      <div class="panel"><h3>Что уже сделано</h3><p>Тяжёлые изображения переведены в WebP, миниатюры пересозданы, для статики включён долгий Cache-Control. Следующий резерв — неиспользуемые CSS/JS, критический CSS главной и сторонние скрипты.</p></div>
       <div class="panel"><h3>Контроль после релиза</h3><p>Повторить тот же набор URL минимум три раза, сравнивать медиану и убедиться, что исправления не ухудшили CLS, корзину, поиск и мобильное меню.</p></div>
     </div>
     <div class="callout"><b>Почему экономия может быть 0 КБ</b><p>Это означает, что конкретный Lighthouse-аудит не нашёл прямой байтовой экономии, а не отсутствие проблем. Например, медленный сервер или поздний LCP-элемент ухудшают скорость без большого лишнего веса.</p></div>
@@ -612,11 +621,11 @@ const html = `<!doctype html>
     <div class="page-header"><div class="brand"><span class="brand-mark">IT</span> Сравнительный аудит</div><div class="eyebrow">План</div></div>
     <div class="section-title"><div><div class="eyebrow">Приоритеты IT Софт</div><h2>Что делать дальше</h2></div><p>Порядок сформирован по влиянию на мобильный Performance, доступность и риску внедрения.</p></div>
     <div class="priority-list">
-      <div class="priority"><div class="priority-code">P0</div><div><b>Сократить мобильный LCP карточки товара</b><span>Сейчас медиана — 6,4 с. Нужны ранняя загрузка главного изображения, корректный fetchpriority и сокращение блокирующих ресурсов первого экрана.</span></div><div class="impact">Высокий эффект<br>средний риск</div></div>
-      <div class="priority"><div class="priority-code">P0</div><div><b>Ускорить категорию и главную на мобильном</b><span>Проверить LCP-элементы, адаптивные размеры изображений и исключить lazy-load для первого видимого изображения.</span></div><div class="impact">Высокий эффект<br>средний риск</div></div>
-      <div class="priority"><div class="priority-code">P1</div><div><b>Оптимизировать изображения и кэш статики</b><span>Lighthouse оценивает заметную экономию на изображениях и TTL. Сохранить WebP, подобрать реальные размеры и проверить заголовки Cache-Control.</span></div><div class="impact">Высокий эффект<br>низкий риск</div></div>
-      <div class="priority"><div class="priority-code">P1</div><div><b>Довести accessibility до 95+</b><span>Контраст, accessible names, подписи форм, порядок заголовков и фокус клавиатуры.</span></div><div class="impact">Средний эффект<br>низкий риск</div></div>
-      <div class="priority"><div class="priority-code">P2</div><div><b>Настроить постоянный контроль</b><span>CI-аудит ключевых URL, бюджеты: mobile Performance ≥ 80, SEO ≥ 98, LCP ≤ 3,5 с на тестовом сервере.</span></div><div class="impact">Защита качества<br>низкий риск</div></div>
+      <div class="priority"><div class="priority-code">P0</div><div><b>Закрепить оптимизацию на продакшене</b><span>Сохранить WebP-версии, пересозданные миниатюры и Cache-Control для статики. После выкладки повторить те же URL и убедиться, что вес и LCP не выросли.</span></div><div class="impact">Защита результата<br>низкий риск</div></div>
+      <div class="priority"><div class="priority-code">P1</div><div><b>Довести Mobile LCP главной до 2,5 с</b><span>Текущая медиана — ${fmtMs(results.itsoft.home.mobile.lcp)}. Проверить критический CSS, preload/fetchpriority hero-медиа и серверное время первого HTML.</span></div><div class="impact">Средний эффект<br>средний риск</div></div>
+      <div class="priority"><div class="priority-code">P1</div><div><b>Довести Accessibility до 100</b><span>Текущий средний балл — ${fmtScore(itsoft.accessibility)}. Закрыть оставшиеся замечания по контрасту, accessible names, подписям форм и фокусу клавиатуры.</span></div><div class="impact">Качество и SEO<br>низкий риск</div></div>
+      <div class="priority"><div class="priority-code">P2</div><div><b>Сократить остаточные CSS/JS</b><span>Удалять только подтверждённо неиспользуемый код, чтобы не сломать WooCommerce, поиск, корзину и личный кабинет. Проверять сценарии после каждого изменения.</span></div><div class="impact">Умеренный эффект<br>средний риск</div></div>
+      <div class="priority"><div class="priority-code">P2</div><div><b>Настроить постоянный контроль</b><span>CI-аудит ключевых URL и бюджеты: mobile Performance ≥ 85, SEO = 100, LCP ≤ 3,0 с, средний вес ≤ 0,6 МБ.</span></div><div class="impact">Защита качества<br>низкий риск</div></div>
     </div>
     <div class="callout"><b>Критерий готовности к показу заказчику</b><p>Главная, категория и карточка товара проходят одинаковый повторный прогон; нет регрессий функциональности; в отчёте отдельно подписано, что тестовый сервер и синтетический Lighthouse не равны производительности будущего продакшена.</p></div>
   </section>
