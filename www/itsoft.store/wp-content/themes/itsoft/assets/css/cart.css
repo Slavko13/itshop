@@ -1031,6 +1031,12 @@
 	display: none;
 }
 
+/* Quantity controls save automatically; keep WooCommerce's submit control as
+ * the programmatic update target without exposing a duplicate action. */
+.cart-page .actions > .button[name='update_cart'] {
+	display: none !important;
+}
+
 .cart-page .cart-collaterals {
 	position: sticky;
 	top: 24px;

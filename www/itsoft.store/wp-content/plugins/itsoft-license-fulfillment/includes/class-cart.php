@@ -5,7 +5,19 @@ defined( 'ABSPATH' ) || exit;
 final class ITSoft_LF_Cart {
 	public function register_hooks(): void {
 		add_filter( 'woocommerce_cart_item_quantity', array( $this, 'add_quantity_controls' ), 20, 3 );
+		add_filter( 'woocommerce_add_message', array( $this, 'suppress_cart_updated_message' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ), 30 );
+	}
+
+	public function suppress_cart_updated_message( string $message ): string {
+		if ( ! function_exists( 'is_cart' ) || ! is_cart() ) {
+			return $message;
+		}
+
+		$plain_message = trim( wp_strip_all_tags( $message ) );
+		$cart_updated  = trim( wp_strip_all_tags( __( 'Cart updated.', 'woocommerce' ) ) );
+
+		return $plain_message === $cart_updated ? '' : $message;
 	}
 
 	public function add_quantity_controls( string $quantity_html, string $cart_item_key, array $cart_item ): string {
