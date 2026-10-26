@@ -187,6 +187,7 @@ docker compose exec -T wordpress wp eval \
   --allow-root >/dev/null 2>&1 || true
 
 docker compose exec -T wordpress wp cache flush --allow-root >/dev/null 2>&1 || true
+bash optimize-media.sh
 docker compose ps
 
 cat <<EOF

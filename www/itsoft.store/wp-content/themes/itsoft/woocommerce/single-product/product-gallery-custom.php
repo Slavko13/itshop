@@ -61,6 +61,7 @@ if ( empty( $attachment_ids ) && ( $placeholder = wc_placeholder_img_src( 'produ
 				$image_attributes = array(
 					'loading'  => 0 === $main_image_index ? 'eager' : 'lazy',
 					'decoding' => 'async',
+					'sizes'    => '(max-width: 767px) calc(100vw - 58px), (max-width: 1199px) calc(50vw - 64px), 540px',
 				);
 				if ( 0 === $main_image_index ) {
 					$image_attributes['fetchpriority'] = 'high';

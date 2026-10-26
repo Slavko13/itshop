@@ -72,6 +72,7 @@ $image_attrs    = array(
 	'class'    => 'catalog-card__image',
 	'loading'  => $image_priority ? 'eager' : 'lazy',
 	'decoding' => 'async',
+	'sizes'    => '(max-width: 767px) calc(100vw - 54px), (max-width: 1023px) calc(50vw - 44px), (max-width: 1439px) calc(33.333vw - 48px), 360px',
 );
 
 if ( $image_priority ) {

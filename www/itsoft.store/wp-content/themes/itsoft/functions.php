@@ -751,20 +751,96 @@ add_filter(
 );
 
 /**
- * Preload the single variable font used by all public and account templates.
+ * Preload the two compact Inter subsets used by public and account templates.
+ *
+ * The previous all-language variable font weighed about 327 KB. Splitting the
+ * Cyrillic and Latin glyphs keeps the same typeface and weights at about one
+ * fifth of that transfer size.
  */
 add_action(
 	'wp_head',
 	static function () {
-		$font_url = get_template_directory_uri() . '/assets/fonts/inter/Inter-VariableFont_slnt,wght.woff2';
-		printf(
-			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>%s',
-			esc_url( $font_url ),
-			"\n"
+		$font_urls = array(
+			get_template_directory_uri() . '/assets/fonts/inter/Inter-Cyrillic-Variable.woff2',
+			get_template_directory_uri() . '/assets/fonts/inter/Inter-Latin-Variable.woff2',
 		);
+
+		foreach ( $font_urls as $font_url ) {
+			printf(
+				'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>%s',
+				esc_url( $font_url ),
+				"\n"
+			);
+		}
 	},
 	1
 );
+
+/**
+ * Preload only the image that can become LCP on catalogue and product pages.
+ * Responsive preload attributes mirror the rendered image, preventing a
+ * duplicate request and letting the browser choose a smaller mobile source.
+ */
+function itsoft_preload_lcp_product_image() {
+	if ( is_admin() || ! function_exists( 'wc_get_product' ) ) {
+		return;
+	}
+
+	$attachment_id = 0;
+	$image_size    = '';
+	$image_sizes   = '';
+
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		$product = wc_get_product( get_queried_object_id() );
+		if ( $product instanceof WC_Product ) {
+			$attachment_id = (int) $product->get_image_id();
+			$image_size    = 'product-image';
+			$image_sizes   = '(max-width: 767px) calc(100vw - 58px), (max-width: 1199px) calc(50vw - 64px), 540px';
+		}
+	} elseif (
+		( function_exists( 'is_shop' ) && is_shop() )
+		|| is_tax( array( 'product_cat', 'product_tag' ) )
+		|| is_search()
+	) {
+		global $wp_query;
+
+		if ( ! empty( $wp_query->posts ) ) {
+			foreach ( $wp_query->posts as $post ) {
+				$product = wc_get_product( $post );
+				if ( ! $product instanceof WC_Product || ! itsoft_is_product_available_for_sale( $product ) ) {
+					continue;
+				}
+
+				$attachment_id = (int) $product->get_image_id();
+				if ( $attachment_id ) {
+					$image_size  = 'catalog-card';
+					$image_sizes = '(max-width: 767px) calc(100vw - 54px), (max-width: 1023px) calc(50vw - 44px), (max-width: 1439px) calc(33.333vw - 48px), 360px';
+					break;
+				}
+			}
+		}
+	}
+
+	if ( ! $attachment_id || ! $image_size ) {
+		return;
+	}
+
+	$image_url = wp_get_attachment_image_url( $attachment_id, $image_size );
+	$image_set = wp_get_attachment_image_srcset( $attachment_id, $image_size );
+
+	if ( ! $image_url ) {
+		return;
+	}
+
+	printf(
+		'<link rel="preload" as="image" href="%1$s"%2$s imagesizes="%3$s" fetchpriority="high">%4$s',
+		esc_url( $image_url ),
+		$image_set ? ' imagesrcset="' . esc_attr( $image_set ) . '"' : '',
+		esc_attr( $image_sizes ),
+		"\n"
+	);
+}
+add_action( 'wp_head', 'itsoft_preload_lcp_product_image', 2 );
 
 /**
  * Keep theme assets cache-safe even when an optimisation plugin strips ?ver=.
@@ -1058,6 +1134,7 @@ function itsoft_image_sizes() {
     add_image_size( 'aside-news', 596, 384, true );
     add_image_size( 'category-post', 784, 460, ['center', 'top'] );
 	add_image_size( 'catalog-card', 640, 850, false );
+	add_image_size( 'catalog-card-mobile', 480, 638, false );
     add_image_size( 'product-image', 862, 788 );
     add_image_size( 'product-slide', 120, 135, ['center', 'top'] );
     add_image_size( 'recommend-thumb', 288, 168, ['left', 'top'] );
