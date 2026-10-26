@@ -42,6 +42,45 @@ function itsoft_configure_gtranslate() {
 }
 
 /**
+ * Keep Yoast organization metadata on the same brand logo as the storefront.
+ * This migration also removes the legacy media-library logo URL restored by
+ * older database backups.
+ */
+add_action( 'init', 'itsoft_sync_brand_logo_metadata', 20 );
+function itsoft_sync_brand_logo_metadata() {
+	$configuration_version = '2026-10-26-1';
+
+	if ( get_option( 'itsoft_brand_logo_configuration_version' ) === $configuration_version ) {
+		return;
+	}
+
+	$yoast_titles = get_option( 'wpseo_titles' );
+	if ( is_array( $yoast_titles ) ) {
+		$logo_path = get_template_directory() . '/assets/images/brand-logo.png';
+		$logo_url  = get_template_directory_uri() . '/assets/images/brand-logo.png';
+
+		$yoast_titles['company_logo']      = $logo_url;
+		$yoast_titles['company_logo_id']   = 0;
+		$yoast_titles['company_logo_meta'] = array(
+			'width'    => 1200,
+			'height'   => 279,
+			'filesize' => file_exists( $logo_path ) ? filesize( $logo_path ) : 0,
+			'url'      => $logo_url,
+			'path'     => $logo_path,
+			'size'     => 'full',
+			'id'       => 0,
+			'alt'      => 'Айтисофт',
+			'pixels'   => 334800,
+			'type'     => 'image/png',
+		);
+
+		update_option( 'wpseo_titles', $yoast_titles );
+	}
+
+	update_option( 'itsoft_brand_logo_configuration_version', $configuration_version, false );
+}
+
+/**
  * Keep unavailable products out of catalog archives and their result counts.
  * The direct product URL remains accessible.
  */

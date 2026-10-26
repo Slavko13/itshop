@@ -1377,6 +1377,10 @@ body {
 		overflow: hidden;
 	}
 
+	.header-main__logo .brand-logo__image {
+		width: clamp(96px, 30vw, 128px);
+	}
+
 	.header-main__search {
 		grid-column: 3;
 		width: 44px;
@@ -1614,7 +1618,7 @@ body {
 }
 
 @media (max-width: 360px) {
-	.header-main__logo .brand-logo__wordmark span {
-		display: none;
+	.header-main__logo .brand-logo__image {
+		width: 94px;
 	}
 }

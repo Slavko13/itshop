@@ -491,17 +491,12 @@
             }
 
             .catalog-nav__mobile-logo .brand-logo {
-                gap: 7px;
+                display: inline-flex;
             }
 
-            .catalog-nav__mobile-logo .brand-logo__mark {
-                flex-basis: 32px;
-                width: 32px;
-            }
-
-            .catalog-nav__mobile-logo .brand-logo__wordmark {
-                gap: 5px;
-                font-size: 21px;
+            .catalog-nav__mobile-logo .brand-logo__image {
+                width: 150px;
+                height: auto;
             }
             
             .catalog-nav__mobile-actions {

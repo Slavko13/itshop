@@ -404,43 +404,18 @@ blockquote p {
 .brand-logo {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
     white-space: nowrap;
 }
 
-.brand-logo__mark {
+.brand-logo__image {
     display: block;
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
+    width: 166px;
+    height: auto;
 }
 
-.brand-logo__wordmark {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 7px;
-    color: #0f1116;
-    font-family: 'Manrope', system-ui, sans-serif;
-    font-size: 27px;
-    line-height: 1;
-    letter-spacing: -0.055em;
-}
-
-.brand-logo__wordmark strong,
-.brand-logo__wordmark span {
-    display: block;
-}
-
-.brand-logo__wordmark strong {
-    font-weight: 800;
-}
-
-.brand-logo__wordmark span {
-    font-weight: 560;
-}
-
-.brand-logo--light .brand-logo__wordmark {
-    color: #fff;
+.brand-logo--light .brand-logo__image {
+    width: 190px;
+    filter: brightness(0) invert(1);
 }
 
 .logo__img {
@@ -3557,17 +3532,8 @@ blockquote p {
     .header-main__logo {
         width: 140px;
     }
-    .header-main__logo .brand-logo {
-        gap: 8px;
-    }
-    .header-main__logo .brand-logo__mark {
-        flex-basis: 36px;
-        width: 36px;
-        height: 36px;
-    }
-    .header-main__logo .brand-logo__wordmark {
-        gap: 6px;
-        font-size: 23px;
+    .header-main__logo .brand-logo__image {
+        width: 140px;
     }
     .topbar {
         display: none;
