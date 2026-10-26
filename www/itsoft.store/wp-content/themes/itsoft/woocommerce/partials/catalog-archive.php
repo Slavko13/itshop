@@ -25,6 +25,7 @@ $category_tree_html = itsoft_render_catalog_category_tree(
 	$category_tree,
 	array(
 		'current_id' => $is_category_term ? $term_id : 0,
+		'open_first' => ! $is_category_term,
 	)
 );
 

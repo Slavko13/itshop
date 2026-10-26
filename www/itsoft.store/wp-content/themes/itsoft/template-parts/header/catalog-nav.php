@@ -615,6 +615,13 @@
             const nav = document.querySelector('.catalog__nav');
             const toggleBtns = document.querySelectorAll('.catalog-nav__toggle-btn');
 
+			const firstParent = nav ? nav.querySelector('.catalog-nav__parent-item.has-children') : null;
+			if (firstParent && !nav.querySelector('.catalog-nav__parent-item.open')) {
+				firstParent.classList.add('open');
+				const firstToggle = firstParent.querySelector('.catalog-nav__toggle-btn');
+				if (firstToggle) firstToggle.setAttribute('aria-expanded', 'true');
+			}
+
             // Accordion Toggles
             toggleBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {

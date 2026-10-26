@@ -35,6 +35,45 @@ class CatalogSidebarToggle {
 	}
 }
 
+class CatalogCategoryTree {
+	constructor(root) {
+		this.root = root;
+		this.toggles = [...root.querySelectorAll('.catalog-tree__toggle')];
+	}
+
+	init() {
+		this.toggles.forEach((toggle) => {
+			toggle.addEventListener('click', (event) => {
+				event.preventDefault();
+				event.stopPropagation();
+
+				const item = toggle.closest('.catalog-tree__item--has-children');
+				if (!item) return;
+
+				const nextState = item.getAttribute('aria-expanded') !== 'true';
+				this.closeSiblings(item);
+				this.setExpanded(item, toggle, nextState);
+			});
+		});
+	}
+
+	closeSiblings(item) {
+		const list = item.parentElement;
+		if (!list) return;
+
+		[...list.children].forEach((sibling) => {
+			if (sibling === item || !sibling.classList.contains('catalog-tree__item--has-children')) return;
+			const toggle = sibling.querySelector(':scope > .catalog-tree__row > .catalog-tree__toggle');
+			this.setExpanded(sibling, toggle, false);
+		});
+	}
+
+	setExpanded(item, toggle, expanded) {
+		item.setAttribute('aria-expanded', String(expanded));
+		if (toggle) toggle.setAttribute('aria-expanded', String(expanded));
+	}
+}
+
 class CatalogGridLoader {
 	constructor(root, settings = {}) {
 		this.root = root;
@@ -495,6 +534,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	const sidebar = document.querySelector('[data-catalog-sidebar]');
 	if (sidebar) {
 		new CatalogSidebarToggle(sidebar).init();
+		const categoryTree = sidebar.querySelector('.catalog-tree');
+		if (categoryTree) new CatalogCategoryTree(categoryTree).init();
 	}
 
 	const grid = document.querySelector('[data-catalog-grid]');

@@ -224,6 +224,7 @@ if ( ! function_exists( 'itsoft_render_catalog_category_tree' ) ) {
 				'list_class'   => 'catalog-tree',
 				'item_class'   => 'catalog-tree__item',
 				'link_class'   => 'catalog-tree__link',
+				'open_first'   => false,
 			)
 		);
 
@@ -236,7 +237,7 @@ if ( ! function_exists( 'itsoft_render_catalog_category_tree' ) ) {
 
 		$output = '<ul class="' . esc_attr( $list_class ) . '" role="' . esc_attr( $role ) . '">';
 
-		foreach ( $tree as $node ) {
+		foreach ( $tree as $node_index => $node ) {
 			if ( empty( $node['term'] ) || ! $node['term'] instanceof WP_Term ) {
 				continue;
 			}
@@ -245,6 +246,8 @@ if ( ! function_exists( 'itsoft_render_catalog_category_tree' ) ) {
 			$children    = $node['children'] ?? array();
 			$is_current  = (int) $term->term_id === (int) $args['current_id'];
 			$is_ancestor = in_array( (int) $term->term_id, $args['ancestor_ids'], true );
+			$is_default   = 0 === (int) $args['depth'] && 0 === (int) $node_index && ! empty( $args['open_first'] );
+			$is_expanded  = ! empty( $children ) && ( $is_current || $is_ancestor || $is_default );
 
 			$item_classes = array( $args['item_class'] );
 			$link_classes = array( $args['link_class'] );
@@ -272,20 +275,32 @@ if ( ! function_exists( 'itsoft_render_catalog_category_tree' ) ) {
 			$output .= sprintf(
 				'<li class="%1$s" role="treeitem"%2$s>',
 				esc_attr( implode( ' ', array_filter( $item_classes ) ) ),
-				! empty( $children ) ? ' aria-expanded="true"' : ''
+				! empty( $children ) ? ' aria-expanded="' . ( $is_expanded ? 'true' : 'false' ) . '"' : ''
 			);
 
+			$output .= '<div class="catalog-tree__row">';
 			$output .= sprintf(
-				'<a class="%1$s" href="%2$s">%3$s%4$s</a>',
+				'<a class="%1$s" href="%2$s">%3$s</a>',
 				esc_attr( implode( ' ', array_filter( $link_classes ) ) ),
 				esc_url( $term_link ),
-				esc_html( $term->name ),
-				! empty( $children ) ? '<span class="catalog-tree__icon">' . itsoft_catalog_get_icon( 'arrow-right' ) . '</span>' : ''
+				esc_html( $term->name )
 			);
+
+			if ( ! empty( $children ) ) {
+				$output .= sprintf(
+					'<button class="catalog-tree__toggle" type="button" aria-expanded="%1$s" aria-label="%2$s"><span class="catalog-tree__icon" aria-hidden="true">%3$s</span></button>',
+					$is_expanded ? 'true' : 'false',
+					esc_attr( sprintf( __( 'Показать подкатегории: %s', 'itsoft' ), $term->name ) ),
+					itsoft_catalog_get_icon( 'arrow-right' )
+				);
+			}
+
+			$output .= '</div>';
 
 			if ( ! empty( $children ) ) {
 				$child_args            = $args;
 				$child_args['depth']   = (int) $args['depth'] + 1;
+				$child_args['open_first'] = false;
 				$output               .= itsoft_render_catalog_category_tree( $children, $child_args );
 			}
 
