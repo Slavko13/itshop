@@ -3,7 +3,9 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 const root = process.cwd();
-const rawDir = path.join(root, 'lighthouse-comparison', 'raw');
+const rawDir = process.env.LIGHTHOUSE_RAW_DIR
+  ? path.resolve(root, process.env.LIGHTHOUSE_RAW_DIR)
+  : path.join(root, 'lighthouse-comparison', 'raw');
 // The repository already contains a file named `tmp`, so use the existing
 // build workspace rather than replacing user data with a directory.
 const tempDir = path.join(root, '.build', 'pdfs');
@@ -368,7 +370,7 @@ const beforeAfterSection = beforeItsoft && beforeItsoftSummary ? (() => {
       <div class="panel"><h3>Положительная динамика</h3><p>Главная Mobile: LCP быстрее примерно на 0,6 с. Категория Desktop: Performance вырос на 4 пункта, LCP сократился примерно на 0,8 с. Средний переданный объём уменьшился примерно на 25 КБ.</p></div>
       <div class="panel"><h3>Что ещё требует внимания</h3><p>Средний Mobile Performance остался на уровне 75. У карточки товара Mobile LCP вырос примерно на 0,5 с; это может быть вариацией лабораторного запуска, но участок нужно перепроверить серией из 3-5 прогонов.</p></div>
     </div>
-    <div class="callout"><b>Интерпретация</b><p>Обновление не ухудшило сайт системно и дало локальные выигрыши, но главный мобильный LCP всё ещё далёк от целевых 2,5 с. SEO остаётся 92: meta description на проверенных шаблонах по-прежнему не обнаружен Lighthouse.</p></div>
+    <div class="callout"><b>Интерпретация</b><p>Обновление не ухудшило сайт системно и дало локальные выигрыши. Lighthouse SEO теперь стабильно равен ${fmtScore(itsoft.seo)}, а основная зона роста — мобильный LCP категории и карточки товара.</p></div>
   </section>`;
 })() : '';
 
@@ -514,9 +516,9 @@ const html = `<!doctype html>
     <div class="eyebrow" style="color:#BDAEFF;margin-bottom:5mm">Lighthouse · SEO · вес страниц</div>
     <h1>Сравнительный аудит производительности</h1>
     <p class="lead">IT Софт после обновления против Keysoft и Rusoft: одинаковые страницы, одинаковые профили мобильных и десктопных устройств, повторные лабораторные замеры.</p>
-    <div class="cover-meta"><span>26 октября 2026</span><span>Lighthouse ${esc(reportData.methodology.lighthouseVersion)}</span><span>12 новых запусков</span></div>
+    <div class="cover-meta"><span>26 октября 2026</span><span>Lighthouse ${esc(reportData.methodology.lighthouseVersion)}</span><span>36 свежих запусков</span></div>
     <div class="cover-grid">${Object.keys(siteMeta).map((site) => `<div class="cover-site"><b>${siteMeta[site].name}</b><span>${siteMeta[site].domain}</span></div>`).join('')}</div>
-    <div class="cover-note">IT Софт повторно измерен после обновления. Для конкурентов сохранён контрольный замер той же даты и методики. Результаты являются лабораторным снимком и не заменяют полевые данные CrUX / Search Console.</div>
+    <div class="cover-note">IT Софт, Keysoft и Rusoft повторно измерены в одной серии запусков после обновления тестового стенда. Результаты являются лабораторным снимком и не заменяют полевые данные CrUX / Search Console.</div>
   </section>
 
   <section class="page" data-page="02">
@@ -528,9 +530,9 @@ const html = `<!doctype html>
         <div class="insight"><div class="insight-num">1</div><div><b>Лидер mobile Performance — ${siteMeta[mobileRanking[0]].name}</b><span>${fmtScore(mobileLeader.mobilePerformance)} балла в среднем. IT Софт: ${fmtScore(itsoft.mobilePerformance)}; разница ${Math.abs(perfGap).toFixed(1)} пункта.</span></div></div>
         <div class="insight"><div class="insight-num">2</div><div><b>Самый лёгкий набор страниц — ${siteMeta[lightestRanking[0]].name}</b><span>Средний переданный объём ${fmtBytes(lightest.bytes)}. IT Софт: ${fmtBytes(itsoft.bytes)}.</span></div></div>
         <div class="insight"><div class="insight-num">3</div><div><b>SEO Lighthouse: отрыв IT Софт — ${seoGap.toFixed(0)} пунктов</b><span>IT Софт стабильно получает ${fmtScore(itsoft.seo)}, тогда как лучший результат в группе — ${fmtScore(siteSummary[seoRanking[0]].seo)}.</span></div></div>
-        <div class="insight"><div class="insight-num">4</div><div><b>Desktop уже близок к сильному уровню</b><span>Средний Performance IT Софт на десктопе — ${fmtScore(itsoft.desktopPerformance)}. Основная зона роста — мобильная загрузка и SEO-проверки.</span></div></div>
+        <div class="insight"><div class="insight-num">4</div><div><b>Desktop уже близок к сильному уровню</b><span>Средний Performance IT Софт на десктопе — ${fmtScore(itsoft.desktopPerformance)}. Основная зона роста — мобильный LCP и точечные проверки доступности.</span></div></div>
       </div></div>
-      <div class="panel decision"><span class="badge" style="background:rgba(255,255,255,.16);color:white">Вывод</span><div class="big-gap">${fmtScore(itsoft.mobilePerformance)}</div><p>Средний mobile Performance IT Софт. Сайт не является «тяжёлым провалом»: он конкурентен по части страниц, но главная и товарная карточка теряют баллы на мобильном LCP.</p><p><b style="color:white">Приоритет:</b> критический CSS, главный визуальный контент, SEO-аудиты и сторонние скрипты.</p></div>
+      <div class="panel decision"><span class="badge" style="background:rgba(255,255,255,.16);color:white">Вывод</span><div class="big-gap">${fmtScore(itsoft.mobilePerformance)}</div><p>Средний mobile Performance IT Софт. Сайт не является «тяжёлым провалом»: он конкурентен по части страниц, но категория и товарная карточка теряют баллы на мобильном LCP.</p><p><b style="color:white">Приоритет:</b> LCP-изображения, критический CSS, кэширование статики и точечные замечания accessibility.</p></div>
     </div>
   </section>
 
@@ -542,7 +544,7 @@ const html = `<!doctype html>
     <div class="method-grid">
       <div class="method-card"><b>3 типа страниц</b><p>Главная, категория Microsoft Office, карточка Office 2021 Pro Plus. Это покрывает ключевой путь пользователя до корзины.</p></div>
       <div class="method-card"><b>2 устройства</b><p>Стандартный профиль Lighthouse Mobile и preset Desktop с симуляцией сети и процессора.</p></div>
-      <div class="method-card"><b>2 повтора</b><p>Для каждой комбинации использована медиана двух запусков. После обновления IT Софт выполнено 12 новых прогонов.</p></div>
+      <div class="method-card"><b>2 повтора</b><p>Для каждой комбинации использована медиана двух запусков. Всего выполнено 36 свежих прогонов для трёх сайтов.</p></div>
       <div class="method-card"><b>Сопоставимый период</b><p>Контрольный и повторный замеры выполнены 26.10.2026 из одного окружения, Lighthouse ${esc(reportData.methodology.lighthouseVersion)}.</p></div>
     </div>
     <div class="subsection"><h3>Контрольные пороги Lighthouse</h3><div class="thresholds">
@@ -608,11 +610,11 @@ const html = `<!doctype html>
 
   <section class="page" data-page="12">
     <div class="page-header"><div class="brand"><span class="brand-mark">IT</span> Сравнительный аудит</div><div class="eyebrow">План</div></div>
-    <div class="section-title"><div><div class="eyebrow">Приоритеты IT Софт</div><h2>Что делать дальше</h2></div><p>Порядок сформирован по влиянию на мобильный Performance, SEO и риску внедрения.</p></div>
+    <div class="section-title"><div><div class="eyebrow">Приоритеты IT Софт</div><h2>Что делать дальше</h2></div><p>Порядок сформирован по влиянию на мобильный Performance, доступность и риску внедрения.</p></div>
     <div class="priority-list">
-      <div class="priority"><div class="priority-code">P0</div><div><b>Исправить проваленные SEO-аудиты</b><span>Проверить meta description, crawlable links, robots/canonical и соответствие заголовков на всех шаблонах.</span></div><div class="impact">Высокий эффект<br>низкий риск</div></div>
-      <div class="priority"><div class="priority-code">P0</div><div><b>Сократить мобильный LCP главной</b><span>Определить LCP-элемент, задать preload/fetchpriority, убрать lazy-load с первого экрана, оптимизировать размер и формат.</span></div><div class="impact">Высокий эффект<br>средний риск</div></div>
-      <div class="priority"><div class="priority-code">P1</div><div><b>Убрать блокирующие стили и лишний код</b><span>Критический CSS первого экрана, отложенная загрузка остального, аудит плагинов и неиспользуемых WooCommerce-ресурсов.</span></div><div class="impact">Высокий эффект<br>средний риск</div></div>
+      <div class="priority"><div class="priority-code">P0</div><div><b>Сократить мобильный LCP карточки товара</b><span>Сейчас медиана — 6,4 с. Нужны ранняя загрузка главного изображения, корректный fetchpriority и сокращение блокирующих ресурсов первого экрана.</span></div><div class="impact">Высокий эффект<br>средний риск</div></div>
+      <div class="priority"><div class="priority-code">P0</div><div><b>Ускорить категорию и главную на мобильном</b><span>Проверить LCP-элементы, адаптивные размеры изображений и исключить lazy-load для первого видимого изображения.</span></div><div class="impact">Высокий эффект<br>средний риск</div></div>
+      <div class="priority"><div class="priority-code">P1</div><div><b>Оптимизировать изображения и кэш статики</b><span>Lighthouse оценивает заметную экономию на изображениях и TTL. Сохранить WebP, подобрать реальные размеры и проверить заголовки Cache-Control.</span></div><div class="impact">Высокий эффект<br>низкий риск</div></div>
       <div class="priority"><div class="priority-code">P1</div><div><b>Довести accessibility до 95+</b><span>Контраст, accessible names, подписи форм, порядок заголовков и фокус клавиатуры.</span></div><div class="impact">Средний эффект<br>низкий риск</div></div>
       <div class="priority"><div class="priority-code">P2</div><div><b>Настроить постоянный контроль</b><span>CI-аудит ключевых URL, бюджеты: mobile Performance ≥ 80, SEO ≥ 98, LCP ≤ 3,5 с на тестовом сервере.</span></div><div class="impact">Защита качества<br>низкий риск</div></div>
     </div>
