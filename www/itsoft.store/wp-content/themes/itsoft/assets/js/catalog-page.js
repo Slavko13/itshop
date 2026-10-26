@@ -280,49 +280,6 @@ class CatalogGridLoader {
 	}
 }
 
-class CatalogPurchaseState {
-	init() {
-		if (typeof jQuery === 'undefined') {
-			return;
-		}
-
-		const settings = window.ITSOFT_CATALOG_PAGE || {};
-		const i18n = settings.i18n || {};
-		const getLabel = (button) => button && button.querySelector('.catalog-card__buy-label');
-
-		jQuery(document.body).on('adding_to_cart', (event, button) => {
-			const element = button && button[0];
-			const label = getLabel(element);
-
-			if (!element || !label) {
-				return;
-			}
-
-			if (!element.dataset.originalLabel) {
-				element.dataset.originalLabel = label.textContent.trim();
-			}
-
-			element.classList.add('catalog-card__buy--loading');
-			element.setAttribute('aria-busy', 'true');
-			label.textContent = i18n.adding || 'Добавляем…';
-		});
-
-		jQuery(document.body).on('added_to_cart', (event, fragments, cartHash, button) => {
-			const element = button && button[0];
-			const label = getLabel(element);
-
-			if (!element || !label) {
-				return;
-			}
-
-			element.classList.remove('catalog-card__buy--loading');
-			element.classList.add('catalog-card__buy--added');
-			element.removeAttribute('aria-busy');
-			label.textContent = i18n.added || 'В корзине';
-		});
-	}
-}
-
 class CatalogSearch {
 	constructor(form) {
 		this.form = form;
@@ -551,7 +508,5 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.querySelectorAll('.catalog-filters__ordering').forEach((ordering) => {
 		new CatalogOrdering(ordering).init();
 	});
-
-	new CatalogPurchaseState().init();
 });
 

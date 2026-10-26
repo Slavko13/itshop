@@ -635,16 +635,53 @@ try {
 	const ajaxButtonExists = await evaluate(`Boolean(document.querySelector('.catalog-card__buy.ajax_add_to_cart'))`);
 	assert('simple product has AJAX add button', ajaxButtonExists);
 	if (ajaxButtonExists) {
+		const testedProductId = await evaluate(`document.querySelector('.catalog-card__buy.ajax_add_to_cart')?.dataset.product_id || ''`);
 		await evaluate(`document.querySelector('.catalog-card__buy.ajax_add_to_cart').click()`);
 		await delay(1800);
 		const added = await evaluate(`(() => {
-			const button = document.querySelector('.catalog-card__buy.ajax_add_to_cart');
+			const button = document.querySelector('.catalog-card__buy[data-product_id="${testedProductId}"]');
 			return {
 				added: button.classList.contains('added') || button.classList.contains('catalog-card__buy--added'),
 				label: button.querySelector('.catalog-card__buy-label')?.textContent.trim() || '',
 			};
 		})()`);
 		assert('AJAX add-to-cart completes', added.added && added.label === 'В корзине', JSON.stringify(added));
+
+		const quantityBeforeSecondClick = await evaluate(`(async () => {
+			const response = await fetch('/wp-json/wc/store/v1/cart', { credentials: 'same-origin' });
+			const cart = await response.json();
+			const item = (cart.items || []).find((entry) => String(entry.id) === ${JSON.stringify(testedProductId)});
+			return Number(item?.quantity || 0);
+		})()`);
+		await evaluate(`document.querySelector('.catalog-card__buy[data-product_id="${testedProductId}"]').click()`);
+		await delay(1200);
+		const secondClick = await evaluate(`(async () => {
+			const response = await fetch('/wp-json/wc/store/v1/cart', { credentials: 'same-origin' });
+			const cart = await response.json();
+			const item = (cart.items || []).find((entry) => String(entry.id) === ${JSON.stringify(testedProductId)});
+			return { path: location.pathname, quantity: Number(item?.quantity || 0) };
+		})()`);
+		assert(
+			'clicking an in-cart card opens cart without adding another item',
+			secondClick.path.includes('/cart') && secondClick.quantity === quantityBeforeSecondClick,
+			JSON.stringify({ quantityBeforeSecondClick, ...secondClick })
+		);
+		await navigate(new URL('/shop/', baseUrl).toString(), 1280);
+		const persistedInCartState = await evaluate(`(() => {
+			const button = document.querySelector('.catalog-card__buy[data-product_id="${testedProductId}"]');
+			return {
+				state: button?.dataset.cartState || '',
+				label: button?.querySelector('.catalog-card__buy-label')?.textContent.trim() || '',
+				href: button?.getAttribute('href') || '',
+			};
+		})()`);
+		assert(
+			'in-cart card state survives a page reload',
+			persistedInCartState.state === 'in-cart'
+				&& persistedInCartState.label === 'В корзине'
+				&& persistedInCartState.href.includes('/cart'),
+			JSON.stringify(persistedInCartState)
+		);
 	}
 
 	const quickBuyUrl = await evaluate(`document.querySelector('.catalog-card__quick-buy')?.href || ''`);

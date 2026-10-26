@@ -391,6 +391,30 @@ function itsoft_assets() {
 		);
 	}
 
+	$needs_product_card_cart = $needs_storefront_styles || is_product();
+	if ( $needs_product_card_cart ) {
+		$product_card_cart_path = get_template_directory() . '/assets/js/product-card-cart.js';
+		wp_enqueue_script(
+			'itsoft-product-card-cart',
+			get_template_directory_uri() . '/assets/js/product-card-cart.js',
+			array( 'jquery', 'wc-add-to-cart' ),
+			file_exists( $product_card_cart_path ) ? (string) filemtime( $product_card_cart_path ) : $ver,
+			true
+		);
+
+		wp_localize_script(
+			'itsoft-product-card-cart',
+			'ITSOFT_PRODUCT_CARD_CART',
+			array(
+				'cartUrl' => function_exists( 'wc_get_cart_url' ) ? esc_url_raw( wc_get_cart_url() ) : '',
+				'i18n'    => array(
+					'adding' => esc_html__( 'Добавляем…', 'itsoft' ),
+					'added'  => esc_html__( 'В корзине', 'itsoft' ),
+				),
+			)
+		);
+	}
+
 	if ( is_product() ) {
 		$product_redesign_style_path = get_template_directory() . '/assets/css/product-redesign.css';
 		$product_redesign_script_path = get_template_directory() . '/assets/js/product-redesign.js';

@@ -137,7 +137,26 @@ try {
 		};
 	})()` );
 
-	await command( 'Page.navigate', { url: 'http://localhost:8080/cart/' } );
+	const productQuantityBeforeNavigation = Number(
+		preNavigationCart.items.find( ( item ) => item.name.includes( expectedProductText ) )?.quantity || 0
+	);
+	await evaluate( 'document.querySelector("[data-cart-action=add]").click(); true' );
+	await waitFor(
+		'location.pathname.includes("/cart")',
+		'Second click on the in-cart product button did not open the cart.'
+	);
+	const productQuantityAfterNavigation = await evaluate( `(async () => {
+		const response = await fetch('/wp-json/wc/store/v1/cart', { credentials: 'same-origin' });
+		const cart = await response.json();
+		const item = (cart.items || []).find((entry) => entry.name.includes(${ JSON.stringify( expectedProductText ) }));
+		return Number(item?.quantity || 0);
+	})()` );
+	if ( productQuantityAfterNavigation !== productQuantityBeforeNavigation ) {
+		throw new Error(
+			`Second product click changed quantity instead of navigating: before=${ productQuantityBeforeNavigation }, after=${ productQuantityAfterNavigation }`
+		);
+	}
+
 	try {
 		await waitFor(
 			`document.readyState === "complete" && document.body.innerText.includes(${ JSON.stringify( expectedProductText ) })`,
@@ -165,6 +184,11 @@ try {
 	})` );
 	result.addDurationMs = addDurationMs;
 	result.preNavigationCart = preNavigationCart;
+	result.inCartSecondClick = {
+		path: new URL( result.url ).pathname,
+		quantityBefore: productQuantityBeforeNavigation,
+		quantityAfter: productQuantityAfterNavigation,
+	};
 
 	await command( 'Emulation.setDeviceMetricsOverride', {
 		width: 393,

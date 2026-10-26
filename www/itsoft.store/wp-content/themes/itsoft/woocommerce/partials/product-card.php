@@ -111,6 +111,18 @@ $rating_aria = $rating_average > 0
 	)
 	: esc_html__( 'Отзывов пока нет', 'itsoft' );
 
+$is_in_cart = false;
+if ( function_exists( 'WC' ) && WC()->cart ) {
+	foreach ( WC()->cart->get_cart() as $cart_item ) {
+		$cart_product_id   = isset( $cart_item['product_id'] ) ? (int) $cart_item['product_id'] : 0;
+		$cart_variation_id = isset( $cart_item['variation_id'] ) ? (int) $cart_item['variation_id'] : 0;
+		if ( (int) $product->get_id() === $cart_product_id || (int) $product->get_id() === $cart_variation_id ) {
+			$is_in_cart = true;
+			break;
+		}
+	}
+}
+
 $button_classes = array(
 	'catalog-card__buy',
 	'btn',
@@ -126,9 +138,14 @@ if ( $product->supports( 'ajax_add_to_cart' ) ) {
 	$button_classes[] = 'ajax_add_to_cart';
 }
 
+if ( $is_in_cart ) {
+	$button_classes[] = 'catalog-card__buy--added';
+	$button_classes[] = 'added';
+}
+
 $button_classes = implode( ' ', array_filter( array_unique( $button_classes ) ) );
-$button_url     = $product->add_to_cart_url();
-$button_text    = $product->add_to_cart_text();
+$button_url     = $is_in_cart && function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : $product->add_to_cart_url();
+$button_text    = $is_in_cart ? esc_html__( 'В корзине', 'itsoft' ) : $product->add_to_cart_text();
 $is_available   = $product->is_purchasable() && $product->is_in_stock();
 $quick_buy_url  = ! is_product() && function_exists( 'itsoft_get_quick_buy_url' )
 	? itsoft_get_quick_buy_url( $product )
@@ -220,6 +237,8 @@ $metrika_product    = array(
 					data-quantity="1"
 					data-product_id="<?php echo esc_attr( $product->get_id() ); ?>"
 					data-product_sku="<?php echo esc_attr( $product->get_sku() ); ?>"
+					data-cart-state="<?php echo $is_in_cart ? 'in-cart' : 'idle'; ?>"
+					data-cart-url="<?php echo esc_url( function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '' ); ?>"
 					aria-label="<?php echo esc_attr( $button_text . ' — ' . get_the_title( $product->get_id() ) ); ?>"
 					rel="nofollow"
 				>
